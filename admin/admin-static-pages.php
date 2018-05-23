@@ -18,20 +18,20 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 		parent::__construct( $polylang );
 
 		// Removes the editor and the template select dropdown for pages for posts
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 10, 2 );
+		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ], 10, 2 );
 
 		// Add post state for translations of the front page and posts page
-		add_filter( 'display_post_states', array( $this, 'display_post_states' ), 10, 2 );
+		add_filter( 'display_post_states', [ $this, 'display_post_states' ], 10, 2 );
 
 		// Refresh language cache when a static front page has been translated
-		add_action( 'pll_save_post', array( $this, 'pll_save_post' ), 10, 3 );
+		add_action( 'pll_save_post', [ $this, 'pll_save_post' ], 10, 3 );
 
 		// Checks if chosen page on front is translated
-		add_filter( 'pre_update_option_page_on_front', array( $this, 'update_page_on_front' ), 10, 2 );
-		add_filter( 'customize_validate_page_on_front', array( $this, 'customize_validate_page_on_front' ), 10, 2 );
+		add_filter( 'pre_update_option_page_on_front', [ $this, 'update_page_on_front' ], 10, 2 );
+		add_filter( 'customize_validate_page_on_front', [ $this, 'customize_validate_page_on_front' ], 10, 2 );
 
 		// Prevents WP resetting the option
-		add_filter( 'pre_update_option_show_on_front', array( $this, 'update_show_on_front' ), 10, 2 );
+		add_filter( 'pre_update_option_show_on_front', [ $this, 'update_show_on_front' ], 10, 2 );
 	}
 
 	/**
@@ -45,7 +45,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	 */
 	function add_meta_boxes( $post_type, $post ) {
 		if ( 'page' === $post_type ) {
-			add_filter( 'option_page_for_posts', array( $this, 'translate_page_for_posts' ) );
+			add_filter( 'option_page_for_posts', [ $this, 'translate_page_for_posts' ] );
 
 			if ( ( get_option( 'page_for_posts' ) == $post->ID ) && empty( $post->post_content ) ) {
 				add_action( 'edit_form_after_title', '_wp_posts_page_notice' );
@@ -64,11 +64,11 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	 * @return array
 	 */
 	public function display_post_states( $post_states, $post ) {
-		if ( in_array( $post->ID, $this->model->get_languages_list( array( 'fields' => 'page_on_front' ) ) ) ) {
+		if ( in_array( $post->ID, $this->model->get_languages_list( [ 'fields' => 'page_on_front' ] ) ) ) {
 			$post_states['page_on_front'] = __( 'Front Page' );
 		}
 
-		if ( in_array( $post->ID, $this->model->get_languages_list( array( 'fields' => 'page_for_posts' ) ) ) ) {
+		if ( in_array( $post->ID, $this->model->get_languages_list( [ 'fields' => 'page_for_posts' ] ) ) ) {
 			$post_states['page_for_posts'] = __( 'Posts Page' );
 		}
 
@@ -101,7 +101,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	protected function is_page_translated( $page_id ) {
 		if ( $page_id ) {
 			$translations = count( $this->model->post->get_translations( $page_id ) );
-			$languages = count( $this->model->get_languages_list() );
+			$languages    = count( $this->model->get_languages_list() );
 
 			if ( $languages > 1 && $translations != $languages ) {
 				return false;
@@ -157,7 +157,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	 * @return string
 	 */
 	public function update_show_on_front( $value, $old_value ) {
-		if ( ! empty( $GLOBALS['pagenow'] ) && 'options-reading.php' === $GLOBALS['pagenow'] && 'posts' === $value && ! get_pages() && get_pages( array( 'lang' => '' ) ) ) {
+		if ( ! empty( $GLOBALS['pagenow'] ) && 'options-reading.php' === $GLOBALS['pagenow'] && 'posts' === $value && ! get_pages() && get_pages( [ 'lang' => '' ] ) ) {
 			$value = $old_value;
 		}
 		return $value;

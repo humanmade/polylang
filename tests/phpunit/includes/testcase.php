@@ -7,10 +7,10 @@ class PLL_UnitTestCase extends WP_UnitTestCase {
 	static function wpSetUpBeforeClass() {
 		self::$polylang = new StdClass();
 
-		self::$polylang->options = PLL_Install::get_default_options();
+		self::$polylang->options                 = PLL_Install::get_default_options();
 		self::$polylang->options['hide_default'] = 0; // Force option to pre 2.1.5 value otherwise phpunit tests break on Travis
-		self::$polylang->model = new PLL_Admin_Model( self::$polylang->options );
-		self::$polylang->links_model = self::$polylang->model->get_links_model(); // We always need a links model due to PLL_Language::set_home_url()
+		self::$polylang->model                   = new PLL_Admin_Model( self::$polylang->options );
+		self::$polylang->links_model             = self::$polylang->model->get_links_model(); // We always need a links model due to PLL_Language::set_home_url()
 
 		$_SERVER['SCRIPT_FILENAME'] = '/index.php'; // To pass the test in PLL_Choose_Lang::init() by default
 	}
@@ -32,12 +32,12 @@ class PLL_UnitTestCase extends WP_UnitTestCase {
 		parent::tearDown();
 	}
 
-	static function create_language( $locale, $args = array() ) {
+	static function create_language( $locale, $args = [] ) {
 		include PLL_SETTINGS_INC . '/languages.php';
 		$values = $languages[ $locale ];
 
-		$values['slug'] = $values['code'];
-		$values['rtl'] = (int) ( 'rtl' === $values['dir'] );
+		$values['slug']       = $values['code'];
+		$values['rtl']        = (int) ( 'rtl' === $values['dir'] );
 		$values['term_group'] = 0; // default term_group
 
 		$args = array_merge( $values, $args );
@@ -49,7 +49,7 @@ class PLL_UnitTestCase extends WP_UnitTestCase {
 		$languages = self::$polylang->model->get_languages_list();
 		if ( is_array( $languages ) ) {
 			// Delete the default categories first
-			$tt = wp_get_object_terms( get_option( 'default_category' ), 'term_translations' );
+			$tt    = wp_get_object_terms( get_option( 'default_category' ), 'term_translations' );
 			$terms = self::$polylang->model->term->get_translations( get_option( 'default_category' ) );
 
 			wp_delete_term( $tt, 'term_translations' );

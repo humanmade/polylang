@@ -35,30 +35,37 @@ class Install_Test extends PLL_UnitTestCase {
 
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr' ) );
 
-		$en = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'test' ) );
+		$en = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'test',
+			]
+		);
 		self::$polylang->model->term->set_language( $en, 'en' );
 
 		$post_translations_groups = get_terms( 'post_translations' );
-		$post_group = reset( $post_translations_groups );
+		$post_group               = reset( $post_translations_groups );
 
 		$term_translations_groups = get_terms( 'term_translations' );
-		$term_group = reset( $term_translations_groups );
+		$term_group               = reset( $term_translations_groups );
 
 		// User metas
 		update_user_meta( 1, 'pll_filter_content', 'en' );
-		update_user_meta( 1, 'pll_duplicate_content', array( 'post' => true ) );
+		update_user_meta( 1, 'pll_duplicate_content', [ 'post' => true ] );
 		update_user_meta( 1, 'description_fr', 'Biographie' );
 
 		// A menu with a language switcher
 		$menu_en = wp_create_nav_menu( 'menu_en' );
-		$item_id = wp_update_nav_menu_item( $menu_en, 0, array(
-			'menu-item-type'   => 'custom',
-			'menu-item-title'  => 'Language switcher',
-			'menu-item-url'    => '#pll_switcher',
-			'menu-item-status' => 'publish',
-		) );
+		$item_id = wp_update_nav_menu_item(
+			$menu_en, 0, [
+				'menu-item-type'   => 'custom',
+				'menu-item-title'  => 'Language switcher',
+				'menu-item-url'    => '#pll_switcher',
+				'menu-item-status' => 'publish',
+			]
+		);
 
-		update_post_meta( $item_id, '_pll_menu_item', array() );
+		update_post_meta( $item_id, '_pll_menu_item', [] );
 
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 			define( 'WP_UNINSTALL_PLUGIN', true );
@@ -79,7 +86,7 @@ class Install_Test extends PLL_UnitTestCase {
 		$this->assertEmpty( get_option( 'polylang' ) );
 
 		// No languages
-		$this->assertEmpty( get_terms( 'language', array( 'hide_empty' => false ) ) );
+		$this->assertEmpty( get_terms( 'language', [ 'hide_empty' => false ] ) );
 		$this->assertEmpty( get_terms( 'term_language' ) );
 
 		// No languages for posts and terms

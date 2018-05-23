@@ -5,9 +5,9 @@ class PLL_Canonical_UnitTestCase extends PLL_UnitTestCase {
 	// mainly copy paste from WP_Canonical_UnitTestCase::assertCanonical
 	public function assertCanonical( $test_url, $expected ) {
 		if ( is_string( $expected ) ) {
-			$expected = array( 'url' => $expected );
+			$expected = [ 'url' => $expected ];
 		} elseif ( is_array( $expected ) && ! isset( $expected['url'] ) && ! isset( $expected['qv'] ) ) {
-			$expected = array( 'qv' => $expected );
+			$expected = [ 'qv' => $expected ];
 		}
 
 		if ( ! isset( $expected['url'] ) && ! isset( $expected['qv'] ) ) {
@@ -17,7 +17,7 @@ class PLL_Canonical_UnitTestCase extends PLL_UnitTestCase {
 		$this->go_to( home_url( $test_url ) );
 
 		// Does the redirect match what's expected?
-		$can_url = self::$polylang->filters_links->check_canonical_url( home_url( $test_url ), false ); // FIXME TODO define links ( need $curlang )
+		$can_url        = self::$polylang->filters_links->check_canonical_url( home_url( $test_url ), false ); // FIXME TODO define links ( need $curlang )
 		$parsed_can_url = parse_url( $can_url );
 
 		// Just test the Path and Query if present
@@ -40,7 +40,7 @@ class PLL_Canonical_UnitTestCase extends PLL_UnitTestCase {
 			parse_str( $parsed_can_url['query'], $_qv );
 
 			// $_qv should not contain any elements which are set in $query_vars already ( ie. $_GET vars should not be present in the Rewrite )
-			$this->assertEquals( array(), array_intersect( $query_vars, $_qv ) );
+			$this->assertEquals( [], array_intersect( $query_vars, $_qv ) );
 
 			$query_vars = array_merge( $query_vars, $_qv );
 		}

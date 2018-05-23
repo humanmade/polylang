@@ -18,10 +18,10 @@ abstract class PLL_Links_Abstract_Domain extends PLL_Links_Permalinks {
 		parent::__construct( $model );
 
 		// Avoid cross domain requests ( mainly for custom fonts )
-		add_filter( 'content_url', array( $this, 'site_url' ) );
-		add_filter( 'plugins_url', array( $this, 'site_url' ) );
-		add_filter( 'rest_url', array( $this, 'site_url' ) );
-		add_filter( 'upload_dir', array( $this, 'upload_dir' ) );
+		add_filter( 'content_url', [ $this, 'site_url' ] );
+		add_filter( 'plugins_url', [ $this, 'site_url' ] );
+		add_filter( 'rest_url', [ $this, 'site_url' ] );
+		add_filter( 'upload_dir', [ $this, 'upload_dir' ] );
 	}
 
 	/**
@@ -35,7 +35,7 @@ abstract class PLL_Links_Abstract_Domain extends PLL_Links_Permalinks {
 	 * @return string language slug
 	 */
 	public function get_language_from_url( $url = '' ) {
-		$host = empty( $url ) ? $_SERVER['HTTP_HOST'] : parse_url( $url, PHP_URL_HOST );
+		$host          = empty( $url ) ? $_SERVER['HTTP_HOST'] : parse_url( $url, PHP_URL_HOST );
 		return ( $lang = array_search( $host, $this->get_hosts() ) ) ? $lang : '';
 	}
 
@@ -74,9 +74,9 @@ abstract class PLL_Links_Abstract_Domain extends PLL_Links_Permalinks {
 	 * @return array
 	 */
 	public function upload_dir( $uploads ) {
-		$lang = $this->get_language_from_url();
-		$lang = $this->model->get_language( $lang );
-		$uploads['url'] = $this->add_language_to_link( $uploads['url'], $lang );
+		$lang               = $this->get_language_from_url();
+		$lang               = $this->model->get_language( $lang );
+		$uploads['url']     = $this->add_language_to_link( $uploads['url'], $lang );
 		$uploads['baseurl'] = $this->add_language_to_link( $uploads['baseurl'], $lang );
 		return $uploads;
 	}

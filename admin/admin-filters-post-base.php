@@ -16,8 +16,8 @@ abstract class PLL_Admin_Filters_Post_Base {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->links = &$polylang->links;
-		$this->model = &$polylang->model;
+		$this->links     = &$polylang->links;
+		$this->model     = &$polylang->model;
 		$this->pref_lang = &$polylang->pref_lang;
 	}
 
@@ -32,13 +32,9 @@ abstract class PLL_Admin_Filters_Post_Base {
 		if ( ! $this->model->post->get_language( $post_id ) ) {
 			if ( isset( $_GET['new_lang'] ) && $lang = $this->model->get_language( $_GET['new_lang'] ) ) {
 				$this->model->post->set_language( $post_id, $lang );
-			}
-
-			elseif ( ( $parent_id = wp_get_post_parent_id( $post_id ) ) && $parent_lang = $this->model->post->get_language( $parent_id ) ) {
+			} elseif ( ( $parent_id = wp_get_post_parent_id( $post_id ) ) && $parent_lang = $this->model->post->get_language( $parent_id ) ) {
 				$this->model->post->set_language( $post_id, $parent_lang );
-			}
-
-			else {
+			} else {
 				$this->model->post->set_language( $post_id, $this->pref_lang );
 			}
 		}

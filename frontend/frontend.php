@@ -34,17 +34,17 @@ class PLL_Frontend extends PLL_Base {
 	public function __construct( &$links_model ) {
 		parent::__construct( $links_model );
 
-		add_action( 'pll_language_defined', array( $this, 'pll_language_defined' ), 1 );
+		add_action( 'pll_language_defined', [ $this, 'pll_language_defined' ], 1 );
 
 		// Avoids the language being the queried object when querying multiple taxonomies
-		add_action( 'parse_tax_query', array( $this, 'parse_tax_query' ), 1 );
+		add_action( 'parse_tax_query', [ $this, 'parse_tax_query' ], 1 );
 
 		// Filters posts by language
-		add_action( 'parse_query', array( $this, 'parse_query' ), 6 );
+		add_action( 'parse_query', [ $this, 'parse_query' ], 6 );
 
 		// Not before 'check_canonical_url'
 		if ( ! defined( 'PLL_AUTO_TRANSLATE' ) || PLL_AUTO_TRANSLATE ) {
-			add_action( 'template_redirect', array( $this, 'auto_translate' ), 7 );
+			add_action( 'template_redirect', [ $this, 'auto_translate' ], 7 );
 		}
 	}
 
@@ -67,8 +67,8 @@ class PLL_Frontend extends PLL_Base {
 			}
 
 			// Setup the language chooser
-			$c = array( 'Content', 'Url', 'Url', 'Domain' );
-			$class = 'PLL_Choose_Lang_' . $c[ $this->options['force_lang'] ];
+			$c                 = [ 'Content', 'Url', 'Url', 'Domain' ];
+			$class             = 'PLL_Choose_Lang_' . $c[ $this->options['force_lang'] ];
 			$this->choose_lang = new $class( $this );
 			$this->choose_lang->init();
 
@@ -84,8 +84,8 @@ class PLL_Frontend extends PLL_Base {
 	 */
 	public function pll_language_defined() {
 		// Filters
-		$this->filters_links = new PLL_Frontend_Filters_Links( $this );
-		$this->filters = new PLL_Frontend_Filters( $this );
+		$this->filters_links  = new PLL_Frontend_Filters_Links( $this );
+		$this->filters        = new PLL_Frontend_Filters( $this );
 		$this->filters_search = new PLL_Frontend_Filters_Search( $this );
 
 		// Auto translate for Ajax
@@ -102,7 +102,7 @@ class PLL_Frontend extends PLL_Base {
 	 * @param object $query WP_Query object
 	 */
 	public function parse_tax_query( $query ) {
-		$pll_query = new PLL_Query( $query, $this->model );
+		$pll_query          = new PLL_Query( $query, $this->model );
 		$queried_taxonomies = $pll_query->get_queried_taxonomies();
 
 		if ( ! empty( $queried_taxonomies ) && 'language' == reset( $queried_taxonomies ) ) {
@@ -118,8 +118,8 @@ class PLL_Frontend extends PLL_Base {
 	 * @param object $query WP_Query object
 	 */
 	public function parse_query( $query ) {
-		$qv = $query->query_vars;
-		$pll_query = new PLL_Query( $query, $this->model );
+		$qv         = $query->query_vars;
+		$pll_query  = new PLL_Query( $query, $this->model );
 		$taxonomies = $pll_query->get_queried_taxonomies();
 
 		// Allow filtering recent posts and secondary queries by the current language
@@ -128,9 +128,9 @@ class PLL_Frontend extends PLL_Base {
 		}
 
 		// Modifies query vars when the language is queried
-		if ( ! empty( $qv['lang'] ) || ( ! empty( $taxonomies ) && array( 'language' ) == array_values( $taxonomies ) ) ) {
+		if ( ! empty( $qv['lang'] ) || ( ! empty( $taxonomies ) && [ 'language' ] == array_values( $taxonomies ) ) ) {
 			// Do we query a custom taxonomy?
-			$taxonomies = array_diff( $taxonomies, array( 'language', 'category', 'post_tag' ) );
+			$taxonomies = array_diff( $taxonomies, [ 'language', 'category', 'post_tag' ] );
 
 			// Remove pages query when the language is set unless we do a search
 			// Take care not to break the single page, attachment and taxonomies queries!
@@ -178,7 +178,7 @@ class PLL_Frontend extends PLL_Base {
 				$restore_curlang = $this->curlang->slug; // To always remember the current language through blogs
 			}
 
-			$lang = $this->model->get_language( $restore_curlang );
+			$lang          = $this->model->get_language( $restore_curlang );
 			$this->curlang = $lang ? $lang : $this->model->get_language( $this->options['default_lang'] );
 
 			if ( isset( $this->static_pages ) ) {

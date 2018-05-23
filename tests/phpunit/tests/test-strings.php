@@ -22,23 +22,23 @@ class Strings_Test extends PLL_UnitTestCase {
 	function clean_up_global_scope() {
 		global $wp_widget_factory, $wp_registered_sidebars, $wp_registered_widgets, $wp_registered_widget_controls, $wp_registered_widget_updates;
 
-		$wp_registered_sidebars = array();
-		$wp_registered_widgets = array();
-		$wp_registered_widget_controls = array();
-		$wp_registered_widget_updates = array();
-		$wp_widget_factory->widgets = array();
+		$wp_registered_sidebars        = [];
+		$wp_registered_widgets         = [];
+		$wp_registered_widget_controls = [];
+		$wp_registered_widget_updates  = [];
+		$wp_widget_factory->widgets    = [];
 
 		parent::clean_up_global_scope();
 	}
 
 	function __return_fr_FR() {
-		return array( 'fr_FR' );
+		return [ 'fr_FR' ];
 	}
 
 	function test_base_strings() {
 		$strings = PLL_Admin_Strings::get_strings();
-		$names = wp_list_pluck( $strings, 'name' );
-		$this->assertCount( 4, array_intersect( array( 'Site Title', 'Tagline', 'Date Format', 'Time Format' ), $names ) );
+		$names   = wp_list_pluck( $strings, 'name' );
+		$this->assertCount( 4, array_intersect( [ 'Site Title', 'Tagline', 'Date Format', 'Time Format' ], $names ) );
 	}
 
 	// FIXME: order of nest two tests matters due to static protected strings in PLL_Admin_Strings
@@ -49,16 +49,16 @@ class Strings_Test extends PLL_UnitTestCase {
 
 		self::$polylang->filters = new PLL_Admin_Filters( self::$polylang );
 
-		$_POST = array(
+		$_POST = [
 			'widget-id'     => 'search-2',
 			'id_base'       => 'search',
 			'widget_number' => 2,
 			'multi_number'  => '',
-		);
+		];
 
-		$_POST['widget-search'][2] = array(
+		$_POST['widget-search'][2] = [
 			'title' => 'My Title',
-		);
+		];
 
 		$_POST['search-2_lang_choice'] = 'en';
 
@@ -77,16 +77,16 @@ class Strings_Test extends PLL_UnitTestCase {
 
 		self::$polylang->filters = new PLL_Admin_Filters( self::$polylang );
 
-		$_POST = array(
+		$_POST = [
 			'widget-id'     => 'search-2',
 			'id_base'       => 'search',
 			'widget_number' => 2,
 			'multi_number'  => '',
-		);
+		];
 
-		$_POST['widget-search'][2] = array(
+		$_POST['widget-search'][2] = [
 			'title' => 'My Title',
-		);
+		];
 
 		$_POST['search-2_lang_choice'] = 0;
 
@@ -103,7 +103,7 @@ class Strings_Test extends PLL_UnitTestCase {
 	function test_html_string() {
 		update_option( 'use_balanceTags', 1 ); // To break malformed html in versions < 2.1
 		self::$polylang->curlang = $language = self::$polylang->model->get_language( 'fr' );
-		$_mo = new PLL_MO();
+		$_mo                     = new PLL_MO();
 		$_mo->add_entry( $_mo->make_entry( '<p>test</p>', '<p>test fr</p>' ) );
 		$_mo->add_entry( $_mo->make_entry( '<p>malformed<p>', '<p>malformed fr<p>' ) );
 		$_mo->export_to_db( $language );
@@ -121,7 +121,7 @@ class Strings_Test extends PLL_UnitTestCase {
 	// Test #94
 	function test_slashed_string() {
 		self::$polylang->curlang = $language = self::$polylang->model->get_language( 'fr' );
-		$_mo = new PLL_MO();
+		$_mo                     = new PLL_MO();
 		$_mo->add_entry( $_mo->make_entry( '\slashed', '\slashed fr' ) );
 		$_mo->add_entry( $_mo->make_entry( '\\slashed', '\\slashed fr' ) );
 		$_mo->add_entry( $_mo->make_entry( '\\\slashed', '\\\slashed fr' ) );
@@ -153,12 +153,12 @@ class Strings_Test extends PLL_UnitTestCase {
 		$mo->export_to_db( self::$polylang->model->get_language( 'fr' ) );
 
 		// Reset $wp_locale_switcher to add fr_FR in the list of available languages
-		add_filter( 'get_available_languages', array( $this, '__return_fr_FR' ) );
-		$old_locale_switcher = $GLOBALS['wp_locale_switcher'];
+		add_filter( 'get_available_languages', [ $this, '__return_fr_FR' ] );
+		$old_locale_switcher           = $GLOBALS['wp_locale_switcher'];
 		$GLOBALS['wp_locale_switcher'] = new WP_Locale_Switcher();
 		$GLOBALS['wp_locale_switcher']->init();
 
-		self::$polylang = new PLL_Frontend( self::$polylang->links_model );
+		self::$polylang          = new PLL_Frontend( self::$polylang->links_model );
 		self::$polylang->curlang = self::$polylang->model->get_language( 'en' );
 		do_action( 'pll_language_defined' );
 

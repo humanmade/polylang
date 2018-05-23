@@ -17,11 +17,11 @@ class PLL_Frontend_Auto_Translate {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
+		$this->model   = &$polylang->model;
 		$this->curlang = &$polylang->curlang;
 
-		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ) ); // after main Polylang filter
-		add_filter( 'get_terms_args', array( $this, 'get_terms_args' ), 20, 2 );
+		add_action( 'pre_get_posts', [ $this, 'pre_get_posts' ] ); // after main Polylang filter
+		add_filter( 'get_terms_args', [ $this, 'get_terms_args' ], 20, 2 );
 	}
 
 	/**
@@ -66,10 +66,10 @@ class PLL_Frontend_Auto_Translate {
 		// /!\ always keep untranslated as is
 
 		// Term ids separated by a comma
-		$arr = array();
+		$arr = [];
 		if ( ! empty( $qv['cat'] ) ) {
 			foreach ( explode( ',', $qv['cat'] ) as $cat ) {
-				$tr = $this->get_term( abs( $cat ) );
+				$tr    = $this->get_term( abs( $cat ) );
 				$arr[] = $cat < 0 ? -$tr : $tr;
 			}
 
@@ -77,7 +77,7 @@ class PLL_Frontend_Auto_Translate {
 		}
 
 		// Category_name
-		$arr = array();
+		$arr = [];
 		if ( ! empty( $qv['category_name'] ) ) {
 			foreach ( explode( ',', $qv['category_name'] ) as $slug ) {
 				$arr[] = $this->get_translated_term_by( 'slug', $slug, 'category' );
@@ -87,8 +87,8 @@ class PLL_Frontend_Auto_Translate {
 		}
 
 		// Array of term ids
-		foreach ( array( 'category__and', 'category__in', 'category__not_in', 'tag__and', 'tag__in', 'tag__not_in' ) as $key ) {
-			$arr = array();
+		foreach ( [ 'category__and', 'category__in', 'category__not_in', 'tag__and', 'tag__in', 'tag__not_in' ] as $key ) {
+			$arr = [];
 			if ( ! empty( $qv[ $key ] ) ) {
 				foreach ( $qv[ $key ] as $cat ) {
 					$arr[] = ( $tr = $this->get_term( $cat ) ) ? $tr : $cat;
@@ -98,7 +98,7 @@ class PLL_Frontend_Auto_Translate {
 		}
 
 		// Tag
-		$arr = array();
+		$arr = [];
 		if ( ! empty( $qv['tag'] ) ) {
 			$sep = strpos( $qv['tag'], ',' ) !== false ? ',' : '+'; // Two possible separators for tag slugs
 			foreach ( explode( $sep, $qv['tag'] ) as $slug ) {
@@ -114,8 +114,8 @@ class PLL_Frontend_Auto_Translate {
 		}
 
 		// Array of tag slugs
-		foreach ( array( 'tag_slug__and', 'tag_slug__in' ) as $key ) {
-			$arr = array();
+		foreach ( [ 'tag_slug__and', 'tag_slug__in' ] as $key ) {
+			$arr = [];
 			if ( ! empty( $qv[ $key ] ) ) {
 				foreach ( $qv[ $key ] as $slug ) {
 					$arr[] = $this->get_translated_term_by( 'slug', $slug, 'post_tag' );
@@ -127,9 +127,9 @@ class PLL_Frontend_Auto_Translate {
 
 		// Custom taxonomies
 		// According to the codex, this type of query is deprecated as of WP 3.1 but it does not appear in WP 3.5 source code
-		foreach ( array_intersect( $this->model->get_translated_taxonomies(), get_taxonomies( array( '_builtin' => false ) ) ) as $taxonomy ) {
+		foreach ( array_intersect( $this->model->get_translated_taxonomies(), get_taxonomies( [ '_builtin' => false ] ) ) as $taxonomy ) {
 			$tax = get_taxonomy( $taxonomy );
-			$arr = array();
+			$arr = [];
 			if ( ! empty( $qv[ $tax->query_var ] ) ) {
 				$sep = strpos( $qv[ $tax->query_var ], ',' ) !== false ? ',' : '+'; // Two possible separators
 				foreach ( explode( $sep, $qv[ $tax->query_var ] ) as $slug ) {
@@ -146,7 +146,7 @@ class PLL_Frontend_Auto_Translate {
 		}
 
 		// p, page_id, post_parent can only take one id
-		foreach ( array( 'p', 'page_id', 'post_parent' ) as $key ) {
+		foreach ( [ 'p', 'page_id', 'post_parent' ] as $key ) {
 			if ( ! empty( $qv[ $key ] ) && $tr_id = $this->get_post( $qv[ $key ] ) ) {
 				$qv[ $key ] = $tr_id;
 			}
@@ -155,22 +155,25 @@ class PLL_Frontend_Auto_Translate {
 		// name, can only take one slug
 		if ( ! empty( $qv['name'] ) ) {
 			if ( empty( $qv['post_type'] ) ) {
-				$post_types = array( 'post' );
+				$post_types = [ 'post' ];
 			} elseif ( 'any' === $qv['post_type'] ) {
-				$post_types = get_post_types( array( 'exclude_from_search' => false ) ); // May return a empty array
+				$post_types = get_post_types( [ 'exclude_from_search' => false ] ); // May return a empty array
 			} else {
 				$post_types = (array) $qv['post_type'];
 			}
 
 			if ( ! empty( $post_types ) ) {
 				// No function to get post by name except get_posts itself
-				$id = $wpdb->get_var( sprintf( "
+				$id         = $wpdb->get_var(
+					sprintf(
+						"
 					SELECT ID from {$wpdb->posts}
 					WHERE {$wpdb->posts}.post_type IN ( '%s' )
 					AND post_name='%s'",
-					implode( "', '", esc_sql( $post_types ) ),
-					esc_sql( $qv['name'] )
-				) );
+						implode( "', '", esc_sql( $post_types ) ),
+						esc_sql( $qv['name'] )
+					)
+				);
 				$qv['name'] = ( $id && ( $tr_id = $this->get_post( $id ) ) && $tr = get_post( $tr_id ) ) ? $tr->post_name : $qv['name'];
 			}
 		}
@@ -178,18 +181,18 @@ class PLL_Frontend_Auto_Translate {
 		// pagename, the page id is already available in queried_object_id
 		if ( ! empty( $qv['pagename'] ) && ! empty( $query->queried_object_id ) && $tr_id = $this->get_post( $query->queried_object_id ) ) {
 			$query->queried_object_id = $tr_id;
-			$qv['pagename'] = get_page_uri( $tr_id );
+			$qv['pagename']           = get_page_uri( $tr_id );
 		}
 
 		// Array of post ids
 		// post_parent__in & post_parent__not_in since WP 3.6
-		foreach ( array( 'post__in', 'post__not_in', 'post_parent__in', 'post_parent__not_in' ) as $key ) {
-			$arr = array();
+		foreach ( [ 'post__in', 'post__not_in', 'post_parent__in', 'post_parent__not_in' ] as $key ) {
+			$arr = [];
 			if ( ! empty( $qv[ $key ] ) ) {
 				// post__in used by the 2 functions below
 				// Useless to filter them as output is already in the right language and would result in performance loss
 				foreach ( debug_backtrace() as $trace ) {
-					if ( in_array( $trace['function'], array( 'wp_nav_menu', 'gallery_shortcode' ) ) ) {
+					if ( in_array( $trace['function'], [ 'wp_nav_menu', 'gallery_shortcode' ] ) ) {
 						return;
 					}
 				}
@@ -235,16 +238,14 @@ class PLL_Frontend_Auto_Translate {
 	protected function translate_tax_query_recursive( $tax_queries ) {
 		foreach ( $tax_queries as $key => $q ) {
 			if ( isset( $q['taxonomy'], $q['terms'] ) && $this->model->is_translated_taxonomy( $q['taxonomy'] ) ) {
-				$arr = array();
-				$field = isset( $q['field'] ) && in_array( $q['field'], array( 'slug', 'name' ) ) ? $q['field'] : 'term_id';
+				$arr   = [];
+				$field = isset( $q['field'] ) && in_array( $q['field'], [ 'slug', 'name' ] ) ? $q['field'] : 'term_id';
 				foreach ( (array) $q['terms'] as $t ) {
 					$arr[] = $this->get_translated_term_by( $field, $t, $q['taxonomy'] );
 				}
 
 				$tax_queries[ $key ]['terms'] = $arr;
-			}
-
-			// Nested queries
+			} // Nested queries
 			elseif ( is_array( $q ) ) {
 				$tax_queries[ $key ] = $this->translate_tax_query_recursive( $q );
 			}
@@ -269,10 +270,15 @@ class PLL_Frontend_Auto_Translate {
 				return $tr_id;
 			}
 		} else {
-			$terms = get_terms( $taxonomy, array( $field => $term, 'lang' => '' ) );
+			$terms = get_terms(
+				$taxonomy, [
+					$field => $term,
+					'lang' => '',
+				]
+			);
 
 			if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
-				$t = reset( $terms );
+				$t     = reset( $terms );
 				$tr_id = $this->get_term( $t->term_id );
 
 				if ( ! is_wp_error( $tr = get_term( $tr_id, $taxonomy ) ) ) {

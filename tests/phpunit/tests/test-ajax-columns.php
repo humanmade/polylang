@@ -9,7 +9,7 @@ class Ajax_Columns_Test extends PLL_Ajax_UnitTestCase {
 		self::create_language( 'en_US' );
 		self::create_language( 'fr_FR' );
 
-		self::$editor = self::factory()->user->create( array( 'role' => 'editor' ) );
+		self::$editor = self::factory()->user->create( [ 'role' => 'editor' ] );
 	}
 
 	function setUp() {
@@ -17,7 +17,7 @@ class Ajax_Columns_Test extends PLL_Ajax_UnitTestCase {
 		remove_all_actions( 'admin_init' ); // to save ( a lot of ) time as WP will attempt to update core and plugins
 
 		wp_set_current_user( self::$editor ); // set a user to pass current_user_can tests
-		self::$polylang->links = new PLL_Admin_Links( self::$polylang );
+		self::$polylang->links           = new PLL_Admin_Links( self::$polylang );
 		self::$polylang->filters_columns = new PLL_Admin_Filters_Columns( self::$polylang );
 	}
 
@@ -36,14 +36,14 @@ class Ajax_Columns_Test extends PLL_Ajax_UnitTestCase {
 
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr' ) );
 
-		$_POST = array(
+		$_POST = [
 			'action'       => 'pll_update_post_rows',
 			'post_id'      => $en,
 			'translations' => $fr,
 			'post_type'    => 'post',
 			'screen'       => 'edit-post',
 			'_pll_nonce'   => wp_create_nonce( 'inlineeditnonce', '_inline_edit' ),
-		);
+		];
 
 		try {
 			$this->_handleAjax( 'pll_update_post_rows' );
@@ -96,7 +96,7 @@ class Ajax_Columns_Test extends PLL_Ajax_UnitTestCase {
 
 		self::$polylang->model->term->save_translations( $en, compact( 'en', 'fr' ) );
 
-		$_POST = array(
+		$_POST = [
 			'action'       => 'pll_update_term_rows',
 			'term_id'      => $en,
 			'translations' => $fr,
@@ -104,7 +104,7 @@ class Ajax_Columns_Test extends PLL_Ajax_UnitTestCase {
 			'post_type'    => 'post',
 			'screen'       => 'edit-category',
 			'_pll_nonce'   => wp_create_nonce( 'pll_language', '_pll_nonce' ),
-		);
+		];
 
 		try {
 			$this->_handleAjax( 'pll_update_term_rows' );

@@ -13,7 +13,7 @@ class Media_Test extends PLL_UnitTestCase {
 		parent::setUp();
 
 		self::$polylang->options['media_support'] = 1;
-		self::$polylang->filters_media = new PLL_Admin_Filters_Media( self::$polylang );
+		self::$polylang->filters_media            = new PLL_Admin_Filters_Media( self::$polylang );
 		add_filter( 'intermediate_image_sizes', '__return_empty_array' );  // don't create intermediate sizes to save time
 	}
 
@@ -21,7 +21,7 @@ class Media_Test extends PLL_UnitTestCase {
 		self::$polylang->pref_lang = self::$polylang->model->get_language( 'fr' );
 
 		$filename = dirname( __FILE__ ) . '/../data/image.jpg';
-		$fr = $this->factory->attachment->create_upload_object( $filename );
+		$fr       = $this->factory->attachment->create_upload_object( $filename );
 		$this->assertEquals( self::$polylang->pref_lang, self::$polylang->model->post->get_language( $fr ) );
 
 		// cleanup
@@ -32,15 +32,15 @@ class Media_Test extends PLL_UnitTestCase {
 		self::$polylang->pref_lang = self::$polylang->model->get_language( 'en' );
 
 		$filename = dirname( __FILE__ ) . '/../data/image.jpg';
-		$en = $this->factory->attachment->create_upload_object( $filename );
-		$fr = self::$polylang->filters_media->create_media_translation( $en, 'fr' );
+		$en       = $this->factory->attachment->create_upload_object( $filename );
+		$fr       = self::$polylang->filters_media->create_media_translation( $en, 'fr' );
 
 		$this->assertEquals( 'fr', self::$polylang->model->post->get_language( $fr )->slug );
 		$this->assertEquals( self::$polylang->model->post->get_translation( $en, 'fr' ), $fr );
 
-		$data = wp_get_attachment_metadata( $en );
+		$data        = wp_get_attachment_metadata( $en );
 		$uploads_dir = wp_upload_dir();
-		$filename = $uploads_dir['basedir'] . '/' . $data['file'];
+		$filename    = $uploads_dir['basedir'] . '/' . $data['file'];
 
 		// deleting a translation does not delete the file
 		wp_delete_attachment( $en );
@@ -53,7 +53,7 @@ class Media_Test extends PLL_UnitTestCase {
 
 	function test_attachment_fields_to_edit() {
 		$filename = dirname( __FILE__ ) . '/../data/image.jpg';
-		$fr = $this->factory->attachment->create_upload_object( $filename );
+		$fr       = $this->factory->attachment->create_upload_object( $filename );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$fields = get_attachment_fields_to_edit( $fr );
@@ -68,31 +68,36 @@ class Media_Test extends PLL_UnitTestCase {
 
 		// Don't use on the Edit Media panel
 		$GLOBALS['pagenow'] = 'post.php';
-		$fields = get_attachment_fields_to_edit( $fr );
+		$fields             = get_attachment_fields_to_edit( $fr );
 		$this->assertFalse( isset( $fields['language'] ) );
 	}
 
 	function test_attachment_fields_to_save() {
 		$filename = dirname( __FILE__ ) . '/../data/image.jpg';
-		$en = $this->factory->attachment->create_upload_object( $filename );
+		$en       = $this->factory->attachment->create_upload_object( $filename );
 		self::$polylang->model->post->set_language( $en, 'en' );
 		$fr = $this->factory->attachment->create_upload_object( $filename );
 
-		$editor = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$editor = self::factory()->user->create( [ 'role' => 'editor' ] );
 		wp_set_current_user( $editor ); // Set a user to pass current_user_can tests
 
-		$_REQUEST = $_POST = array(
+		$_REQUEST = $_POST = [
 			'post_ID'       => $fr,
 			'post_title'    => 'Test image',
-			'attachments'   => array( $fr => array( 'language' => 'fr' ) ),
-			'media_tr_lang' => array( 'en' => $en ),
+			'attachments'   => [ $fr => [ 'language' => 'fr' ] ],
+			'media_tr_lang' => [ 'en' => $en ],
 			'_pll_nonce'    => wp_create_nonce( 'pll_language' ),
-		);
+		];
 		edit_post();
 
 		$this->assertEquals( 'en', self::$polylang->model->post->get_language( $en )->slug );
 		$this->assertEquals( 'fr', self::$polylang->model->post->get_language( $fr )->slug );
-		$this->assertEqualSets( array( 'en' => $en, 'fr' => $fr ), self::$polylang->model->post->get_translations( $en ) );
+		$this->assertEqualSets(
+			[
+				'en' => $en,
+				'fr' => $fr,
+			], self::$polylang->model->post->get_translations( $en )
+		);
 
 		unset( $_REQUEST, $_POST );
 	}

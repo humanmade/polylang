@@ -253,8 +253,8 @@ function pll_is_translated_taxonomy( $tax ) {
  * @param array $args list of parameters
  * @return array
  */
-function pll_languages_list( $args = array() ) {
-	$args = wp_parse_args( $args, array( 'fields' => 'slug' ) );
+function pll_languages_list( $args = [] ) {
+	$args = wp_parse_args( $args, [ 'fields' => 'slug' ] );
 	return PLL()->model->get_languages_list( $args );
 }
 
@@ -363,7 +363,7 @@ function pll_get_term_translations( $term_id ) {
  * @param array  $args ( accepted keys: post_type, m, year, monthnum, day, author, author_name, post_format )
  * @return int posts count
  */
-function pll_count_posts( $lang, $args = array() ) {
+function pll_count_posts( $lang, $args = [] ) {
 	return PLL()->model->count_posts( PLL()->model->get_language( $lang ), $args );
 }
 

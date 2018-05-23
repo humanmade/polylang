@@ -42,12 +42,12 @@ class PLL_WPML_Config {
 	 * @since 1.0
 	 */
 	public function init() {
-		$this->xmls = array();
+		$this->xmls = [];
 
 		// Plugins
 		// Don't forget sitewide active plugins thanks to Reactorshop http://wordpress.org/support/topic/polylang-and-yoast-seo-plugin/page/2?replies=38#post-4801829
-		$plugins = ( is_multisite() && $sitewide_plugins = get_site_option( 'active_sitewide_plugins' ) ) && is_array( $sitewide_plugins ) ? array_keys( $sitewide_plugins ) : array();
-		$plugins = array_merge( $plugins, get_option( 'active_plugins', array() ) );
+		$plugins = ( is_multisite() && $sitewide_plugins = get_site_option( 'active_sitewide_plugins' ) ) && is_array( $sitewide_plugins ) ? array_keys( $sitewide_plugins ) : [];
+		$plugins = array_merge( $plugins, get_option( 'active_plugins', [] ) );
 
 		foreach ( $plugins as $plugin ) {
 			if ( file_exists( $file = WP_PLUGIN_DIR . '/' . dirname( $plugin ) . '/wpml-config.xml' ) && false !== $xml = simplexml_load_file( $file ) ) {
@@ -71,17 +71,17 @@ class PLL_WPML_Config {
 		}
 
 		if ( ! empty( $this->xmls ) ) {
-			add_filter( 'pll_copy_post_metas', array( $this, 'copy_post_metas' ), 10, 2 );
-			add_filter( 'pll_get_post_types', array( $this, 'translate_types' ), 10, 2 );
-			add_filter( 'pll_get_taxonomies', array( $this, 'translate_taxonomies' ), 10, 2 );
+			add_filter( 'pll_copy_post_metas', [ $this, 'copy_post_metas' ], 10, 2 );
+			add_filter( 'pll_get_post_types', [ $this, 'translate_types' ], 10, 2 );
+			add_filter( 'pll_get_taxonomies', [ $this, 'translate_taxonomies' ], 10, 2 );
 
 			foreach ( $this->xmls as $context => $xml ) {
 				foreach ( $xml->xpath( 'admin-texts/key' ) as $key ) {
 					$attributes = $key->attributes();
-					$name = (string) $attributes['name'];
+					$name       = (string) $attributes['name'];
 					if ( PLL() instanceof PLL_Frontend ) {
 						$this->options[ $name ] = $key;
-						add_filter( 'option_' . $name, array( $this, 'translate_strings' ) );
+						add_filter( 'option_' . $name, [ $this, 'translate_strings' ] );
 					} else {
 						$this->register_string_recursive( $context, get_option( $name ), $key );
 					}
@@ -103,10 +103,10 @@ class PLL_WPML_Config {
 		foreach ( $this->xmls as $xml ) {
 			foreach ( $xml->xpath( 'custom-fields/custom-field' ) as $cf ) {
 				$attributes = $cf->attributes();
-				if ( 'copy' == $attributes['action'] || ( ! $sync && in_array( $attributes['action'], array( 'translate', 'copy-once' ) ) ) ) {
+				if ( 'copy' == $attributes['action'] || ( ! $sync && in_array( $attributes['action'], [ 'translate', 'copy-once' ] ) ) ) {
 					$metas[] = (string) $cf;
 				} else {
-					$metas = array_diff( $metas, array( (string) $cf ) );
+					$metas = array_diff( $metas, [ (string) $cf ] );
 				}
 			}
 		}
@@ -186,7 +186,7 @@ class PLL_WPML_Config {
 		if ( count( $children ) ) {
 			foreach ( $children as $child ) {
 				$attributes = $child->attributes();
-				$name = (string) $attributes['name'];
+				$name       = (string) $attributes['name'];
 				if ( '*' === $name && is_array( $options ) ) {
 					foreach ( $options as $n => $option ) {
 						$this->register_wildcard_options_recursive( $context, $option, $n );
@@ -234,7 +234,7 @@ class PLL_WPML_Config {
 		if ( count( $children ) ) {
 			foreach ( $children as $child ) {
 				$attributes = $child->attributes();
-				$name = (string) $attributes['name'];
+				$name       = (string) $attributes['name'];
 				if ( '*' === $name && is_array( $values ) ) {
 					foreach ( $values as $n => $v ) {
 						$values[ $n ] = $this->translate_wildcard_options_recursive( $v, $n );

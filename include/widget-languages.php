@@ -16,10 +16,10 @@ class PLL_Widget_Languages extends WP_Widget {
 		parent::__construct(
 			'polylang',
 			__( 'Language Switcher', 'polylang' ),
-			array(
+			[
 				'description' => __( 'Displays a language switcher', 'polylang' ),
 				'customize_selective_refresh' => true,
-			)
+			]
 		);
 	}
 
@@ -35,7 +35,7 @@ class PLL_Widget_Languages extends WP_Widget {
 		// Sets a unique id for dropdown
 		$instance['dropdown'] = empty( $instance['dropdown'] ) ? 0 : $args['widget_id'];
 
-		if ( $list = pll_the_languages( array_merge( $instance, array( 'echo' => 0 ) ) ) ) {
+		if ( $list = pll_the_languages( array_merge( $instance, [ 'echo' => 0 ] ) ) ) {
 			$title = empty( $instance['title'] ) ? '' : $instance['title'];
 			/** This filter is documented in wp-includes/widgets/class-wp-widget-pages.php */
 			$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
@@ -81,7 +81,7 @@ class PLL_Widget_Languages extends WP_Widget {
 	 */
 	function form( $instance ) {
 		// Default values
-		$instance = wp_parse_args( (array) $instance, array_merge( array( 'title' => '' ), PLL_Switcher::get_switcher_options( 'widget', 'default' ) ) );
+		$instance = wp_parse_args( (array) $instance, array_merge( [ 'title' => '' ], PLL_Switcher::get_switcher_options( 'widget', 'default' ) ) );
 
 		// Title
 		printf(
@@ -100,8 +100,8 @@ class PLL_Widget_Languages extends WP_Widget {
 				$this->get_field_name( $key ),
 				$instance[ $key ] ? ' checked="checked"' : '',
 				esc_html( $str ),
-				in_array( $key, array( 'show_names', 'show_flags', 'hide_current' ) ) ? ' class="no-dropdown-' . $this->id . '"' : '',
-				! empty( $instance['dropdown'] ) && in_array( $key, array( 'show_names', 'show_flags', 'hide_current' ) ) ? ' style="display:none;"' : '',
+				in_array( $key, [ 'show_names', 'show_flags', 'hide_current' ] ) ? ' class="no-dropdown-' . $this->id . '"' : '',
+				! empty( $instance['dropdown'] ) && in_array( $key, [ 'show_names', 'show_flags', 'hide_current' ] ) ? ' style="display:none;"' : '',
 				'pll-' . $key
 			);
 		}

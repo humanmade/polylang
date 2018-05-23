@@ -36,14 +36,14 @@ class PLL_Settings extends PLL_Admin_Base {
 		PLL_Admin_Strings::init();
 
 		// FIXME put this as late as possible
-		add_action( 'admin_init', array( $this, 'register_settings_modules' ) );
+		add_action( 'admin_init', [ $this, 'register_settings_modules' ] );
 
 		// Adds screen options and the about box in the languages admin panel
-		add_action( 'load-toplevel_page_mlang', array( $this, 'load_page' ) );
-		add_action( 'load-languages_page_mlang_strings', array( $this, 'load_page_strings' ) );
+		add_action( 'load-toplevel_page_mlang', [ $this, 'load_page' ] );
+		add_action( 'load-languages_page_mlang_strings', [ $this, 'load_page_strings' ] );
 
 		// Saves per-page value in screen option
-		add_filter( 'set-screen-option', array( $this, 'set_screen_option' ), 10, 3 );
+		add_filter( 'set-screen-option', [ $this, 'set_screen_option' ], 10, 3 );
 	}
 
 	/**
@@ -52,22 +52,24 @@ class PLL_Settings extends PLL_Admin_Base {
 	 * @since 1.8
 	 */
 	public function register_settings_modules() {
-		$modules = array(
+		$modules = [
 			'PLL_Settings_Tools',
 			'PLL_Settings_Licenses',
-		);
+		];
 
 		if ( $this->model->get_languages_list() ) {
-			$modules = array_merge( array(
-				'PLL_Settings_Url',
-				'PLL_Settings_Browser',
-				'PLL_Settings_Media',
-				'PLL_Settings_CPT',
-				'PLL_Settings_Sync',
-				'PLL_Settings_WPML',
-				'PLL_Settings_Share_Slug',
-				'PLL_Settings_Translate_Slugs',
-			), $modules );
+			$modules = array_merge(
+				[
+					'PLL_Settings_Url',
+					'PLL_Settings_Browser',
+					'PLL_Settings_Media',
+					'PLL_Settings_CPT',
+					'PLL_Settings_Sync',
+					'PLL_Settings_WPML',
+					'PLL_Settings_Share_Slug',
+					'PLL_Settings_Translate_Slugs',
+				], $modules
+			);
 		}
 
 		/**
@@ -80,7 +82,7 @@ class PLL_Settings extends PLL_Admin_Base {
 		$modules = apply_filters( 'pll_settings_modules', $modules );
 
 		foreach ( $modules as $key => $class ) {
-			$key = is_numeric( $key ) ? strtolower( str_replace( 'PLL_Settings_', '', $class ) ) : $key;
+			$key                   = is_numeric( $key ) ? strtolower( str_replace( 'PLL_Settings_', '', $class ) ) : $key;
 			$this->modules[ $key ] = new $class( $this );
 		}
 	}
@@ -104,19 +106,21 @@ class PLL_Settings extends PLL_Admin_Base {
 			add_meta_box(
 				'pll-about-box',
 				__( 'About Polylang', 'polylang' ),
-				array( $this, 'metabox_about' ),
+				[ $this, 'metabox_about' ],
 				'settings_page_mlang', // FIXME not shown in screen options
 				'normal'
 			);
 		}
 
-		add_screen_option( 'per_page', array(
-			'label'   => __( 'Languages', 'polylang' ),
-			'default' => 10,
-			'option'  => 'pll_lang_per_page',
-		) );
+		add_screen_option(
+			'per_page', [
+				'label'   => __( 'Languages', 'polylang' ),
+				'default' => 10,
+				'option'  => 'pll_lang_per_page',
+			]
+		);
 
-		add_action( 'admin_notices', array( $this, 'notice_objects_with_no_lang' ) );
+		add_action( 'admin_notices', [ $this, 'notice_objects_with_no_lang' ] );
 	}
 
 	/**
@@ -125,11 +129,13 @@ class PLL_Settings extends PLL_Admin_Base {
 	 * @since 2.1
 	 */
 	public function load_page_strings() {
-		add_screen_option( 'per_page', array(
-			'label'   => __( 'Strings translations', 'polylang' ),
-			'default' => 10,
-			'option'  => 'pll_strings_per_page',
-		) );
+		add_screen_option(
+			'per_page', [
+				'label'   => __( 'Strings translations', 'polylang' ),
+				'default' => 10,
+				'option'  => 'pll_strings_per_page',
+			]
+		);
 	}
 
 	/**
@@ -277,10 +283,10 @@ class PLL_Settings extends PLL_Admin_Base {
 
 		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-		wp_enqueue_script( 'pll_admin', plugins_url( '/js/admin' . $suffix . '.js', POLYLANG_FILE ), array( 'jquery', 'wp-ajax-response', 'postbox', 'jquery-ui-selectmenu' ), POLYLANG_VERSION );
+		wp_enqueue_script( 'pll_admin', plugins_url( '/js/admin' . $suffix . '.js', POLYLANG_FILE ), [ 'jquery', 'wp-ajax-response', 'postbox', 'jquery-ui-selectmenu' ], POLYLANG_VERSION );
 		wp_localize_script( 'pll_admin', 'pll_flag_base_url', plugins_url( '/flags/', POLYLANG_FILE ) );
 
-		wp_enqueue_style( 'pll_selectmenu', plugins_url( '/css/selectmenu' . $suffix . '.css', POLYLANG_FILE ), array(), POLYLANG_VERSION );
+		wp_enqueue_style( 'pll_selectmenu', plugins_url( '/css/selectmenu' . $suffix . '.css', POLYLANG_FILE ), [], POLYLANG_VERSION );
 	}
 
 	/**
@@ -307,13 +313,13 @@ class PLL_Settings extends PLL_Admin_Base {
 	 *
 	 * @param array $args query arguments to add to the url
 	 */
-	static public function redirect( $args = array() ) {
+	static public function redirect( $args = [] ) {
 		if ( $errors = get_settings_errors() ) {
 			set_transient( 'settings_errors', $errors, 30 );
 			$args['settings-updated'] = 1;
 		}
 		// Remove possible 'pll_action' and 'lang' query args from the referer before redirecting
-		wp_safe_redirect( add_query_arg( $args, remove_query_arg( array( 'pll_action', 'lang' ), wp_get_referer() ) ) );
+		wp_safe_redirect( add_query_arg( $args, remove_query_arg( [ 'pll_action', 'lang' ], wp_get_referer() ) ) );
 		exit;
 	}
 
@@ -327,9 +333,9 @@ class PLL_Settings extends PLL_Admin_Base {
 		include PLL_SETTINGS_INC . '/languages.php';
 
 		// Keep only languages with existing WP language pack
-		$translations = wp_get_available_translations();
+		$translations          = wp_get_available_translations();
 		$translations['en_US'] = ''; // Languages packs don't include en_US
-		$languages = array_intersect_key( $languages, $translations );
+		$languages             = array_intersect_key( $languages, $translations );
 
 		/**
 		 * Filter the list of predefined languages

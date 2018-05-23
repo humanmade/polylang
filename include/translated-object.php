@@ -21,7 +21,13 @@ abstract class PLL_Translated_Object {
 
 		// register our taxonomies as soon as possible
 		// this is early registration, not ready for rewrite rules as wp_rewrite will be setup later
-		$args = array( 'label' => false, 'public' => false, 'query_var' => false, 'rewrite' => false, '_pll' => true );
+		$args = [
+			'label' => false,
+			'public' => false,
+			'query_var' => false,
+			'rewrite' => false,
+			'_pll' => true,
+		];
 		register_taxonomy( $this->tax_language, $this->object_type, $args );
 		$args['update_count_callback'] = '_update_generic_term_count'; // count *all* posts to avoid deleting in clean_translations_terms
 		register_taxonomy( $this->tax_translations, $this->object_type, $args );
@@ -43,14 +49,14 @@ abstract class PLL_Translated_Object {
 		}
 
 		$object_id = (int) $object_id;
-		$term = get_object_term_cache( $object_id, $taxonomy );
+		$term      = get_object_term_cache( $object_id, $taxonomy );
 
 		if ( false === $term ) {
 			// query language and translations at the same time
-			$taxonomies = array( $this->tax_language, $this->tax_translations );
+			$taxonomies = [ $this->tax_language, $this->tax_translations ];
 
 			// query terms
-			foreach ( wp_get_object_terms( $object_id, $taxonomies, array( 'update_term_meta_cache' => false ) ) as $t ) {
+			foreach ( wp_get_object_terms( $object_id, $taxonomies, [ 'update_term_meta_cache' => false ] ) as $t ) {
 				$terms[ $t->taxonomy ] = $t;
 				if ( $t->taxonomy == $taxonomy ) {
 					$term = $t;
@@ -60,10 +66,9 @@ abstract class PLL_Translated_Object {
 			// store it the way WP wants it
 			// set an empty cache if no term found in the taxonomy
 			foreach ( $taxonomies as $tax ) {
-				wp_cache_add( $object_id, empty( $terms[ $tax ] ) ? array() : array( $terms[ $tax ] ), $tax . '_relationships' );
+				wp_cache_add( $object_id, empty( $terms[ $tax ] ) ? [] : [ $terms[ $tax ] ], $tax . '_relationships' );
 			}
-		}
-		else {
+		} else {
 			$term = reset( $term );
 		}
 
@@ -98,9 +103,9 @@ abstract class PLL_Translated_Object {
 		if ( ( $lang = $this->get_language( $id ) ) && isset( $translations ) && is_array( $translations ) ) {
 			// sanitize the translations array
 			$translations = array_map( 'intval', $translations );
-			$translations = array_merge( array( $lang->slug => $id ), $translations ); // make sure this object is in translations
-			$translations = array_diff( $translations, array( 0 ) ); // don't keep non translated languages
-			$translations = array_intersect_key( $translations, array_flip( $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) ); // keep only valid languages slugs as keys
+			$translations = array_merge( [ $lang->slug => $id ], $translations ); // make sure this object is in translations
+			$translations = array_diff( $translations, [ 0 ] ); // don't keep non translated languages
+			$translations = array_intersect_key( $translations, array_flip( $this->model->get_languages_list( [ 'fields' => 'slug' ] ) ) ); // keep only valid languages slugs as keys
 
 			// unlink removed translations
 			$old_translations = $this->get_translations( $id );
@@ -111,18 +116,17 @@ abstract class PLL_Translated_Object {
 			// Check id we need to create or update the translation group
 			if ( $this->should_update_translation_group( $id, $translations ) ) {
 				$terms = wp_get_object_terms( $translations, $this->tax_translations );
-				$term = reset( $terms );
+				$term  = reset( $terms );
 
 				// create a new term if necessary
 				if ( empty( $term ) ) {
-					wp_insert_term( $group = uniqid( 'pll_' ), $this->tax_translations, array( 'description' => serialize( $translations ) ) );
-				}
-				else {
+					wp_insert_term( $group = uniqid( 'pll_' ), $this->tax_translations, [ 'description' => serialize( $translations ) ] );
+				} else {
 					// take care not to overwrite extra data stored in description field, if any
-					$d = unserialize( $term->description );
-					$d = is_array( $d ) ? array_diff_key( $d, $old_translations ) : array(); // remove old translations
-					$d = array_merge( $d, $translations ); // add new one
-					wp_update_term( $group = (int) $term->term_id, $this->tax_translations, array( 'description' => serialize( $d ) ) );
+					$d                     = unserialize( $term->description );
+					$d                     = is_array( $d ) ? array_diff_key( $d, $old_translations ) : []; // remove old translations
+					$d                     = array_merge( $d, $translations ); // add new one
+					wp_update_term( $group = (int) $term->term_id, $this->tax_translations, [ 'description' => serialize( $d ) ] );
 				}
 
 				// link all translations to the new term
@@ -149,19 +153,18 @@ abstract class PLL_Translated_Object {
 	 * @param int $id post id or term id
 	 */
 	public function delete_translation( $id ) {
-		$id = (int) $id;
+		$id   = (int) $id;
 		$term = $this->get_object_term( $id, $this->tax_translations );
 
 		if ( ! empty( $term ) ) {
-			$d = unserialize( $term->description );
+			$d    = unserialize( $term->description );
 			$slug = array_search( $id, $this->get_translations( $id ) ); // in case some plugin stores the same value with different key
 			unset( $d[ $slug ] );
 
 			if ( empty( $d ) ) {
 				wp_delete_term( (int) $term->term_id, $this->tax_translations );
-			}
-			else {
-				wp_update_term( (int) $term->term_id, $this->tax_translations, array( 'description' => serialize( $d ) ) );
+			} else {
+				wp_update_term( (int) $term->term_id, $this->tax_translations, [ 'description' => serialize( $d ) ] );
 			}
 		}
 	}
@@ -175,17 +178,17 @@ abstract class PLL_Translated_Object {
 	 * @return array an associative array of translations with language code as key and translation id as value
 	 */
 	public function get_translations( $id ) {
-		$term = $this->get_object_term( $id, $this->tax_translations );
-		$translations = empty( $term ) ? array() : unserialize( $term->description );
+		$term         = $this->get_object_term( $id, $this->tax_translations );
+		$translations = empty( $term ) ? [] : unserialize( $term->description );
 
 		// make sure we return only translations ( thus we allow plugins to store other information in the array )
 		if ( is_array( $translations ) ) {
-			$translations = array_intersect_key( $translations, array_flip( $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) );
+			$translations = array_intersect_key( $translations, array_flip( $this->model->get_languages_list( [ 'fields' => 'slug' ] ) ) );
 		}
 
 		// make sure to return at least the passed post or term in its translation array
 		if ( empty( $translations ) && $lang = $this->get_language( $id ) ) {
-			$translations = array( $lang->slug => $id );
+			$translations = [ $lang->slug => $id ];
 		}
 
 		return $translations;

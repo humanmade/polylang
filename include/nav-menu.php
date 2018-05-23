@@ -17,11 +17,11 @@ class PLL_Nav_Menu {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
+		$this->model   = &$polylang->model;
 		$this->options = &$polylang->options;
 
 		// integration with WP customizer
-		add_action( 'customize_register', array( $this, 'create_nav_menu_locations' ), 5 );
+		add_action( 'customize_register', [ $this, 'create_nav_menu_locations' ], 5 );
 	}
 
 	/**
@@ -42,7 +42,7 @@ class PLL_Nav_Menu {
 			}
 
 			$_wp_registered_nav_menus = $arr;
-			$once = true;
+			$once                     = true;
 		}
 	}
 
@@ -74,6 +74,6 @@ class PLL_Nav_Menu {
 		if ( 1 == count( $infos ) ) {
 			$infos[] = $this->options['default_lang'];
 		}
-		return array_combine( array( 'location', 'lang' ), $infos );
+		return array_combine( [ 'location', 'lang' ], $infos );
 	}
 }

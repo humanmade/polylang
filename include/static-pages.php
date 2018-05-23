@@ -17,19 +17,19 @@ abstract class PLL_Static_Pages {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
+		$this->model   = &$polylang->model;
 		$this->options = &$polylang->options;
 		$this->curlang = &$polylang->curlang;
 
 		$this->init();
 
 		// Modifies the page link in case the front page is not in the default language
-		add_filter( 'page_link', array( $this, 'page_link' ), 20, 2 );
+		add_filter( 'page_link', [ $this, 'page_link' ], 20, 2 );
 
 		// clean the languages cache when editing page of front, page for posts
-		add_action( 'update_option_show_on_front', array( $this->model, 'clean_languages_cache' ) );
-		add_action( 'update_option_page_on_front', array( $this->model, 'clean_languages_cache' ) );
-		add_action( 'update_option_page_for_posts', array( $this->model, 'clean_languages_cache' ) );
+		add_action( 'update_option_show_on_front', [ $this->model, 'clean_languages_cache' ] );
+		add_action( 'update_option_page_on_front', [ $this->model, 'clean_languages_cache' ] );
+		add_action( 'update_option_page_for_posts', [ $this->model, 'clean_languages_cache' ] );
 
 		// refresh rewrite rules when the page on front is modified
 		add_action( 'update_option_page_on_front', 'flush_rewrite_rules' );
@@ -42,12 +42,10 @@ abstract class PLL_Static_Pages {
 	 */
 	public function init() {
 		if ( 'page' == get_option( 'show_on_front' ) ) {
-			$this->page_on_front = get_option( 'page_on_front' );
+			$this->page_on_front  = get_option( 'page_on_front' );
 			$this->page_for_posts = get_option( 'page_for_posts' );
-		}
-
-		else {
-			$this->page_on_front = 0;
+		} else {
+			$this->page_on_front  = 0;
 			$this->page_for_posts = 0;
 		}
 	}
@@ -79,7 +77,7 @@ abstract class PLL_Static_Pages {
 	public static function pll_languages_list( $languages, $model ) {
 		if ( 'page' === get_option( 'show_on_front' ) ) {
 			foreach ( $languages as $k => $language ) {
-				$languages[ $k ]->page_on_front = $model->post->get( get_option( 'page_on_front' ), $language );
+				$languages[ $k ]->page_on_front  = $model->post->get( get_option( 'page_on_front' ), $language );
 				$languages[ $k ]->page_for_posts = $model->post->get( get_option( 'page_for_posts' ), $language );
 			}
 		}

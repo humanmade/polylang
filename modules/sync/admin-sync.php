@@ -16,26 +16,26 @@ class PLL_Admin_Sync {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
+		$this->model   = &$polylang->model;
 		$this->options = &$polylang->options;
 
 		$this->taxonomies = new PLL_Sync_Tax( $polylang );
 		$this->post_metas = new PLL_Sync_Post_Metas( $polylang );
 		$this->term_metas = new PLL_Sync_Term_Metas( $polylang );
 
-		add_filter( 'wp_insert_post_parent', array( $this, 'wp_insert_post_parent' ), 10, 3 );
-		add_action( 'add_meta_boxes', array( $this, 'add_meta_boxes' ), 5, 2 ); // Before Types which populates custom fields in same hook with priority 10
+		add_filter( 'wp_insert_post_parent', [ $this, 'wp_insert_post_parent' ], 10, 3 );
+		add_action( 'add_meta_boxes', [ $this, 'add_meta_boxes' ], 5, 2 ); // Before Types which populates custom fields in same hook with priority 10
 
-		add_action( 'pll_save_post', array( $this, 'pll_save_post' ), 10, 3 );
-		add_action( 'pll_save_term', array( $this, 'sync_term_parent' ), 10, 3 );
+		add_action( 'pll_save_post', [ $this, 'pll_save_post' ], 10, 3 );
+		add_action( 'pll_save_term', [ $this, 'sync_term_parent' ], 10, 3 );
 
 		if ( $this->options['media_support'] ) {
-			add_action( 'pll_translate_media', array( $this->taxonomies, 'copy' ), 10, 3 );
-			add_action( 'pll_translate_media', array( $this->post_metas, 'copy' ), 10, 3 );
-			add_action( 'edit_attachment', array( $this, 'edit_attachment' ) );
+			add_action( 'pll_translate_media', [ $this->taxonomies, 'copy' ], 10, 3 );
+			add_action( 'pll_translate_media', [ $this->post_metas, 'copy' ], 10, 3 );
+			add_action( 'edit_attachment', [ $this, 'edit_attachment' ] );
 		}
 
-		add_filter( 'pre_update_option_sticky_posts', array( $this, 'sync_sticky_posts' ), 10, 2 );
+		add_filter( 'pre_update_option_sticky_posts', [ $this, 'sync_sticky_posts' ], 10, 2 );
 	}
 
 	/**
@@ -66,8 +66,8 @@ class PLL_Admin_Sync {
 		if ( 'post-new.php' == $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) && $this->model->is_translated_post_type( $post->post_type ) ) {
 			// Capability check already done in post-new.php
 			$from_post_id = (int) $_GET['from_post'];
-			$from_post = get_post( $from_post_id );
-			$lang = $this->model->get_language( $_GET['new_lang'] );
+			$from_post    = get_post( $from_post_id );
+			$lang         = $this->model->get_language( $_GET['new_lang'] );
 
 			if ( ! $from_post || ! $lang ) {
 				return;
@@ -76,13 +76,13 @@ class PLL_Admin_Sync {
 			$this->taxonomies->copy( $from_post_id, $post->ID, $lang->slug );
 			$this->post_metas->copy( $from_post_id, $post->ID, $lang->slug );
 
-			foreach ( array( 'menu_order', 'comment_status', 'ping_status' ) as $property ) {
+			foreach ( [ 'menu_order', 'comment_status', 'ping_status' ] as $property ) {
 				$post->$property = $from_post->$property;
 			}
 
 			// Copy the date only if the synchronization is activated
 			if ( in_array( 'post_date', $this->options['sync'] ) ) {
-				$post->post_date = $from_post->post_date;
+				$post->post_date     = $from_post->post_date;
 				$post->post_date_gmt = $from_post->post_date_gmt;
 			}
 
@@ -105,7 +105,7 @@ class PLL_Admin_Sync {
 		global $wpdb;
 
 		// Prepare properties to synchronize
-		foreach ( array( 'comment_status', 'ping_status', 'menu_order' ) as $property ) {
+		foreach ( [ 'comment_status', 'ping_status', 'menu_order' ] as $property ) {
 			if ( in_array( $property, $this->options['sync'] ) ) {
 				$postarr[ $property ] = $post->$property;
 			}
@@ -116,14 +116,14 @@ class PLL_Admin_Sync {
 			if ( 'post-new.php' === $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) ) {
 				$original = get_post( (int) $_GET['from_post'] );
 				$wpdb->update(
-					$wpdb->posts, array(
+					$wpdb->posts, [
 						'post_date' => $original->post_date,
 						'post_date_gmt' => $original->post_date_gmt,
-					),
-					array( 'ID' => $post_id )
+					],
+					[ 'ID' => $post_id ]
 				);
 			} else {
-				$postarr['post_date'] = $post->post_date;
+				$postarr['post_date']     = $post->post_date;
 				$postarr['post_date_gmt'] = $post->post_date_gmt;
 			}
 		}
@@ -134,7 +134,7 @@ class PLL_Admin_Sync {
 			}
 
 			// Add comment status, ping status, menu order... to synchronization
-			$tr_arr = empty( $postarr ) ? array() : $postarr;
+			$tr_arr = empty( $postarr ) ? [] : $postarr;
 
 			if ( isset( $GLOBALS['post_type'] ) ) {
 				$post_type = $GLOBALS['post_type'];
@@ -155,7 +155,7 @@ class PLL_Admin_Sync {
 			// Update all the row at once
 			// Don't use wp_update_post to avoid infinite loop
 			if ( ! empty( $tr_arr ) ) {
-				$wpdb->update( $wpdb->posts, $tr_arr, array( 'ID' => $tr_id ) );
+				$wpdb->update( $wpdb->posts, $tr_arr, [ 'ID' => $tr_id ] );
 				clean_post_cache( $tr_id );
 			}
 		}
@@ -196,8 +196,8 @@ class PLL_Admin_Sync {
 
 					$wpdb->update(
 						$wpdb->term_taxonomy,
-						array( 'parent' => isset( $tr_parent ) ? $tr_parent : 0 ),
-						array( 'term_taxonomy_id' => get_term( (int) $tr_id, $taxonomy )->term_taxonomy_id )
+						[ 'parent' => isset( $tr_parent ) ? $tr_parent : 0 ],
+						[ 'term_taxonomy_id' => get_term( (int) $tr_id, $taxonomy )->term_taxonomy_id ]
 					);
 
 					clean_term_cache( $tr_id, $taxonomy ); // OK since WP 3.9
@@ -231,13 +231,13 @@ class PLL_Admin_Sync {
 			// Stick post
 			if ( $sticked = array_diff( $value, $old_value ) ) {
 				$translations = $this->model->post->get_translations( reset( $sticked ) );
-				$value = array_unique( array_merge( $value, array_values( $translations ) ) );
+				$value        = array_unique( array_merge( $value, array_values( $translations ) ) );
 			}
 
 			// Unstick post
 			if ( $unsticked = array_diff( $old_value, $value ) ) {
 				$translations = $this->model->post->get_translations( reset( $unsticked ) );
-				$value = array_unique( array_diff( $value, array_values( $translations ) ) );
+				$value        = array_unique( array_diff( $value, array_values( $translations ) ) );
 			}
 		}
 
@@ -261,14 +261,16 @@ class PLL_Admin_Sync {
 		if ( is_object( $this->$obj ) && method_exists( $this->$obj, 'copy' ) ) {
 			if ( WP_DEBUG ) {
 				$debug = debug_backtrace();
-				$i = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
+				$i     = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
 
-				trigger_error( sprintf(
-					'%1$s was called incorrectly in %3$s on line %4$s: the call to PLL()->sync->%1$s() has been deprecated in Polylang 2.3, use PLL()->sync->%2$s->copy() instead.' . "\nError handler",
-					$func, $obj, $debug[ $i ]['file'], $debug[ $i ]['line']
-				) );
+				trigger_error(
+					sprintf(
+						'%1$s was called incorrectly in %3$s on line %4$s: the call to PLL()->sync->%1$s() has been deprecated in Polylang 2.3, use PLL()->sync->%2$s->copy() instead.' . "\nError handler",
+						$func, $obj, $debug[ $i ]['file'], $debug[ $i ]['line']
+					)
+				);
 			}
-			return call_user_func_array( array( $this->$obj, 'copy' ), $args );
+			return call_user_func_array( [ $this->$obj, 'copy' ], $args );
 		}
 
 		$debug = debug_backtrace();

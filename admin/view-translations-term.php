@@ -13,8 +13,7 @@ if ( isset( $term_id ) ) {
 	<th scope="row"><?php esc_html_e( 'Translations', 'polylang' ); ?></th>
 	<td>
 	<?php
-}
-else {
+} else {
 	// Add term form
 	?>
 	<p><?php esc_html_e( 'Translations', 'polylang' ); ?></p>
@@ -67,7 +66,8 @@ else {
 			?>
 			<td class = "pll-translation-column">
 				<?php
-				printf( '
+				printf(
+					'
 					<label class="screen-reader-text" for="tr_lang_%1$s">%2$s</label>
 					<input type="hidden" class="htr_lang" name="term_tr_lang[%1$s]" id="htr_lang_%1$s" value="%3$s" />
 					<span lang="%6$s" dir="%7$s"><input type="text" class="tr_lang" id="tr_lang_%1$s" value="%4$s"%5$s /></span>',

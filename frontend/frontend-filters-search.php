@@ -17,19 +17,19 @@ class PLL_Frontend_Filters_Search {
 	 */
 	public function __construct( &$polylang ) {
 		$this->links_model = &$polylang->links_model;
-		$this->curlang = &$polylang->curlang;
+		$this->curlang     = &$polylang->curlang;
 
 		// adds the language information in the search form
 		// low priority in case the search form is created using the same filter as described in http://codex.wordpress.org/Function_Reference/get_search_form
-		add_filter( 'get_search_form', array( $this, 'get_search_form' ), 99 );
+		add_filter( 'get_search_form', [ $this, 'get_search_form' ], 99 );
 
 		// adds the language information in admin bar search form
-		add_action( 'add_admin_bar_menus', array( $this, 'add_admin_bar_menus' ) );
+		add_action( 'add_admin_bar_menus', [ $this, 'add_admin_bar_menus' ] );
 
 		// adds javascript at the end of the document
 		// was used for WP < 3.6. kept just in case
 		if ( defined( 'PLL_SEARCH_FORM_JS' ) && PLL_SEARCH_FORM_JS ) {
-			add_action( 'wp_footer', array( $this, 'wp_print_footer_scripts' ) );
+			add_action( 'wp_footer', [ $this, 'wp_print_footer_scripts' ] );
 		}
 	}
 
@@ -47,11 +47,10 @@ class PLL_Frontend_Filters_Search {
 			if ( $this->links_model->using_permalinks ) {
 				// take care to modify only the url in the <form> tag
 				preg_match( '#<form.+>#', $form, $matches );
-				$old = reset( $matches );
-				$new = preg_replace( '#' . esc_url( $this->links_model->home ) . '\/?#', esc_url( $this->curlang->search_url ), $old );
+				$old  = reset( $matches );
+				$new  = preg_replace( '#' . esc_url( $this->links_model->home ) . '\/?#', esc_url( $this->curlang->search_url ), $old );
 				$form = str_replace( $old, $new, $form );
-			}
-			else {
+			} else {
 				$form = str_replace( '</form>', '<input type="hidden" name="lang" value="' . esc_attr( $this->curlang->slug ) . '" /></form>', $form );
 			}
 		}
@@ -66,7 +65,7 @@ class PLL_Frontend_Filters_Search {
 	 */
 	function add_admin_bar_menus() {
 		remove_action( 'admin_bar_menu', 'wp_admin_bar_search_menu', 4 );
-		add_action( 'admin_bar_menu', array( $this, 'admin_bar_search_menu' ), 4 );
+		add_action( 'admin_bar_menu', [ $this, 'admin_bar_search_menu' ], 4 );
 	}
 
 	/**
@@ -84,12 +83,17 @@ class PLL_Frontend_Filters_Search {
 		$form .= '<input type="submit" class="adminbar-button" value="' . esc_attr__( 'Search' ) . '"/>';
 		$form .= '</form>';
 
-		$wp_admin_bar->add_menu( array(
-			'parent' => 'top-secondary',
-			'id'     => 'search',
-			'title'  => $this->get_search_form( $form ), // pass the get_search_form filter
-			'meta'   => array( 'class' => 'admin-bar-search', 'tabindex' => -1 ),
-		) );
+		$wp_admin_bar->add_menu(
+			[
+				'parent' => 'top-secondary',
+				'id'     => 'search',
+				'title'  => $this->get_search_form( $form ), // pass the get_search_form filter
+				'meta'   => [
+					'class' => 'admin-bar-search',
+					'tabindex' => -1,
+				],
+			]
+		);
 	}
 
 	/**
@@ -103,7 +107,7 @@ class PLL_Frontend_Filters_Search {
 		// thanks to AndyDeGroo for improving the code for compatibility with old browsers
 		// http://wordpress.org/support/topic/development-of-polylang-version-08?replies=6#post-2645559
 		$lang = esc_js( $this->curlang->slug );
-		$js = "//<![CDATA[
+		$js   = "//<![CDATA[
 		e = document.getElementsByName( 's' );
 		for ( i = 0; i < e.length; i++ ) {
 			if ( e[i].tagName.toUpperCase() == 'INPUT' ) {

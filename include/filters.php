@@ -17,32 +17,32 @@ class PLL_Filters {
 	 */
 	public function __construct( &$polylang ) {
 		$this->links_model = &$polylang->links_model;
-		$this->model = &$polylang->model;
-		$this->options = &$polylang->options;
-		$this->curlang = &$polylang->curlang;
+		$this->model       = &$polylang->model;
+		$this->options     = &$polylang->options;
+		$this->curlang     = &$polylang->curlang;
 
 		// Filters the comments according to the current language
-		add_action( 'parse_comment_query', array( $this, 'parse_comment_query' ) );
-		add_filter( 'comments_clauses', array( $this, 'comments_clauses' ), 10, 2 );
+		add_action( 'parse_comment_query', [ $this, 'parse_comment_query' ] );
+		add_filter( 'comments_clauses', [ $this, 'comments_clauses' ], 10, 2 );
 
 		// Filters the get_pages function according to the current language
-		add_filter( 'get_pages', array( $this, 'get_pages' ), 10, 2 );
+		add_filter( 'get_pages', [ $this, 'get_pages' ], 10, 2 );
 
 		// Rewrites next and previous post links to filter them by language
-		add_filter( 'get_previous_post_join', array( $this, 'posts_join' ), 10, 5 );
-		add_filter( 'get_next_post_join', array( $this, 'posts_join' ), 10, 5 );
-		add_filter( 'get_previous_post_where', array( $this, 'posts_where' ), 10, 5 );
-		add_filter( 'get_next_post_where', array( $this, 'posts_where' ), 10, 5 );
+		add_filter( 'get_previous_post_join', [ $this, 'posts_join' ], 10, 5 );
+		add_filter( 'get_next_post_join', [ $this, 'posts_join' ], 10, 5 );
+		add_filter( 'get_previous_post_where', [ $this, 'posts_where' ], 10, 5 );
+		add_filter( 'get_next_post_where', [ $this, 'posts_where' ], 10, 5 );
 
 		// Converts the locale to a valid W3C locale
-		add_filter( 'language_attributes', array( $this, 'language_attributes' ) );
+		add_filter( 'language_attributes', [ $this, 'language_attributes' ] );
 
 		// Prevents deleting all the translations of the default category
-		add_filter( 'map_meta_cap', array( $this, 'fix_delete_default_category' ), 10, 4 );
+		add_filter( 'map_meta_cap', [ $this, 'fix_delete_default_category' ], 10, 4 );
 
 		// Translate the site title in emails sent to users
-		add_filter( 'password_change_email', array( $this, 'translate_user_email' ) );
-		add_filter( 'email_change_email', array( $this, 'translate_user_email' ) );
+		add_filter( 'password_change_email', [ $this, 'translate_user_email' ] );
+		add_filter( 'email_change_email', [ $this, 'translate_user_email' ] );
 	}
 
 	/**
@@ -55,8 +55,8 @@ class PLL_Filters {
 	 */
 	protected function get_comments_queried_language( $query ) {
 		// Don't filter comments if comment ids or post ids are specified
-		$plucked = wp_array_slice_assoc( $query->query_vars, array( 'comment__in', 'parent', 'post_id', 'post__in', 'post_parent' ) );
-		$fields = array_filter( $plucked );
+		$plucked = wp_array_slice_assoc( $query->query_vars, [ 'comment__in', 'parent', 'post_id', 'post__in', 'post_parent' ] );
+		$fields  = array_filter( $plucked );
 		if ( ! empty( $fields ) ) {
 			return false;
 		}
@@ -80,7 +80,7 @@ class PLL_Filters {
 	 */
 	public function parse_comment_query( $query ) {
 		if ( $lang = $this->get_comments_queried_language( $query ) ) {
-			$key = '_' . ( is_array( $lang ) ? implode( ',', $lang ) : $this->model->get_language( $lang )->slug );
+			$key                               = '_' . ( is_array( $lang ) ? implode( ',', $lang ) : $this->model->get_language( $lang )->slug );
 			$query->query_vars['cache_domain'] = empty( $query->query_vars['cache_domain'] ) ? 'pll' . $key : $query->query_vars['cache_domain'] . $key;
 		}
 	}
@@ -106,7 +106,7 @@ class PLL_Filters {
 				$clauses['join'] .= " JOIN $wpdb->posts ON $wpdb->posts.ID = $wpdb->comments.comment_post_ID";
 			}
 
-			$clauses['join'] .= $this->model->post->join_clause();
+			$clauses['join']  .= $this->model->post->join_clause();
 			$clauses['where'] .= $this->model->post->where_clause( $lang );
 		}
 		return $clauses;
@@ -138,25 +138,25 @@ class PLL_Filters {
 		if ( ! empty( $args['number'] ) && ! $once ) {
 			$once = true; // avoid infinite loop
 
-			$r = array(
+			$r = [
 				'lang' => 0, // So this query is not filtered
 				'numberposts' => -1,
 				'nopaging'    => true,
 				'post_type'   => $args['post_type'],
 				'fields'      => 'ids',
-				'tax_query'   => array(
-					array(
+				'tax_query'   => [
+					[
 						'taxonomy' => 'language',
 						'field'    => 'term_taxonomy_id', // Since WP 3.5
 						'terms'    => $language->term_taxonomy_id,
 						'operator' => 'NOT IN',
-					),
-				),
-			);
+					],
+				],
+			];
 
 			// Take care that 'exclude' argument accepts integer or strings too
 			$args['exclude'] = array_merge( wp_parse_id_list( $args['exclude'] ), get_posts( $r ) );
-			$pages = get_pages( $args );
+			$pages           = get_pages( $args );
 		}
 
 		$ids = wp_list_pluck( $pages, 'ID' );
@@ -264,7 +264,7 @@ class PLL_Filters {
 	 * @return array
 	 */
 	function translate_user_email( $email ) {
-		$blog_name = wp_specialchars_decode( pll__( get_option( 'blogname' ) ), ENT_QUOTES );
+		$blog_name        = wp_specialchars_decode( pll__( get_option( 'blogname' ) ), ENT_QUOTES );
 		$email['subject'] = sprintf( $email['subject'], $blog_name );
 		$email['message'] = str_replace( '###SITENAME###', $blog_name, $email['message'] );
 		return $email;

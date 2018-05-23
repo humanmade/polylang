@@ -22,7 +22,7 @@ class Search_Form_Test extends PLL_UnitTestCase {
 
 		// switch to pretty permalinks
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->set_permalink_structure( $this->structure );
 
 		self::$polylang->model->post->register_taxonomy(); // needs this for 'lang' query var
@@ -45,7 +45,7 @@ class Search_Form_Test extends PLL_UnitTestCase {
 
 		$admin_bar = new WP_Admin_Bar;
 		$admin_bar->add_menus();
-		do_action_ref_array( 'admin_bar_menu', array( &$admin_bar ) ); // ndeed add menus to the admin bar
+		do_action_ref_array( 'admin_bar_menu', [ &$admin_bar ] ); // ndeed add menus to the admin bar
 		$node = $admin_bar->get_node( 'search' );
 
 		$this->assertContains( home_url( '/fr/' ), $node->title );
@@ -55,7 +55,7 @@ class Search_Form_Test extends PLL_UnitTestCase {
 		global $wp_rewrite;
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' );
-		$form = get_search_form( false ); // don't echo
+		$form                    = get_search_form( false ); // don't echo
 
 		$this->assertContains( home_url( '/fr/' ), $form );
 

@@ -38,64 +38,64 @@ if ( ! defined( 'ABSPATH' ) ) {
  * 'zu_ZA' (Zulu)
  * 'zz_TR' (Zazaki)
  */
-$languages = array(
-	'af' => array(
+$languages = [
+	'af' => [
 		'code'     => 'af',
 		'locale'   => 'af',
 		'name'     => 'Afrikaans',
 		'dir'      => 'ltr',
 		'flag'     => 'za',
 		'facebook' => 'af_ZA',
-	),
-	'ak' => array(
+	],
+	'ak' => [
 		'facebook' => 'ak_GH',
-	),
-	'am' => array(
+	],
+	'am' => [
 		'facebook' => 'am_ET',
-	),
-	'ar' => array(
+	],
+	'ar' => [
 		'code'     => 'ar',
 		'locale'   => 'ar',
 		'name'     => 'العربية',
 		'dir'      => 'rtl',
 		'flag'     => 'arab',
 		'facebook' => 'ar_AR',
-	),
-	'arq' => array(
+	],
+	'arq' => [
 		'facebook' => 'ar_AR',
-	),
-	'ary' => array(
+	],
+	'ary' => [
 		'code'     => 'ar',
 		'locale'   => 'ary',
 		'name'     => 'العربية المغربية',
 		'dir'      => 'rtl',
 		'flag'     => 'ma',
 		'facebook' => 'ar_AR',
-	),
-	'as' => array(
+	],
+	'as' => [
 		'code'     => 'as',
 		'locale'   => 'as',
 		'name'     => 'অসমীয়া',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'as_IN',
-	),
-	'az' => array(
+	],
+	'az' => [
 		'code'     => 'az',
 		'locale'   => 'az',
 		'name'     => 'Azərbaycan',
 		'dir'      => 'ltr',
 		'flag'     => 'az',
 		'facebook' => 'az_AZ',
-	),
-	'azb' => array(
+	],
+	'azb' => [
 		'code'     => 'az',
 		'locale'   => 'azb',
 		'name'     => 'گؤنئی آذربایجان',
 		'dir'      => 'rtl',
 		'flag'     => 'az',
-	),
-	'bel' => array(
+	],
+	'bel' => [
 		'code'     => 'be',
 		'locale'   => 'bel',
 		'name'     => 'Беларуская мова',
@@ -103,102 +103,102 @@ $languages = array(
 		'flag'     => 'by',
 		'w3c'      => 'be',
 		'facebook' => 'be_BY',
-	),
-	'bg_BG' => array(
+	],
+	'bg_BG' => [
 		'code'     => 'bg',
 		'locale'   => 'bg_BG',
 		'name'     => 'български',
 		'dir'      => 'ltr',
 		'flag'     => 'bg',
 		'facebook' => 'bg_BG',
-	),
-	'bn_BD' => array(
+	],
+	'bn_BD' => [
 		'code'     => 'bn',
 		'locale'   => 'bn_BD',
 		'name'     => 'বাংলা',
 		'dir'      => 'ltr',
 		'flag'     => 'bd',
 		'facebook' => 'bn_IN',
-	),
-	'bo' => array(
+	],
+	'bo' => [
 		'code'     => 'bo',
 		'locale'   => 'bo',
 		'name'     => 'བོད་ཡིག',
 		'dir'      => 'ltr',
 		'flag'     => 'tibet',
-	),
-	'bre' => array(
+	],
+	'bre' => [
 		'w3c'      => 'br',
 		'facebook' => 'br_FR',
-	),
-	'bs_BA' => array(
+	],
+	'bs_BA' => [
 		'code'     => 'bs',
 		'locale'   => 'bs_BA',
 		'name'     => 'Bosanski',
 		'dir'      => 'ltr',
 		'flag'     => 'ba',
 		'facebook' => 'bs_BA',
-	),
-	'ca' => array(
+	],
+	'ca' => [
 		'code'     => 'ca',
 		'locale'   => 'ca',
 		'name'     => 'Català',
 		'dir'      => 'ltr',
 		'flag'     => 'catalonia',
 		'facebook' => 'ca_ES',
-	),
-	'ceb' => array(
+	],
+	'ceb' => [
 		'code'     => 'ceb',
 		'locale'   => 'ceb',
 		'name'     => 'Cebuano',
 		'dir'      => 'ltr',
 		'flag'     => 'ph',
 		'facebook' => 'cx_PH',
-	),
-	'ckb' => array(
+	],
+	'ckb' => [
 		'code'     => 'ku',
 		'locale'   => 'ckb',
 		'name'     => 'کوردی',
 		'dir'      => 'rtl',
 		'flag'     => 'kurdistan',
 		'facebook' => 'cb_IQ',
-	),
-	'co' => array(
+	],
+	'co' => [
 		'facebook' => 'co_FR',
-	),
-	'cs_CZ' => array(
+	],
+	'cs_CZ' => [
 		'code'     => 'cs',
 		'locale'   => 'cs_CZ',
 		'name'     => 'Čeština',
 		'dir'      => 'ltr',
 		'flag'     => 'cz',
 		'facebook' => 'cs_CZ',
-	),
-	'cy' => array(
+	],
+	'cy' => [
 		'code'     => 'cy',
 		'locale'   => 'cy',
 		'name'     => 'Cymraeg',
 		'dir'      => 'ltr',
 		'flag'     => 'wales',
 		'facebook' => 'cy_GB',
-	),
-	'da_DK' => array(
+	],
+	'da_DK' => [
 		'code'     => 'da',
 		'locale'   => 'da_DK',
 		'name'     => 'Dansk',
 		'dir'      => 'ltr',
 		'flag'     => 'dk',
 		'facebook' => 'da_DK',
-	),
-	'de_CH' => array(
+	],
+	'de_CH' => [
 		'code'     => 'de',
 		'locale'   => 'de_CH',
 		'name'     => 'Deutsch',
 		'dir'      => 'ltr',
 		'flag'     => 'ch',
 		'facebook' => 'de_DE',
-	),
-	'de_CH_informal' => array(
+	],
+	'de_CH_informal' => [
 		'code'     => 'de',
 		'locale'   => 'de_CH_informal',
 		'name'     => 'Deutsch',
@@ -206,16 +206,16 @@ $languages = array(
 		'flag'     => 'ch',
 		'w3c'      => 'de-CH',
 		'facebook' => 'de_DE',
-	),
-	'de_DE' => array(
+	],
+	'de_DE' => [
 		'code'     => 'de',
 		'locale'   => 'de_DE',
 		'name'     => 'Deutsch',
 		'dir'      => 'ltr',
 		'flag'     => 'de',
 		'facebook' => 'de_DE',
-	),
-	'de_DE_formal' => array(
+	],
+	'de_DE_formal' => [
 		'code'     => 'de',
 		'locale'   => 'de_DE_formal',
 		'name'     => 'Deutsch',
@@ -223,539 +223,539 @@ $languages = array(
 		'flag'     => 'de',
 		'w3c'      => 'de-DE',
 		'facebook' => 'de_DE',
-	),
-	'dzo' => array(
+	],
+	'dzo' => [
 		'code'     => 'dz',
 		'locale'   => 'dzo',
 		'name'     => 'རྫོང་ཁ',
 		'dir'      => 'ltr',
 		'flag'     => 'bt',
 		'w3c'      => 'dz',
-	),
-	'el' => array(
+	],
+	'el' => [
 		'code'     => 'el',
 		'locale'   => 'el',
 		'name'     => 'Ελληνικά',
 		'dir'      => 'ltr',
 		'flag'     => 'gr',
 		'facebook' => 'el_GR',
-	),
-	'en_AU' => array(
+	],
+	'en_AU' => [
 		'code'     => 'en',
 		'locale'   => 'en_AU',
 		'name'     => 'English',
 		'dir'      => 'ltr',
 		'flag'     => 'au',
 		'facebook' => 'en_US',
-	),
-	'en_CA' => array(
+	],
+	'en_CA' => [
 		'code'     => 'en',
 		'locale'   => 'en_CA',
 		'name'     => 'English',
 		'dir'      => 'ltr',
 		'flag'     => 'ca',
 		'facebook' => 'en_US',
-	),
-	'en_GB' => array(
+	],
+	'en_GB' => [
 		'code'     => 'en',
 		'locale'   => 'en_GB',
 		'name'     => 'English',
 		'dir'      => 'ltr',
 		'flag'     => 'gb',
 		'facebook' => 'en_GB',
-	),
-	'en_NZ' => array(
+	],
+	'en_NZ' => [
 		'code'     => 'en',
 		'locale'   => 'en_NZ',
 		'name'     => 'English',
 		'dir'      => 'ltr',
 		'flag'     => 'nz',
 		'facebook' => 'en_US',
-	),
-	'en_US' => array(
+	],
+	'en_US' => [
 		'code'     => 'en',
 		'locale'   => 'en_US',
 		'name'     => 'English',
 		'dir'      => 'ltr',
 		'flag'     => 'us',
 		'facebook' => 'en_US',
-	),
-	'en_ZA' => array(
+	],
+	'en_ZA' => [
 		'code'     => 'en',
 		'locale'   => 'en_ZA',
 		'name'     => 'English',
 		'dir'      => 'ltr',
 		'flag'     => 'za',
 		'facebook' => 'en_US',
-	),
-	'eo' => array(
+	],
+	'eo' => [
 		'code'     => 'eo',
 		'locale'   => 'eo',
 		'name'     => 'Esperanto',
 		'dir'      => 'ltr',
 		'flag'     => 'esperanto',
 		'facebook' => 'eo_EO',
-	),
-	'es_AR' => array(
+	],
+	'es_AR' => [
 		'code'     => 'es',
 		'locale'   => 'es_AR',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'ar',
 		'facebook' => 'es_LA',
-	),
-	'es_CL' => array(
+	],
+	'es_CL' => [
 		'code'     => 'es',
 		'locale'   => 'es_CL',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'cl',
 		'facebook' => 'es_CL',
-	),
-	'es_CO' => array(
+	],
+	'es_CO' => [
 		'code'     => 'es',
 		'locale'   => 'es_CO',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'co',
 		'facebook' => 'es_CO',
-	),
-	'es_CR' => array(
+	],
+	'es_CR' => [
 		'code'     => 'es',
 		'locale'   => 'es_CR',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'cr',
 		'facebook' => 'es_LA',
-	),
-	'es_ES' => array(
+	],
+	'es_ES' => [
 		'code'     => 'es',
 		'locale'   => 'es_ES',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'es',
 		'facebook' => 'es_ES',
-	),
-	'es_GT' => array(
+	],
+	'es_GT' => [
 		'code'     => 'es',
 		'locale'   => 'es_GT',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'gt',
 		'facebook' => 'es_LA',
-	),
-	'es_MX' => array(
+	],
+	'es_MX' => [
 		'code'     => 'es',
 		'locale'   => 'es_MX',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'mx',
 		'facebook' => 'es_MX',
-	),
-	'es_PE' => array(
+	],
+	'es_PE' => [
 		'code'     => 'es',
 		'locale'   => 'es_PE',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 'pe',
 		'facebook' => 'es_LA',
-	),
-	'es_VE' => array(
+	],
+	'es_VE' => [
 		'code'     => 'es',
 		'locale'   => 'es_VE',
 		'name'     => 'Español',
 		'dir'      => 'ltr',
 		'flag'     => 've',
 		'facebook' => 'es_VE',
-	),
-	'et' => array(
+	],
+	'et' => [
 		'code'     => 'et',
 		'locale'   => 'et',
 		'name'     => 'Eesti',
 		'dir'      => 'ltr',
 		'flag'     => 'ee',
 		'facebook' => 'et_EE',
-	),
-	'eu' => array(
+	],
+	'eu' => [
 		'code'     => 'eu',
 		'locale'   => 'eu',
 		'name'     => 'Euskara',
 		'dir'      => 'ltr',
 		'flag'     => 'basque',
 		'facebook' => 'eu_ES',
-	),
-	'fa_AF' => array(
+	],
+	'fa_AF' => [
 		'code'     => 'fa',
 		'locale'   => 'fa_AF',
 		'name'     => 'فارسی',
 		'dir'      => 'rtl',
 		'flag'     => 'af',
 		'facebook' => 'fa_IR',
-	),
-	'fa_IR' => array(
+	],
+	'fa_IR' => [
 		'code'     => 'fa',
 		'locale'   => 'fa_IR',
 		'name'     => 'فارسی',
 		'dir'      => 'rtl',
 		'flag'     => 'ir',
 		'facebook' => 'fa_IR',
-	),
-	'fi' => array(
+	],
+	'fi' => [
 		'code'     => 'fi',
 		'locale'   => 'fi',
 		'name'     => 'Suomi',
 		'dir'      => 'ltr',
 		'flag'     => 'fi',
 		'facebook' => 'fi_FI',
-	),
-	'fo' => array(
+	],
+	'fo' => [
 		'code'     => 'fo',
 		'locale'   => 'fo',
 		'name'     => 'Føroyskt',
 		'dir'      => 'ltr',
 		'flag'     => 'fo',
 		'facebook' => 'fo_FO',
-	),
-	'fr_BE' => array(
+	],
+	'fr_BE' => [
 		'code'     => 'fr',
 		'locale'   => 'fr_BE',
 		'name'     => 'Français',
 		'dir'      => 'ltr',
 		'flag'     => 'be',
 		'facebook' => 'fr_FR',
-	),
-	'fr_CA' => array(
+	],
+	'fr_CA' => [
 		'code'     => 'fr',
 		'locale'   => 'fr_CA',
 		'name'     => 'Français',
 		'dir'      => 'ltr',
 		'flag'     => 'quebec',
 		'facebook' => 'fr_CA',
-	),
-	'fr_FR' => array(
+	],
+	'fr_FR' => [
 		'code'     => 'fr',
 		'locale'   => 'fr_FR',
 		'name'     => 'Français',
 		'dir'      => 'ltr',
 		'flag'     => 'fr',
 		'facebook' => 'fr_FR',
-	),
-	'fuc' => array(
+	],
+	'fuc' => [
 		'facebook' => 'ff_NG',
-	),
-	'fur' => array(
+	],
+	'fur' => [
 		'code'     => 'fur',
 		'locale'   => 'fur',
 		'name'     => 'Furlan',
 		'dir'      => 'ltr',
 		'flag'     => 'it',
-	),
-	'fy' => array(
+	],
+	'fy' => [
 		'code'     => 'fy',
 		'locale'   => 'fy',
 		'name'     => 'Frysk',
 		'dir'      => 'ltr',
 		'flag'     => 'nl',
 		'facebook' => 'fy_NL',
-	),
-	'ga' => array(
+	],
+	'ga' => [
 		'facebook' => 'ga_IE',
-	),
-	'gd' => array(
+	],
+	'gd' => [
 		'code'     => 'gd',
 		'locale'   => 'gd',
 		'name'     => 'Gàidhlig',
 		'dir'      => 'ltr',
 		'flag'     => 'scotland',
-	),
-	'gl_ES' => array(
+	],
+	'gl_ES' => [
 		'code'     => 'gl',
 		'locale'   => 'gl_ES',
 		'name'     => 'Galego',
 		'dir'      => 'ltr',
 		'flag'     => 'galicia',
 		'facebook' => 'gl_ES',
-	),
-	'gn' => array(
+	],
+	'gn' => [
 		'facebook' => 'gn_PY',
-	),
-	'gu' => array(
+	],
+	'gu' => [
 		'code'     => 'gu',
 		'locale'   => 'gu',
 		'name'     => 'ગુજરાતી',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'gu_IN',
-	),
-	'hau' => array(
+	],
+	'hau' => [
 		'facebook' => 'ha_NG',
-	),
-	'haz' => array(
+	],
+	'haz' => [
 		'code'     => 'haz',
 		'locale'   => 'haz',
 		'name'     => 'هزاره گی',
 		'dir'      => 'rtl',
 		'flag'     => 'af',
-	),
-	'he_IL' => array(
+	],
+	'he_IL' => [
 		'code'     => 'he',
 		'locale'   => 'he_IL',
 		'name'     => 'עברית',
 		'dir'      => 'rtl',
 		'flag'     => 'il',
 		'facebook' => 'he_IL',
-	),
-	'hi_IN' => array(
+	],
+	'hi_IN' => [
 		'code'     => 'hi',
 		'locale'   => 'hi_IN',
 		'name'     => 'हिन्दी',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'hi_IN',
-	),
-	'hr' => array(
+	],
+	'hr' => [
 		'code'     => 'hr',
 		'locale'   => 'hr',
 		'name'     => 'Hrvatski',
 		'dir'      => 'ltr',
 		'flag'     => 'hr',
 		'facebook' => 'hr_HR',
-	),
-	'hu_HU' => array(
+	],
+	'hu_HU' => [
 		'code'     => 'hu',
 		'locale'   => 'hu_HU',
 		'name'     => 'Magyar',
 		'dir'      => 'ltr',
 		'flag'     => 'hu',
 		'facebook' => 'hu_HU',
-	),
-	'hy' => array(
+	],
+	'hy' => [
 		'code'     => 'hy',
 		'locale'   => 'hy',
 		'name'     => 'Հայերեն',
 		'dir'      => 'ltr',
 		'flag'     => 'am',
 		'facebook' => 'hy_AM',
-	),
-	'id_ID' => array(
+	],
+	'id_ID' => [
 		'code'     => 'id',
 		'locale'   => 'id_ID',
 		'name'     => 'Bahasa Indonesia',
 		'dir'      => 'ltr',
 		'flag'     => 'id',
 		'facebook' => 'id_ID',
-	),
-	'ido' => array(
+	],
+	'ido' => [
 		'w3c'      => 'io',
-	),
-	'is_IS' => array(
+	],
+	'is_IS' => [
 		'code'     => 'is',
 		'locale'   => 'is_IS',
 		'name'     => 'Íslenska',
 		'dir'      => 'ltr',
 		'flag'     => 'is',
 		'facebook' => 'is_IS',
-	),
-	'it_IT' => array(
+	],
+	'it_IT' => [
 		'code'     => 'it',
 		'locale'   => 'it_IT',
 		'name'     => 'Italiano',
 		'dir'      => 'ltr',
 		'flag'     => 'it',
 		'facebook' => 'it_IT',
-	),
-	'ja' => array(
+	],
+	'ja' => [
 		'code'     => 'ja',
 		'locale'   => 'ja',
 		'name'     => '日本語',
 		'dir'      => 'ltr',
 		'flag'     => 'jp',
 		'facebook' => 'ja_JP',
-	),
-	'jv_ID' => array(
+	],
+	'jv_ID' => [
 		'code'     => 'jv',
 		'locale'   => 'jv_ID',
 		'name'     => 'Basa Jawa',
 		'dir'      => 'ltr',
 		'flag'     => 'id',
 		'facebook' => 'jv_ID',
-	),
-	'ka_GE' => array(
+	],
+	'ka_GE' => [
 		'code'     => 'ka',
 		'locale'   => 'ka_GE',
 		'name'     => 'ქართული',
 		'dir'      => 'ltr',
 		'flag'     => 'ge',
 		'facebook' => 'ka_GE',
-	),
-	'kab' => array(
+	],
+	'kab' => [
 		'code'     => 'kab',
 		'locale'   => 'kab',
 		'name'     => 'Taqbaylit',
 		'dir'      => 'ltr',
 		'flag'     => 'dz',
-	),
-	'kin' => array(
+	],
+	'kin' => [
 		'w3c'      => 'rw',
 		'facebook' => 'rw_RW',
-	),
-	'kk' => array(
+	],
+	'kk' => [
 		'code'     => 'kk',
 		'locale'   => 'kk',
 		'name'     => 'Қазақ тілі',
 		'dir'      => 'ltr',
 		'flag'     => 'kz',
 		'facebook' => 'kk_KZ',
-	),
-	'km' => array(
+	],
+	'km' => [
 		'code'     => 'km',
 		'locale'   => 'km',
 		'name'     => 'ភាសាខ្មែរ',
 		'dir'      => 'ltr',
 		'flag'     => 'kh',
 		'facebook' => 'km_KH',
-	),
-	'kn' => array(
+	],
+	'kn' => [
 		'facebook' => 'kn_IN',
-	),
-	'ko_KR' => array(
+	],
+	'ko_KR' => [
 		'code'     => 'ko',
 		'locale'   => 'ko_KR',
 		'name'     => '한국어',
 		'dir'      => 'ltr',
 		'flag'     => 'kr',
 		'facebook' => 'ko_KR',
-	),
-	'ku' => array(
+	],
+	'ku' => [
 		'facebook' => 'ku_TR',
-	),
-	'ky_KY' => array(
+	],
+	'ky_KY' => [
 		'facebook' => 'ky_KG',
-	),
-	'la' => array(
+	],
+	'la' => [
 		'facebook' => 'la_VA',
-	),
-	'li' => array(
+	],
+	'li' => [
 		'facebook' => 'li_NL',
-	),
-	'lin' => array(
+	],
+	'lin' => [
 		'facebook' => 'ln_CD',
-	),
-	'lo' => array(
+	],
+	'lo' => [
 		'code'     => 'lo',
 		'locale'   => 'lo',
 		'name'     => 'ພາສາລາວ',
 		'dir'      => 'ltr',
 		'flag'     => 'la',
 		'facebook' => 'lo_LA',
-	),
-	'lt_LT' => array(
+	],
+	'lt_LT' => [
 		'code'     => 'lt',
 		'locale'   => 'lt_LT',
 		'name'     => 'Lietuviškai',
 		'dir'      => 'ltr',
 		'flag'     => 'lt',
 		'facebook' => 'lt_LT',
-	),
-	'lv' => array(
+	],
+	'lv' => [
 		'code'     => 'lv',
 		'locale'   => 'lv',
 		'name'     => 'Latviešu valoda',
 		'dir'      => 'ltr',
 		'flag'     => 'lv',
 		'facebook' => 'lv_LV',
-	),
-	'mg_MG' => array(
+	],
+	'mg_MG' => [
 		'facebook' => 'mg_MG',
-	),
-	'mk_MK' => array(
+	],
+	'mk_MK' => [
 		'code'     => 'mk',
 		'locale'   => 'mk_MK',
 		'name'     => 'македонски јазик',
 		'dir'      => 'ltr',
 		'flag'     => 'mk',
 		'facebook' => 'mk_MK',
-	),
-	'ml_IN' => array(
+	],
+	'ml_IN' => [
 		'code'     => 'ml',
 		'locale'   => 'ml_IN',
 		'name'     => 'മലയാളം',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'ml_IN',
-	),
-	'mlt' => array(
+	],
+	'mlt' => [
 		'facebook' => 'mt_MT',
-	),
-	'mn' => array(
+	],
+	'mn' => [
 		'code'     => 'mn',
 		'locale'   => 'mn',
 		'name'     => 'Монгол хэл',
 		'dir'      => 'ltr',
 		'flag'     => 'mn',
 		'facebook' => 'mn_MN',
-	),
-	'mr' => array(
+	],
+	'mr' => [
 		'code'     => 'mr',
 		'locale'   => 'mr',
 		'name'     => 'मराठी',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'mr_IN',
-	),
-	'mri' => array(
+	],
+	'mri' => [
 		'w3c'      => 'mi',
 		'facebook' => 'mi_NZ',
-	),
-	'ms_MY' => array(
+	],
+	'ms_MY' => [
 		'code'     => 'ms',
 		'locale'   => 'ms_MY',
 		'name'     => 'Bahasa Melayu',
 		'dir'      => 'ltr',
 		'flag'     => 'my',
 		'facebook' => 'ms_MY',
-	),
-	'my_MM' => array(
+	],
+	'my_MM' => [
 		'code'     => 'my',
 		'locale'   => 'my_MM',
 		'name'     => 'ဗမာစာ',
 		'dir'      => 'ltr',
 		'flag'     => 'mm',
 		'facebook' => 'my_MM',
-	),
-	'nb_NO' => array(
+	],
+	'nb_NO' => [
 		'code'     => 'nb',
 		'locale'   => 'nb_NO',
 		'name'     => 'Norsk Bokmål',
 		'dir'      => 'ltr',
 		'flag'     => 'no',
 		'facebook' => 'nb_NO',
-	),
-	'ne_NP' => array(
+	],
+	'ne_NP' => [
 		'code'     => 'ne',
 		'locale'   => 'ne_NP',
 		'name'     => 'नेपाली',
 		'dir'      => 'ltr',
 		'flag'     => 'np',
 		'facebook' => 'ne_NP',
-	),
-	'nl_BE' => array(
+	],
+	'nl_BE' => [
 		'code'     => 'nl',
 		'locale'   => 'nl_BE',
 		'name'     => 'Nederlands',
 		'dir'      => 'ltr',
 		'flag'     => 'be',
 		'facebook' => 'nl_BE',
-	),
-	'nl_NL' => array(
+	],
+	'nl_NL' => [
 		'code'     => 'nl',
 		'locale'   => 'nl_NL',
 		'name'     => 'Nederlands',
 		'dir'      => 'ltr',
 		'flag'     => 'nl',
 		'facebook' => 'nl_NL',
-	),
-	'nl_NL_formal' => array(
+	],
+	'nl_NL_formal' => [
 		'code'     => 'nl',
 		'locale'   => 'nl_NL_formal',
 		'name'     => 'Nederlands',
@@ -763,342 +763,342 @@ $languages = array(
 		'flag'     => 'nl',
 		'w3c'      => 'nl-NL',
 		'facebook' => 'nl_NL',
-	),
-	'nn_NO' => array(
+	],
+	'nn_NO' => [
 		'code'     => 'nn',
 		'locale'   => 'nn_NO',
 		'name'     => 'Norsk Nynorsk',
 		'dir'      => 'ltr',
 		'flag'     => 'no',
 		'facebook' => 'nn_NO',
-	),
-	'oci' => array(
+	],
+	'oci' => [
 		'code'     => 'oc',
 		'locale'   => 'oci',
 		'name'     => 'Occitan',
 		'dir'      => 'ltr',
 		'flag'     => 'occitania',
 		'w3c'      => 'oc',
-	),
-	'ory' => array(
+	],
+	'ory' => [
 		'facebook' => 'or_IN',
-	),
-	'pa_IN' => array(
+	],
+	'pa_IN' => [
 		'code'     => 'pa',
 		'locale'   => 'pa_IN',
 		'name'     => 'ਪੰਜਾਬੀ',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'pa_IN',
-	),
-	'pl_PL' => array(
+	],
+	'pl_PL' => [
 		'code'     => 'pl',
 		'locale'   => 'pl_PL',
 		'name'     => 'Polski',
 		'dir'      => 'ltr',
 		'flag'     => 'pl',
 		'facebook' => 'pl_PL',
-	),
-	'ps' => array(
+	],
+	'ps' => [
 		'code'     => 'ps',
 		'locale'   => 'ps',
 		'name'     => 'پښتو',
 		'dir'      => 'rtl',
 		'flag'     => 'af',
 		'facebook' => 'ps_AF',
-	),
-	'pt_BR' => array(
+	],
+	'pt_BR' => [
 		'code'     => 'pt',
 		'locale'   => 'pt_BR',
 		'name'     => 'Português',
 		'dir'      => 'ltr',
 		'flag'     => 'br',
 		'facebook' => 'pt_BR',
-	),
-	'pt_PT' => array(
+	],
+	'pt_PT' => [
 		'code'     => 'pt',
 		'locale'   => 'pt_PT',
 		'name'     => 'Português',
 		'dir'      => 'ltr',
 		'flag'     => 'pt',
 		'facebook' => 'pt_PT',
-	),
-	'pt_PT_ao90' => array(
+	],
+	'pt_PT_ao90' => [
 		'code'     => 'pt',
 		'locale'   => 'pt_PT_ao90',
 		'name'     => 'Português',
 		'dir'      => 'ltr',
 		'flag'     => 'pt',
 		'facebook' => 'pt_PT',
-	),
-	'rhg' => array(
+	],
+	'rhg' => [
 		'code'     => 'rhg',
 		'locale'   => 'rhg',
 		'name'     => 'Ruáinga',
 		'dir'      => 'ltr',
 		'flag'     => 'mm',
-	),
-	'ro_RO' => array(
+	],
+	'ro_RO' => [
 		'code'     => 'ro',
 		'locale'   => 'ro_RO',
 		'name'     => 'Română',
 		'dir'      => 'ltr',
 		'flag'     => 'ro',
 		'facebook' => 'ro_RO',
-	),
-	'roh' => array(
+	],
+	'roh' => [
 		'w3c'      => 'rm',
 		'facebook' => 'rm_CH',
-	),
-	'ru_RU' => array(
+	],
+	'ru_RU' => [
 		'code'     => 'ru',
 		'locale'   => 'ru_RU',
 		'name'     => 'Русский',
 		'dir'      => 'ltr',
 		'flag'     => 'ru',
 		'facebook' => 'ru_RU',
-	),
-	'sa_IN' => array(
+	],
+	'sa_IN' => [
 		'facebook' => 'sa_IN',
-	),
-	'sah' => array(
+	],
+	'sah' => [
 		'code'     => 'sah',
 		'locale'   => 'sah',
 		'name'     => 'Сахалыы',
 		'dir'      => 'ltr',
 		'flag'     => 'ru',
-	),
-	'si_LK' => array(
+	],
+	'si_LK' => [
 		'code'     => 'si',
 		'locale'   => 'si_LK',
 		'name'     => 'සිංහල',
 		'dir'      => 'ltr',
 		'flag'     => 'lk',
 		'facebook' => 'si_LK',
-	),
-	'sk_SK' => array(
+	],
+	'sk_SK' => [
 		'code'     => 'sk',
 		'locale'   => 'sk_SK',
 		'name'     => 'Slovenčina',
 		'dir'      => 'ltr',
 		'flag'     => 'sk',
 		'facebook' => 'sk_SK',
-	),
-	'sl_SI' => array(
+	],
+	'sl_SI' => [
 		'code'     => 'sl',
 		'locale'   => 'sl_SI',
 		'name'     => 'Slovenščina',
 		'dir'      => 'ltr',
 		'flag'     => 'si',
 		'facebook' => 'sl_SI',
-	),
-	'sna' => array(
+	],
+	'sna' => [
 		'facebook' => 'sn_ZW',
-	),
-	'so_SO' => array(
+	],
+	'so_SO' => [
 		'code'     => 'so',
 		'locale'   => 'so_SO',
 		'name'     => 'Af-Soomaali',
 		'dir'      => 'ltr',
 		'flag'     => 'so',
 		'facebook' => 'so_SO',
-	),
-	'sq' => array(
+	],
+	'sq' => [
 		'code'     => 'sq',
 		'locale'   => 'sq',
 		'name'     => 'Shqip',
 		'dir'      => 'ltr',
 		'flag'     => 'al',
 		'facebook' => 'sq_AL',
-	),
-	'sr_RS' => array(
+	],
+	'sr_RS' => [
 		'code'     => 'sr',
 		'locale'   => 'sr_RS',
 		'name'     => 'Српски језик',
 		'dir'      => 'ltr',
 		'flag'     => 'rs',
 		'facebook' => 'sr_RS',
-	),
-	'srd' => array(
+	],
+	'srd' => [
 		'w3c'      => 'sc',
 		'facebook' => 'sc_IT',
-	),
-	'su_ID' => array(
+	],
+	'su_ID' => [
 		'code'     => 'su',
 		'locale'   => 'su_ID',
 		'name'     => 'Basa Sunda',
 		'dir'      => 'ltr',
 		'flag'     => 'id',
-	),
-	'sv_SE' => array(
+	],
+	'sv_SE' => [
 		'code'     => 'sv',
 		'locale'   => 'sv_SE',
 		'name'     => 'Svenska',
 		'dir'      => 'ltr',
 		'flag'     => 'se',
 		'facebook' => 'sv_SE',
-	),
-	'sw' => array(
+	],
+	'sw' => [
 		'facebook' => 'sw_KE',
-	),
-	'syr' => array(
+	],
+	'syr' => [
 		'facebook' => 'sy_SY',
-	),
-	'szl' => array(
+	],
+	'szl' => [
 		'code'     => 'szl',
 		'locale'   => 'szl',
 		'name'     => 'Ślōnskŏ gŏdka',
 		'dir'      => 'ltr',
 		'flag'     => 'pl',
 		'facebook' => 'sz_PL',
-	),
-	'ta_IN' => array(
+	],
+	'ta_IN' => [
 		'code'     => 'ta',
 		'locale'   => 'ta_IN',
 		'name'     => 'தமிழ்',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'ta_IN',
-	),
-	'ta_LK' => array(
+	],
+	'ta_LK' => [
 		'code'     => 'ta',
 		'locale'   => 'ta_LK',
 		'name'     => 'தமிழ்',
 		'dir'      => 'ltr',
 		'flag'     => 'lk',
 		'facebook' => 'ta_IN',
-	),
-	'tah' => array(
+	],
+	'tah' => [
 		'code'     => 'ty',
 		'locale'   => 'tah',
 		'name'     => 'Reo Tahiti',
 		'dir'      => 'ltr',
 		'flag'     => 'pf',
-	),
-	'te' => array(
+	],
+	'te' => [
 		'code'     => 'te',
 		'locale'   => 'te',
 		'name'     => 'తెలుగు',
 		'dir'      => 'ltr',
 		'flag'     => 'in',
 		'facebook' => 'te_IN',
-	),
-	'tg' => array(
+	],
+	'tg' => [
 		'facebook' => 'tg_TJ',
-	),
-	'th' => array(
+	],
+	'th' => [
 		'code'     => 'th',
 		'locale'   => 'th',
 		'name'     => 'ไทย',
 		'dir'      => 'ltr',
 		'flag'     => 'th',
 		'facebook' => 'th_TH',
-	),
-	'tl' => array(
+	],
+	'tl' => [
 		'code'     => 'tl',
 		'locale'   => 'tl',
 		'name'     => 'Tagalog',
 		'dir'      => 'ltr',
 		'flag'     => 'ph',
 		'facebook' => 'tl_PH',
-	),
-	'tr_TR' => array(
+	],
+	'tr_TR' => [
 		'code'     => 'tr',
 		'locale'   => 'tr_TR',
 		'name'     => 'Türkçe',
 		'dir'      => 'ltr',
 		'flag'     => 'tr',
 		'facebook' => 'tr_TR',
-	),
-	'tt_RU' => array(
+	],
+	'tt_RU' => [
 		'code'     => 'tt',
 		'locale'   => 'tt_RU',
 		'name'     => 'Татар теле',
 		'dir'      => 'ltr',
 		'flag'     => 'ru',
 		'facebook' => 'tt_RU',
-	),
-	'tuk' => array(
+	],
+	'tuk' => [
 		'w3c'      => 'tk',
 		'facebook' => 'tk_TM',
-	),
-	'tzm' => array(
+	],
+	'tzm' => [
 		'facebook' => 'tz_MA',
-	),
-	'ug_CN' => array(
+	],
+	'ug_CN' => [
 		'code'     => 'ug',
 		'locale'   => 'ug_CN',
 		'name'     => 'Uyƣurqə',
 		'dir'      => 'ltr',
 		'flag'     => 'cn',
-	),
-	'uk' => array(
+	],
+	'uk' => [
 		'code'     => 'uk',
 		'locale'   => 'uk',
 		'name'     => 'Українська',
 		'dir'      => 'ltr',
 		'flag'     => 'ua',
 		'facebook' => 'uk_UA',
-	),
-	'ur' => array(
+	],
+	'ur' => [
 		'code'     => 'ur',
 		'locale'   => 'ur',
 		'name'     => 'اردو',
 		'dir'      => 'rtl',
 		'flag'     => 'pk',
 		'facebook' => 'ur_PK',
-	),
-	'uz_UZ' => array(
+	],
+	'uz_UZ' => [
 		'code'     => 'uz',
 		'locale'   => 'uz_UZ',
 		'name'     => 'Oʻzbek',
 		'dir'      => 'ltr',
 		'flag'     => 'uz',
 		'facebook' => 'uz_UZ',
-	),
-	'vec' => array(
+	],
+	'vec' => [
 		'code'     => 'vec',
 		'locale'   => 'vec',
 		'name'     => 'Vèneto',
 		'dir'      => 'ltr',
 		'flag'     => 'veneto',
-	),
-	'vi' => array(
+	],
+	'vi' => [
 		'code'     => 'vi',
 		'locale'   => 'vi',
 		'name'     => 'Tiếng Việt',
 		'dir'      => 'ltr',
 		'flag'     => 'vn',
 		'facebook' => 'vi_VN',
-	),
-	'xho' => array(
+	],
+	'xho' => [
 		'facebook' => 'xh_ZA',
-	),
-	'yor' => array(
+	],
+	'yor' => [
 		'facebook' => 'yo_NG',
-	),
-	'zh_CN' => array(
+	],
+	'zh_CN' => [
 		'code'     => 'zh',
 		'locale'   => 'zh_CN',
 		'name'     => '中文 (中国)',
 		'dir'      => 'ltr',
 		'flag'     => 'cn',
 		'facebook' => 'zh_CN',
-	),
-	'zh_HK' => array(
+	],
+	'zh_HK' => [
 		'code'     => 'zh',
 		'locale'   => 'zh_HK',
 		'name'     => '中文 (香港)',
 		'dir'      => 'ltr',
 		'flag'     => 'hk',
 		'facebook' => 'zh_HK',
-	),
-	'zh_TW' => array(
+	],
+	'zh_TW' => [
 		'code'     => 'zh',
 		'locale'   => 'zh_TW',
 		'name'     => '中文 (台灣)',
 		'dir'      => 'ltr',
 		'flag'     => 'tw',
 		'facebook' => 'zh_TW',
-	),
-);
+	],
+];

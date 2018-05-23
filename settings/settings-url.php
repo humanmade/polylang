@@ -15,14 +15,16 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		parent::__construct( $polylang, array(
-			'module'      => 'url',
-			'title'       => __( 'URL modifications', 'polylang' ),
-			'description' => __( 'Decide how your URLs will look like.', 'polylang' ),
-			'configure'   => true,
-		) );
+		parent::__construct(
+			$polylang, [
+				'module'      => 'url',
+				'title'       => __( 'URL modifications', 'polylang' ),
+				'description' => __( 'Decide how your URLs will look like.', 'polylang' ),
+				'configure'   => true,
+			]
+		);
 
-		$this->links_model = &$polylang->links_model;
+		$this->links_model   = &$polylang->links_model;
 		$this->page_on_front = &$polylang->static_pages->page_on_front;
 	}
 
@@ -62,7 +64,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			);
 			?>
 		</label>
-		<p class="description"><?php echo esc_html__( 'Example:', 'polylang' ) . ' <code>' . esc_html( str_replace( array( '://', 'www.' ), array( '://en.', '' ), home_url( 'my-post/' ) ) ) . '</code>'; ?></p>
+		<p class="description"><?php echo esc_html__( 'Example:', 'polylang' ) . ' <code>' . esc_html( str_replace( [ '://', 'www.' ], [ '://en.', '' ], home_url( 'my-post/' ) ) ) . '</code>'; ?></p>
 		<label>
 			<?php
 			printf(
@@ -218,7 +220,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * @param array $options
 	 */
 	protected function update( $options ) {
-		foreach ( array( 'force_lang', 'rewrite' ) as $key ) {
+		foreach ( [ 'force_lang', 'rewrite' ] as $key ) {
 			$newoptions[ $key ] = isset( $options[ $key ] ) ? (int) $options[ $key ] : 0;
 		}
 
@@ -226,18 +228,21 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			foreach ( $options['domains'] as $key => $domain ) {
 				if ( empty( $domain ) ) {
 					$lang = $this->model->get_language( $key );
-					add_settings_error( 'general', 'pll_invalid_domain', esc_html( sprintf(
-						/* translators: %s is a native language name */
-						__( 'Please enter a valid URL for %s.', 'polylang' ), $lang->name
-					) ) );
-				}
-				else {
+					add_settings_error(
+						'general', 'pll_invalid_domain', esc_html(
+							sprintf(
+								/* translators: %s is a native language name */
+								__( 'Please enter a valid URL for %s.', 'polylang' ), $lang->name
+							)
+						)
+					);
+				} else {
 					$newoptions['domains'][ $key ] = esc_url_raw( trim( $domain ) );
 				}
 			}
 		}
 
-		foreach ( array( 'hide_default', 'redirect_lang' ) as $key ) {
+		foreach ( [ 'hide_default', 'redirect_lang' ] as $key ) {
 			$newoptions[ $key ] = isset( $options[ $key ] ) ? 1 : 0;
 		}
 
@@ -264,20 +269,24 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 	 * @param array $options new set of options to test
 	 */
 	protected function check_domains( $options ) {
-		$options = array_merge( $this->options, $options );
-		$model = new PLL_Model( $options );
+		$options     = array_merge( $this->options, $options );
+		$model       = new PLL_Model( $options );
 		$links_model = $model->get_links_model();
 		foreach ( $this->model->get_languages_list() as $lang ) {
 			$url = add_query_arg( 'deactivate-polylang', 1, $links_model->home_url( $lang ) );
 			// Don't redefine vip_safe_wp_remote_get() as it has not the same signature as wp_remote_get()
-			$response = function_exists( 'vip_safe_wp_remote_get' ) ? vip_safe_wp_remote_get( esc_url_raw( $url ) ) : wp_remote_get( esc_url_raw( $url ) );
+			$response      = function_exists( 'vip_safe_wp_remote_get' ) ? vip_safe_wp_remote_get( esc_url_raw( $url ) ) : wp_remote_get( esc_url_raw( $url ) );
 			$response_code = wp_remote_retrieve_response_code( $response );
 
 			if ( 200 != $response_code ) {
-				add_settings_error( 'general', 'pll_invalid_domain', esc_html( sprintf(
-					/* translators: %s is an url */
-					__( 'Polylang was unable to access the URL %s. Please check that the URL is valid.', 'polylang' ), $url
-				) ) );
+				add_settings_error(
+					'general', 'pll_invalid_domain', esc_html(
+						sprintf(
+							/* translators: %s is an url */
+							__( 'Polylang was unable to access the URL %s. Please check that the URL is valid.', 'polylang' ), $url
+						)
+					)
+				);
 			}
 		}
 	}

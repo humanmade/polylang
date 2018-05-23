@@ -45,10 +45,10 @@ class Switcher_Test extends PLL_UnitTestCase {
 		$this->go_to( get_permalink( $en ) );
 
 		// Raw with default arguments
-		$args = array(
+		$args = [
 			'raw' => 1,
-		);
-		$arr = $this->switcher->the_languages( self::$polylang->links, $args );
+		];
+		$arr  = $this->switcher->the_languages( self::$polylang->links, $args );
 
 		$this->assertCount( 3, $arr );
 		$this->assertTrue( $arr['de']['no_translation'] );
@@ -59,13 +59,15 @@ class Switcher_Test extends PLL_UnitTestCase {
 		$this->assertEquals( 'English', $arr['en']['name'] );
 
 		// Other arguments
-		$args = array_merge( $args, array(
-			'force_home' => 1,
-			'hide_current' => 1,
-			'hide_if_no_translation' => 1,
-			'display_names_as' => 'slug',
-		) );
-		$arr = $this->switcher->the_languages( self::$polylang->links, $args );
+		$args = array_merge(
+			$args, [
+				'force_home' => 1,
+				'hide_current' => 1,
+				'hide_if_no_translation' => 1,
+				'display_names_as' => 'slug',
+			]
+		);
+		$arr  = $this->switcher->the_languages( self::$polylang->links, $args );
 
 		$this->assertCount( 1, $arr ); // Only fr in the array
 		$this->assertEquals( home_url( '?lang=fr' ), $arr['fr']['url'] ); // force_home
@@ -74,11 +76,11 @@ class Switcher_Test extends PLL_UnitTestCase {
 		$this->go_to( home_url( '/' ) );
 
 		// Post_id
-		$args = array(
+		$args = [
 			'raw' => 1,
 			'post_id' => $en,
-		);
-		$arr = $this->switcher->the_languages( self::$polylang->links, $args );
+		];
+		$arr  = $this->switcher->the_languages( self::$polylang->links, $args );
 		$this->assertEquals( get_permalink( $fr ), $arr['fr']['url'] );
 	}
 
@@ -99,10 +101,10 @@ class Switcher_Test extends PLL_UnitTestCase {
 		self::$polylang->links->curlang = self::$polylang->model->get_language( 'en' );
 		$this->go_to( get_permalink( $en ) );
 
-		$args = array( 'echo' => 0 );
+		$args     = [ 'echo' => 0 ];
 		$switcher = $this->switcher->the_languages( self::$polylang->links, $args );
 		$switcher = mb_convert_encoding( $switcher, 'HTML-ENTITIES', 'UTF-8' ); // Due to "Français"
-		$doc = new DomDocument();
+		$doc      = new DomDocument();
 		$doc->loadHTML( $switcher );
 		$xpath = new DOMXpath( $doc );
 
@@ -113,7 +115,7 @@ class Switcher_Test extends PLL_UnitTestCase {
 		$this->assertEquals( get_permalink( $fr ), $a->item( 0 )->getAttribute( 'href' ) );
 
 		// Test echo option
-		$args = array( 'echo' => 1 );
+		$args = [ 'echo' => 1 ];
 		ob_start();
 		$this->switcher->the_languages( self::$polylang->links, $args );
 		$this->assertNotEmpty( ob_get_clean() );
@@ -136,13 +138,13 @@ class Switcher_Test extends PLL_UnitTestCase {
 		self::$polylang->links->curlang = self::$polylang->model->get_language( 'en' );
 		$this->go_to( get_permalink( $en ) );
 
-		$args = array(
+		$args     = [
 			'dropdown' => 1,
 			'echo'     => 0,
-		);
+		];
 		$switcher = $this->switcher->the_languages( self::$polylang->links, $args );
 		$switcher = mb_convert_encoding( $switcher, 'HTML-ENTITIES', 'UTF-8' ); // Due to "Français"
-		$doc = new DomDocument();
+		$doc      = new DomDocument();
 		$doc->loadHTML( $switcher );
 		$xpath = new DOMXpath( $doc );
 

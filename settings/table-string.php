@@ -21,17 +21,19 @@ class PLL_Table_String extends WP_List_Table {
 	 * @param array $languages list of languages
 	 */
 	function __construct( $languages ) {
-		parent::__construct( array(
-			'plural' => 'Strings translations', // Do not translate ( used for css class )
-			'ajax'   => false,
-		) );
+		parent::__construct(
+			[
+				'plural' => 'Strings translations', // Do not translate ( used for css class )
+				'ajax'   => false,
+			]
+		);
 
-		$this->languages = $languages;
-		$this->strings = PLL_Admin_Strings::get_strings();
-		$this->groups = array_unique( wp_list_pluck( $this->strings, 'context' ) );
+		$this->languages      = $languages;
+		$this->strings        = PLL_Admin_Strings::get_strings();
+		$this->groups         = array_unique( wp_list_pluck( $this->strings, 'context' ) );
 		$this->selected_group = empty( $_GET['group'] ) || ! in_array( $_GET['group'], $this->groups ) ? -1 : $_GET['group'];
 
-		add_action( 'mlang_action_string-translation', array( $this, 'save_translations' ) );
+		add_action( 'mlang_action_string-translation', [ $this, 'save_translations' ] );
 	}
 
 	/**
@@ -87,17 +89,19 @@ class PLL_Table_String extends WP_List_Table {
 	 */
 	function column_translations( $item ) {
 		$languages = array_combine( wp_list_pluck( $this->languages, 'slug' ), wp_list_pluck( $this->languages, 'name' ) );
-		$out = '';
+		$out       = '';
 
 		foreach ( $item['translations'] as $key => $translation ) {
 			$input_type = $item['multiline'] ?
 				'<textarea name="translation[%1$s][%2$s]" id="%1$s-%2$s">%4$s</textarea>' :
 				'<input type="text" name="translation[%1$s][%2$s]" id="%1$s-%2$s" value="%4$s" />';
-			$out .= sprintf( '<div class="translation"><label for="%1$s-%2$s">%3$s</label>' . $input_type . '</div>' . "\n",
+			$out       .= sprintf(
+				'<div class="translation"><label for="%1$s-%2$s">%3$s</label>' . $input_type . '</div>' . "\n",
 				esc_attr( $key ),
 				esc_attr( $item['row'] ),
 				esc_html( $languages[ $key ] ),
-			format_to_edit( $translation ) ); // Don't interpret special chars
+				format_to_edit( $translation )
+			); // Don't interpret special chars
 		}
 
 		return $out;
@@ -111,13 +115,13 @@ class PLL_Table_String extends WP_List_Table {
 	 * @return array the list of column titles
 	 */
 	function get_columns() {
-		return array(
+		return [
 			'cb'           => '<input type="checkbox" />', // Checkbox
 			'string'       => esc_html__( 'String', 'polylang' ),
 			'name'         => esc_html__( 'Name', 'polylang' ),
 			'context'      => esc_html__( 'Group', 'polylang' ),
 			'translations' => esc_html__( 'Translations', 'polylang' ),
-		);
+		];
 	}
 
 	/**
@@ -128,11 +132,11 @@ class PLL_Table_String extends WP_List_Table {
 	 * @return array
 	 */
 	function get_sortable_columns() {
-		return array(
-			'string'  => array( 'string', false ),
-			'name'    => array( 'name', false ),
-			'context' => array( 'context', false ),
-		);
+		return [
+			'string'  => [ 'string', false ],
+			'name'    => [ 'name', false ],
+			'context' => [ 'context', false ],
+		];
 	}
 
 	/**
@@ -187,25 +191,27 @@ class PLL_Table_String extends WP_List_Table {
 			$mo->import_from_db( $language );
 			foreach ( $data as $key => $row ) {
 				$data[ $key ]['translations'][ $language->slug ] = $mo->translate( $row['string'] );
-				$data[ $key ]['row'] = $key; // Store the row number for convenience
+				$data[ $key ]['row']                             = $key; // Store the row number for convenience
 			}
 		}
 
-		$per_page = $this->get_items_per_page( 'pll_strings_per_page' );
-		$this->_column_headers = array( $this->get_columns(), array(), $this->get_sortable_columns() );
+		$per_page              = $this->get_items_per_page( 'pll_strings_per_page' );
+		$this->_column_headers = [ $this->get_columns(), [], $this->get_sortable_columns() ];
 
 		if ( ! empty( $_GET['orderby'] ) ) { // No sort by default
-			usort( $data, array( $this, 'usort_reorder' ) );
+			usort( $data, [ $this, 'usort_reorder' ] );
 		}
 
 		$total_items = count( $data );
 		$this->items = array_slice( $data, ( $this->get_pagenum() - 1 ) * $per_page, $per_page );
 
-		$this->set_pagination_args( array(
-			'total_items' => $total_items,
-			'per_page'    => $per_page,
-			'total_pages' => ceil( $total_items / $per_page ),
-		) );
+		$this->set_pagination_args(
+			[
+				'total_items' => $total_items,
+				'per_page'    => $per_page,
+				'total_pages' => ceil( $total_items / $per_page ),
+			]
+		);
 	}
 
 	/**
@@ -216,7 +222,7 @@ class PLL_Table_String extends WP_List_Table {
 	 * @return array
 	 */
 	function get_bulk_actions() {
-		return array( 'delete' => __( 'Delete', 'polylang' ) );
+		return [ 'delete' => __( 'Delete', 'polylang' ) ];
 	}
 
 	/**
@@ -266,7 +272,7 @@ class PLL_Table_String extends WP_List_Table {
 		}
 		echo '</select>' . "\n";
 
-		submit_button( __( 'Filter' ), 'button', 'filter_action', false, array( 'id' => 'post-query-submit' ) );
+		submit_button( __( 'Filter' ), 'button', 'filter_action', false, [ 'id' => 'post-query-submit' ] );
 		echo '</div>';
 	}
 
@@ -333,7 +339,7 @@ class PLL_Table_String extends WP_List_Table {
 		}
 
 		// To refresh the page ( possible thanks to the $_GET['noheader']=true )
-		$args = array_intersect_key( $_REQUEST, array_flip( array( 's', 'paged', 'group' ) ) );
+		$args = array_intersect_key( $_REQUEST, array_flip( [ 's', 'paged', 'group' ] ) );
 		if ( ! empty( $_GET['paged'] ) && ! empty( $_POST['submit'] ) ) {
 			$args['paged'] = (int) $_GET['paged']; // Don't rely on $_REQUEST['paged'] or $_POST['paged']. See #14
 		}

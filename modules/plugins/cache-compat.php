@@ -14,9 +14,9 @@ class PLL_Cache_Compat {
 	 */
 	public function init() {
 		if ( PLL_COOKIE ) {
-			add_action( 'wp_print_footer_scripts', array( $this, 'add_cookie_script' ) );
+			add_action( 'wp_print_footer_scripts', [ $this, 'add_cookie_script' ] );
 		}
-		add_action( 'wp', array( $this, 'do_not_cache_site_home' ) );
+		add_action( 'wp', [ $this, 'do_not_cache_site_home' ] );
 	}
 
 	/**
@@ -28,7 +28,8 @@ class PLL_Cache_Compat {
 	 */
 	public function add_cookie_script() {
 		$domain = ( 2 == PLL()->options['force_lang'] ) ? parse_url( PLL()->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN;
-		$js = sprintf( '
+		$js     = sprintf(
+			'
 			var date = new Date();
 			date.setTime( date.getTime() + %d );
 			document.cookie = "%s=%s; expires=" + date.toUTCString() + "; path=%s%s";',

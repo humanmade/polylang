@@ -17,10 +17,12 @@ class PLL_Table_Settings extends WP_List_Table {
 	 * @since 1.8
 	 */
 	function __construct() {
-		parent::__construct( array(
-			'plural' => 'Settings', // Do not translate ( used for css class )
-			'ajax'   => false,
-		) );
+		parent::__construct(
+			[
+				'plural' => 'Settings', // Do not translate ( used for css class )
+				'ajax'   => false,
+			]
+		);
 	}
 
 	/**
@@ -29,7 +31,7 @@ class PLL_Table_Settings extends WP_List_Table {
 	 * @since 1.8
 	 */
 	protected function get_table_classes() {
-		return array( 'wp-list-table', 'widefat', 'plugins', 'pll-settings' ); // get the style of the plugins list table + one specific class
+		return [ 'wp-list-table', 'widefat', 'plugins', 'pll-settings' ]; // get the style of the plugins list table + one specific class
 	}
 
 	/**
@@ -53,7 +55,8 @@ class PLL_Table_Settings extends WP_List_Table {
 
 		// Display an upgrade message if there is any, reusing css from the plugins updates
 		if ( $message = $item->get_upgrade_message() ) {
-			printf( '
+			printf(
+				'
 				<tr class="plugin-update-tr">
 					<td colspan="3" class="plugin-update colspanchange">%s</td>
 				</tr>',
@@ -69,7 +72,8 @@ class PLL_Table_Settings extends WP_List_Table {
 		// The settings if there are
 		// "inactive" class to reuse css from the plugins list table
 		if ( $form = $item->get_form() ) {
-			printf( '
+			printf(
+				'
 				<tr id="pll-configure-%s" class="pll-configure inactive inline-edit-row" style="display: none;">
 					<td colspan="3">
 						<legend>%s</legend>
@@ -108,8 +112,7 @@ class PLL_Table_Settings extends WP_List_Table {
 				echo '<th scope="row" class="check-column">';
 				echo $this->column_cb( $item );
 				echo '</th>';
-			}
-			else {
+			} else {
 				printf( '<td class="%s">', esc_attr( $classes ) );
 				echo $this->column_default( $item, $column_name );
 				echo '</td>';
@@ -141,11 +144,11 @@ class PLL_Table_Settings extends WP_List_Table {
 	 * @return array the list of column titles
 	 */
 	public function get_columns() {
-		return array(
+		return [
 			'cb'           => '', // For the 4px border inherited from plugins when the module is activated
 			'plugin-title' => esc_html__( 'Module', 'polylang' ), // plugin-title for styling
 			'description'  => esc_html__( 'Description', 'polylang' ),
-		);
+		];
 	}
 
 	/**
@@ -166,9 +169,9 @@ class PLL_Table_Settings extends WP_List_Table {
 	 *
 	 * @param array $items
 	 */
-	public function prepare_items( $items = array() ) {
-		$this->_column_headers = array( $this->get_columns(), array(), $this->get_sortable_columns(), $this->get_primary_column_name() );
-		$this->items = $items;
+	public function prepare_items( $items = [] ) {
+		$this->_column_headers = [ $this->get_columns(), [], $this->get_sortable_columns(), $this->get_primary_column_name() ];
+		$this->items           = $items;
 	}
 
 	/**

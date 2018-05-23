@@ -17,31 +17,31 @@ class PLL_Admin_Filters_Columns {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->links = &$polylang->links;
-		$this->model = &$polylang->model;
+		$this->links       = &$polylang->links;
+		$this->model       = &$polylang->model;
 		$this->filter_lang = &$polylang->filter_lang;
 
 		// add the language and translations columns in 'All Posts', 'All Pages' and 'Media library' panels
 		foreach ( $this->model->get_translated_post_types() as $type ) {
 			// use the latest filter late as some plugins purely overwrite what's done by others :(
 			// specific case for media
-			add_filter( 'manage_' . ( 'attachment' == $type ? 'upload' : 'edit-' . $type ) . '_columns', array( $this, 'add_post_column' ), 100 );
-			add_action( 'manage_' . ( 'attachment' == $type ? 'media' : $type . '_posts' ) . '_custom_column', array( $this, 'post_column' ), 10, 2 );
+			add_filter( 'manage_' . ( 'attachment' == $type ? 'upload' : 'edit-' . $type ) . '_columns', [ $this, 'add_post_column' ], 100 );
+			add_action( 'manage_' . ( 'attachment' == $type ? 'media' : $type . '_posts' ) . '_custom_column', [ $this, 'post_column' ], 10, 2 );
 		}
 
 		// quick edit and bulk edit
-		add_filter( 'quick_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
-		add_filter( 'bulk_edit_custom_box', array( $this, 'quick_edit_custom_box' ), 10, 2 );
+		add_filter( 'quick_edit_custom_box', [ $this, 'quick_edit_custom_box' ], 10, 2 );
+		add_filter( 'bulk_edit_custom_box', [ $this, 'quick_edit_custom_box' ], 10, 2 );
 
 		// adds the language column in the 'Categories' and 'Post Tags' tables
 		foreach ( $this->model->get_translated_taxonomies() as $tax ) {
-			add_filter( 'manage_edit-' . $tax . '_columns', array( $this, 'add_term_column' ) );
-			add_filter( 'manage_' . $tax . '_custom_column', array( $this, 'term_column' ), 10, 3 );
+			add_filter( 'manage_edit-' . $tax . '_columns', [ $this, 'add_term_column' ] );
+			add_filter( 'manage_' . $tax . '_custom_column', [ $this, 'term_column' ], 10, 3 );
 		}
 
 		// ajax responses to update list table rows
-		add_action( 'wp_ajax_pll_update_post_rows', array( $this, 'ajax_update_post_rows' ) );
-		add_action( 'wp_ajax_pll_update_term_rows', array( $this, 'ajax_update_term_rows' ) );
+		add_action( 'wp_ajax_pll_update_post_rows', [ $this, 'ajax_update_post_rows' ] );
+		add_action( 'wp_ajax_pll_update_term_rows', [ $this, 'ajax_update_term_rows' ] );
 	}
 
 	/**
@@ -55,7 +55,7 @@ class PLL_Admin_Filters_Columns {
 	 */
 	protected function add_column( $columns, $before ) {
 		if ( $n = array_search( $before, array_keys( $columns ) ) ) {
-			$end = array_slice( $columns, $n );
+			$end     = array_slice( $columns, $n );
 			$columns = array_slice( $columns, 0, $n );
 		}
 
@@ -109,7 +109,7 @@ class PLL_Admin_Filters_Columns {
 	 */
 	public function post_column( $column, $post_id ) {
 		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save' === $_REQUEST['action'];
-		$lang = $inline ? $this->model->get_language( $_POST['inline_lang_choice'] ) : $this->model->post->get_language( $post_id );
+		$lang   = $inline ? $this->model->get_language( $_POST['inline_lang_choice'] ) : $this->model->post->get_language( $post_id );
 
 		if ( false === strpos( $column, 'language_' ) || ! $lang ) {
 			return;
@@ -149,8 +149,7 @@ class PLL_Admin_Filters_Columns {
 					esc_html( sprintf( __( 'This item is in %s', 'polylang' ), $language->name ) )
 				);
 			}
-		}
-		// link to add a new translation
+		} // link to add a new translation
 		else {
 			echo $this->links->new_post_translation_link( $post_id, $language );
 		}
@@ -170,7 +169,12 @@ class PLL_Admin_Filters_Columns {
 
 			$elements = $this->model->get_languages_list();
 			if ( current_filter() == 'bulk_edit_custom_box' ) {
-				array_unshift( $elements, (object) array( 'slug' => -1, 'name' => __( '&mdash; No Change &mdash;' ) ) );
+				array_unshift(
+					$elements, (object) [
+						'slug' => -1,
+						'name' => __( '&mdash; No Change &mdash;' ),
+					]
+				);
 			}
 
 			$dropdown = new PLL_Walker_Dropdown();
@@ -185,7 +189,12 @@ class PLL_Admin_Filters_Columns {
 					</div>
 				</fieldset>',
 				esc_html__( 'Language', 'polylang' ),
-				$dropdown->walk( $elements, array( 'name' => 'inline_lang_choice', 'id' => '' ) )
+				$dropdown->walk(
+					$elements, [
+						'name' => 'inline_lang_choice',
+						'id' => '',
+					]
+				)
 			);
 		}
 		return $column;
@@ -219,13 +228,13 @@ class PLL_Admin_Filters_Columns {
 		}
 
 		$post_type = isset( $GLOBALS['post_type'] ) ? $GLOBALS['post_type'] : $_REQUEST['post_type']; // 2nd case for quick edit
-		$taxonomy = isset( $GLOBALS['taxonomy'] ) ? $GLOBALS['taxonomy'] : $_REQUEST['taxonomy'];
+		$taxonomy  = isset( $GLOBALS['taxonomy'] ) ? $GLOBALS['taxonomy'] : $_REQUEST['taxonomy'];
 
 		if ( ! post_type_exists( $post_type ) || ! taxonomy_exists( $taxonomy ) ) {
 			return $out;
 		}
 
-		$term_id = (int) $term_id;
+		$term_id  = (int) $term_id;
 		$language = $this->model->get_language( substr( $column, 9 ) );
 
 		if ( $column == $this->get_first_language_column() ) {
@@ -260,9 +269,7 @@ class PLL_Admin_Filters_Columns {
 					esc_html( sprintf( __( 'This item is in %s', 'polylang' ), $language->name ) )
 				);
 			}
-		}
-
-		// link to add a new translation
+		} // link to add a new translation
 		else {
 			$out .= $this->links->new_term_translation_link( $term_id, $taxonomy, $post_type, $language );
 		}
@@ -284,11 +291,11 @@ class PLL_Admin_Filters_Columns {
 
 		check_ajax_referer( 'inlineeditnonce', '_pll_nonce' );
 
-		$x = new WP_Ajax_Response();
-		$wp_list_table = _get_list_table( 'WP_Posts_List_Table', array( 'screen' => $_POST['screen'] ) );
+		$x             = new WP_Ajax_Response();
+		$wp_list_table = _get_list_table( 'WP_Posts_List_Table', [ 'screen' => $_POST['screen'] ] );
 
-		$translations = empty( $_POST['translations'] ) ? array() : explode( ',', $_POST['translations'] ); // collect old translations
-		$translations = array_merge( $translations, array( $_POST['post_id'] ) ); // add current post
+		$translations = empty( $_POST['translations'] ) ? [] : explode( ',', $_POST['translations'] ); // collect old translations
+		$translations = array_merge( $translations, [ $_POST['post_id'] ] ); // add current post
 		$translations = array_map( 'intval', $translations );
 
 		foreach ( $translations as $post_id ) {
@@ -297,7 +304,13 @@ class PLL_Admin_Filters_Columns {
 				ob_start();
 				$wp_list_table->single_row( $post, $level );
 				$data = ob_get_clean();
-				$x->add( array( 'what' => 'row', 'data' => $data, 'supplemental' => array( 'post_id' => $post_id ) ) );
+				$x->add(
+					[
+						'what' => 'row',
+						'data' => $data,
+						'supplemental' => [ 'post_id' => $post_id ],
+					]
+				);
 			}
 		}
 
@@ -318,10 +331,10 @@ class PLL_Admin_Filters_Columns {
 
 		check_ajax_referer( 'pll_language', '_pll_nonce' );
 
-		$x = new WP_Ajax_Response();
-		$wp_list_table = _get_list_table( 'WP_Terms_List_Table', array( 'screen' => $_POST['screen'] ) );
+		$x             = new WP_Ajax_Response();
+		$wp_list_table = _get_list_table( 'WP_Terms_List_Table', [ 'screen' => $_POST['screen'] ] );
 
-		$translations = empty( $_POST['translations'] ) ? array() : explode( ',', $_POST['translations'] ); // collect old translations
+		$translations = empty( $_POST['translations'] ) ? [] : explode( ',', $_POST['translations'] ); // collect old translations
 		$translations = array_merge( $translations, $this->model->term->get_translations( (int) $_POST['term_id'] ) ); // add current translations
 		$translations = array_unique( $translations ); // remove duplicates
 		$translations = array_map( 'intval', $translations );
@@ -332,7 +345,13 @@ class PLL_Admin_Filters_Columns {
 				ob_start();
 				$wp_list_table->single_row( $tag, $level );
 				$data = ob_get_clean();
-				$x->add( array( 'what' => 'row', 'data' => $data, 'supplemental' => array( 'term_id' => $term_id ) ) );
+				$x->add(
+					[
+						'what' => 'row',
+						'data' => $data,
+						'supplemental' => [ 'term_id' => $term_id ],
+					]
+				);
 			}
 		}
 

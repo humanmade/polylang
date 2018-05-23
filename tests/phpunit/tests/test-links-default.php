@@ -14,10 +14,10 @@ class Links_Default_Test extends PLL_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 
-		self::$polylang->options['post_types'] = array(
+		self::$polylang->options['post_types'] = [
 			'cpt' => 'cpt',
-		);
-		register_post_type( 'cpt', array( 'public' => true ) ); // translated custom post type
+		];
+		register_post_type( 'cpt', [ 'public' => true ] ); // translated custom post type
 
 		self::$polylang->options['hide_default'] = 1;
 	}
@@ -54,7 +54,7 @@ class Links_Default_Test extends PLL_UnitTestCase {
 	}
 
 	function test_get_language_from_url() {
-		$_SERVER['HTTP_HOST'] = parse_url( $this->host, PHP_URL_HOST );
+		$_SERVER['HTTP_HOST']   = parse_url( $this->host, PHP_URL_HOST );
 		$_SERVER['REQUEST_URI'] = '/?p=test&lang=fr';
 		$this->assertEquals( 'fr', self::$polylang->links_model->get_language_from_url() );
 	}
@@ -68,7 +68,7 @@ class Links_Default_Test extends PLL_UnitTestCase {
 	// bug fixed in v1.8
 	function test_language_code_in_post_url() {
 		self::$polylang->options['force_lang'] = 1;
-		self::$polylang->filter_links = new PLL_Filters_Links( self::$polylang );
+		self::$polylang->filter_links          = new PLL_Filters_Links( self::$polylang );
 
 		$en = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $en, 'en' );
@@ -79,19 +79,19 @@ class Links_Default_Test extends PLL_UnitTestCase {
 		$this->assertNotContains( 'lang=en', get_permalink( $en ) );
 		$this->assertContains( 'lang=fr', get_permalink( $fr ) );
 
-		$en = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$en = $this->factory->post->create( [ 'post_type' => 'page' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$fr = $this->factory->post->create( [ 'post_type' => 'page' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->assertNotContains( 'lang=en', get_permalink( $en ) );
 		$this->assertContains( 'lang=fr', get_permalink( $fr ) );
 
-		$en = $this->factory->post->create( array( 'post_type' => 'cpt' ) );
+		$en = $this->factory->post->create( [ 'post_type' => 'cpt' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'cpt' ) );
+		$fr = $this->factory->post->create( [ 'post_type' => 'cpt' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->assertNotContains( 'lang=en', get_permalink( $en ) );
@@ -100,19 +100,19 @@ class Links_Default_Test extends PLL_UnitTestCase {
 
 	function test_language_from_post_content() {
 		self::$polylang->options['force_lang'] = 0;
-		self::$polylang->filter_links = new PLL_Filters_Links( self::$polylang );
+		self::$polylang->filter_links          = new PLL_Filters_Links( self::$polylang );
 
 		$fr = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->assertNotContains( 'lang=fr', get_permalink( $fr ) );
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$fr = $this->factory->post->create( [ 'post_type' => 'page' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->assertNotContains( 'lang=fr', get_permalink( $fr ) );
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'cpt' ) );
+		$fr = $this->factory->post->create( [ 'post_type' => 'cpt' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->assertNotContains( 'lang=fr', get_permalink( $fr ) );

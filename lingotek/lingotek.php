@@ -21,47 +21,47 @@ class PLL_Lingotek {
 		$options = get_option( 'polylang' );
 
 		// The Lingotek tab
-		add_filter( 'pll_settings_tabs', array( $this, 'add_tab' ) );
-		add_action( 'pll_settings_active_tab_lingotek', array( $this, 'display_tab' ) );
+		add_filter( 'pll_settings_tabs', [ $this, 'add_tab' ] );
+		add_action( 'pll_settings_active_tab_lingotek', [ $this, 'display_tab' ] );
 
 		if ( PLL_SETTINGS && isset( $_GET['page'] ) && 'mlang_lingotek' == $_GET['page'] ) {
-			add_action( 'admin_print_styles', array( $this, 'print_css' ) );
+			add_action( 'admin_print_styles', [ $this, 'print_css' ] );
 		}
 
 		// The pointer
 		$content = __( 'You’ve just upgraded to the latest version of Polylang! Would you like to automatically translate your website for free?', 'polylang' );
 
-		$buttons = array(
-			array(
+		$buttons = [
+			[
 				'label' => __( 'Close' ),
-			),
-			array(
+			],
+			[
 				'label' => __( 'Learn more', 'polylang' ),
 				'link' => admin_url( 'admin.php?page=mlang&tab=lingotek' ),
-			),
-		);
+			],
+		];
 
 		if ( $link = $this->get_activate_link() ) {
 			$content .= ' ' . __( 'Click on Activate Lingotek to start translating.', 'polylang' );
 
-			$buttons[] = array(
+			$buttons[] = [
 				'label' => __( 'Activate Lingotek', 'polylang' ),
 				'link' => str_replace( '&amp;', '&', $link ), // wp_nonce_url escapes the url for html display. Here we want it for js
-			);
+			];
 		}
 
-		$args = array(
+		$args = [
 			'pointer' => 'pll_lgt',
 			'id' => empty( $options['previous_version'] ) ? 'nav-tab-lingotek' : 'wp-admin-bar-languages',
-			'position' => array(
+			'position' => [
 				'edge' => 'top',
 				'align' => 'left',
-			),
+			],
 			'width' => 400,
 			'title' => __( 'Congratulations!', 'polylang' ),
 			'content' => $content,
 			'buttons' => $buttons,
-		);
+		];
 
 		new PLL_Pointer( $args );
 	}
@@ -87,75 +87,75 @@ class PLL_Lingotek {
 	public function display_tab() {
 		$activate_link = $this->get_activate_link();
 
-		$links = array(
-			'activate' => array(
+		$links = [
+			'activate' => [
 				'label'   => is_plugin_active( self::LINGOTEK ) ? __( 'Activated', 'polylang' ) : __( 'Activate', 'polylang' ),
 				'link'    => $activate_link,
 				'classes' => 'button button-primary' . ( $activate_link ? '' : ' disabled' ),
-			),
-			'translation' => array(
+			],
+			'translation' => [
 				'label'   => __( 'Request Translation', 'polylang' ),
 				'link'    => 'http://www.lingotek.com/wordpress/translation_bid',
 				'new_tab' => true,
 				'classes' => 'button button-primary',
-			),
-			'services' => array(
+			],
+			'services' => [
 				'label'   => __( 'Request Services', 'polylang' ),
 				'link'    => 'http://www.lingotek.com/wordpress/extra_services',
 				'new_tab' => true,
 				'classes' => 'button button-primary',
-			),
-		);
+			],
+		];
 
 		printf( '<p>%s</p>', esc_html__( 'Polylang is now fully integrated with Lingotek, a professional translation management system!', 'polylang' ) );
 
 		$this->box(
 			__( 'Automatically Translate My Site', 'polylang' ),
 			__( 'Polylang is now fully integrated with Lingotek!', 'polylang' ),
-			array(
+			[
 				__( 'Access free machine translation for your site for up to 100,000 characters.', 'polylang' ),
 				__( 'Machine translation is an excellent option if you\'re on a tight budget, looking for near-instant results, and are okay with less-than-perfect quality.', 'polylang' ),
-			),
-			array_intersect_key( $links, array_flip( array( 'activate' ) ) ),
+			],
+			array_intersect_key( $links, array_flip( [ 'activate' ] ) ),
 			'image01.gif'
 		);
 
 		$this->box(
 			__( 'Translation Management System', 'polylang' ),
 			__( 'Do you need to connect to a professional translation management system?', 'polylang' ),
-			array(
+			[
 				__( 'Access free machine translation for your site for up to 100,000 characters.', 'polylang' ),
 				__( 'Access an online translator workbench.', 'polylang' ),
 				__( 'Have linguists compare side-by-side versions of original and translated text.', 'polylang' ),
 				__( 'Save and re-use previously translated material (leverage translation memory (TM)).', 'polylang' ),
-			),
-			array_intersect_key( $links, array_flip( array( 'activate' ) ) ),
+			],
+			array_intersect_key( $links, array_flip( [ 'activate' ] ) ),
 			'image02.png'
 		);
 
 		$this->box(
 			__( 'Professionally Translate My Site', 'polylang' ),
 			__( 'Do you need to professionally translate your site?', 'polylang' ),
-			array(
+			[
 				__( 'Start the process of getting a professional translation bid.', 'polylang' ),
 				__( 'Activate account so Lingotek can get an accurate count of how many words you have on your site and which languages you wish to translate into.', 'polylang' ),
 				__( 'Once activated click on the request translation bid and a certified translation project manager will contact you to give a no obligations translation bid.', 'polylang' ),
-			),
-			array_intersect_key( $links, array_flip( array( 'activate', 'translation' ) ) ),
+			],
+			array_intersect_key( $links, array_flip( [ 'activate', 'translation' ] ) ),
 			'image03.png'
 		);
 
 		$this->box(
 			__( 'Need Extra Services?', 'polylang' ),
 			__( 'Do you need help translating your site?', 'polylang' ),
-			array(
+			[
 				__( 'Start the process of getting extra services.', 'polylang' ),
 				__( 'Do you need someone to run your localization project?', 'polylang' ),
 				__( 'Do you need customized workflows?', 'polylang' ),
 				__( 'Do you have existing Translation Memories you would like to use?', 'polylang' ),
 				__( 'Do you need help creating glossaries and terminologies?', 'polylang' ),
-			),
-			array_intersect_key( $links, array_flip( array( 'activate', 'services' ) ) ),
+			],
+			array_intersect_key( $links, array_flip( [ 'activate', 'services' ] ) ),
 			'image04.png'
 		);
 	}
@@ -288,9 +288,7 @@ class PLL_Lingotek {
 				$plugin = dirname( self::LINGOTEK );
 				return wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin ), 'install-plugin_' . $plugin );
 			}
-		}
-
-		elseif ( current_user_can( 'activate_plugins' ) ) {
+		} elseif ( current_user_can( 'activate_plugins' ) ) {
 			if ( ! is_plugin_active( self::LINGOTEK ) ) {
 				return wp_nonce_url( 'plugins.php?action=activate&plugin=' . self::LINGOTEK, 'activate-plugin_' . self::LINGOTEK );
 			}
@@ -300,4 +298,4 @@ class PLL_Lingotek {
 	}
 }
 
-add_action( 'wp_loaded', array( new PLL_Lingotek(), 'init' ) );
+add_action( 'wp_loaded', [ new PLL_Lingotek(), 'init' ] );

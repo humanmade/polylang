@@ -15,13 +15,13 @@ class PLL_Sync_Tax {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->model = &$polylang->model;
+		$this->model   = &$polylang->model;
 		$this->options = &$polylang->options;
 
-		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
-		add_action( 'pll_save_term', array( $this, 'create_term' ), 10, 3 );
-		add_action( 'pre_delete_term', array( $this, 'pre_delete_term' ) );
-		add_action( 'delete_term', array( $this, 'delete_term' ) );
+		add_action( 'set_object_terms', [ $this, 'set_object_terms' ], 10, 5 );
+		add_action( 'pll_save_term', [ $this, 'create_term' ], 10, 3 );
+		add_action( 'pre_delete_term', [ $this, 'pre_delete_term' ] );
+		add_action( 'delete_term', [ $this, 'delete_term' ] );
 	}
 
 	/**
@@ -37,7 +37,7 @@ class PLL_Sync_Tax {
 	 * @return array List of taxonomy names
 	 */
 	protected function get_taxonomies_to_copy( $sync, $from = null, $to = null, $lang = null ) {
-		$taxonomies = ! $sync || in_array( 'taxonomies', $this->options['sync'] ) ? $this->model->get_translated_taxonomies() : array();
+		$taxonomies = ! $sync || in_array( 'taxonomies', $this->options['sync'] ) ? $this->model->get_translated_taxonomies() : [];
 		if ( ! $sync || in_array( 'post_format', $this->options['sync'] ) ) {
 			$taxonomies[] = 'post_format';
 		}
@@ -70,7 +70,7 @@ class PLL_Sync_Tax {
 	 */
 	protected function maybe_translate_terms( $object_id, $terms, $taxonomy, $lang ) {
 		if ( is_array( $terms ) && $this->model->is_translated_taxonomy( $taxonomy ) ) {
-			$newterms = array();
+			$newterms = [];
 
 			// Convert to term ids if we got tag names
 			$strings = array_map( 'is_string', $terms );
@@ -113,7 +113,7 @@ class PLL_Sync_Tax {
 	 */
 	public function set_object_terms( $object_id, $terms, $tt_ids, $taxonomy, $append ) {
 		static $avoid_recursion = false;
-		$taxonomy_object = get_taxonomy( $taxonomy );
+		$taxonomy_object        = get_taxonomy( $taxonomy );
 
 		// Make sure that the taxonomy is registered for a post type
 		if ( ! $avoid_recursion && array_filter( $taxonomy_object->object_type, 'post_type_exists' ) ) {
@@ -159,7 +159,7 @@ class PLL_Sync_Tax {
 	 * @param string $lang  Language slug
 	 */
 	public function copy( $from, $to, $lang ) {
-		remove_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 6 );
+		remove_action( 'set_object_terms', [ $this, 'set_object_terms' ], 10, 6 );
 
 		// Get taxonomies to sync for this post type
 		$taxonomies = array_intersect( get_post_taxonomies( $from ), $this->get_taxonomies_to_copy( false, $from, $to, $lang ) );
@@ -170,7 +170,7 @@ class PLL_Sync_Tax {
 		// Copy
 		foreach ( $taxonomies as $tax ) {
 			if ( $terms = get_the_terms( $from, $tax ) ) {
-				$terms = array_map( 'intval', wp_list_pluck( $terms, 'term_id' ) );
+				$terms    = array_map( 'intval', wp_list_pluck( $terms, 'term_id' ) );
 				$newterms = $this->maybe_translate_terms( $from, $terms, $tax, $lang );
 
 				if ( ! empty( $newterms ) ) {
@@ -179,7 +179,7 @@ class PLL_Sync_Tax {
 			}
 		}
 
-		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 6 );
+		add_action( 'set_object_terms', [ $this, 'set_object_terms' ], 10, 6 );
 	}
 
 	/**
@@ -194,24 +194,26 @@ class PLL_Sync_Tax {
 	public function create_term( $term_id, $taxonomy, $translations ) {
 		if ( doing_action( 'create_term' ) && in_array( $taxonomy, $this->get_taxonomies_to_copy( true ) ) ) {
 			// Get all posts associated to the translated terms
-			$tr_posts = get_posts( array(
-				'numberposts' => -1,
-				'nopaging'    => true,
-				'post_type'   => 'any',
-				'post_status' => 'any',
-				'fields'      => 'ids',
-				'tax_query'   => array(
-					array(
-						'taxonomy'         => $taxonomy,
-						'field'            => 'id',
-						'terms'            => array_merge( array( $term_id ), array_values( $translations ) ),
-						'include_children' => false,
-					),
-				),
-			) );
+			$tr_posts = get_posts(
+				[
+					'numberposts' => -1,
+					'nopaging'    => true,
+					'post_type'   => 'any',
+					'post_status' => 'any',
+					'fields'      => 'ids',
+					'tax_query'   => [
+						[
+							'taxonomy'         => $taxonomy,
+							'field'            => 'id',
+							'terms'            => array_merge( [ $term_id ], array_values( $translations ) ),
+							'include_children' => false,
+						],
+					],
+				]
+			);
 
-			$lang = $this->model->term->get_language( $term_id ); // Language of the created term
-			$posts = array();
+			$lang  = $this->model->term->get_language( $term_id ); // Language of the created term
+			$posts = [];
 
 			foreach ( $tr_posts as $post_id ) {
 				$post = $this->model->post->get_translation( $post_id, $lang );
@@ -236,7 +238,7 @@ class PLL_Sync_Tax {
 	 * @since 2.3.2
 	 */
 	public function pre_delete_term() {
-		remove_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
+		remove_action( 'set_object_terms', [ $this, 'set_object_terms' ], 10, 5 );
 	}
 
 	/**
@@ -245,6 +247,6 @@ class PLL_Sync_Tax {
 	 * @since 2.3.2
 	 */
 	public function delete_term() {
-		add_action( 'set_object_terms', array( $this, 'set_object_terms' ), 10, 5 );
+		add_action( 'set_object_terms', [ $this, 'set_object_terms' ], 10, 5 );
 	}
 }

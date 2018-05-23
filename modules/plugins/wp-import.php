@@ -6,7 +6,7 @@
  * @since 1.2
  */
 class PLL_WP_Import extends WP_Import {
-	public $post_translations = array();
+	public $post_translations = [];
 
 	/**
 	 * overrides WP_Import::process_terms to remap terms translations
@@ -14,7 +14,7 @@ class PLL_WP_Import extends WP_Import {
 	 * @since 1.2
 	 */
 	function process_terms() {
-		$term_translations = array();
+		$term_translations = [];
 
 		// store this for future usage as parent function unsets $this->terms
 		foreach ( $this->terms as $term ) {
@@ -35,7 +35,7 @@ class PLL_WP_Import extends WP_Import {
 
 		if ( ( $options = get_option( 'polylang' ) ) && empty( $options['default_lang'] ) && ( $languages = PLL()->model->get_languages_list() ) ) {
 			// assign the default language if importer created the first language
-			$default_lang = reset( $languages );
+			$default_lang            = reset( $languages );
 			$options['default_lang'] = $default_lang->slug;
 			update_option( 'polylang', $options );
 		}
@@ -51,7 +51,7 @@ class PLL_WP_Import extends WP_Import {
 	 * @since 1.2
 	 */
 	function process_posts() {
-		$menu_items = $mo_posts = array();
+		$menu_items = $mo_posts = [];
 
 		// store this for future usage as parent function unset $this->posts
 		foreach ( $this->posts as $post ) {
@@ -131,11 +131,13 @@ class PLL_WP_Import extends WP_Import {
 			$trs = array_unique( $trs );
 
 			// make sure we don't attempt to insert already existing term relationships
-			$existing_trs = $wpdb->get_results( "
+			$existing_trs = $wpdb->get_results(
+				"
 				SELECT tr.object_id, tr.term_taxonomy_id FROM $wpdb->term_relationships AS tr
 				INNER JOIN $wpdb->term_taxonomy AS tt ON tr.term_taxonomy_id = tt.term_taxonomy_id
 				WHERE tt.taxonomy IN ( 'term_language', 'term_translations' )
-			" );
+			"
+			);
 
 			foreach ( $existing_trs as $key => $tr ) {
 				$existing_trs[ $key ] = $wpdb->prepare( '( %d, %d )', $tr->object_id, $tr->term_taxonomy_id );
@@ -161,8 +163,8 @@ class PLL_WP_Import extends WP_Import {
 		global $wpdb;
 
 		foreach ( $terms as $term ) {
-			$translations = unserialize( $term['term_description'] );
-			$new_translations = array();
+			$translations     = unserialize( $term['term_description'] );
+			$new_translations = [];
 
 			foreach ( $translations as $slug => $old_id ) {
 				if ( $old_id && ! empty( $processed_objects[ $old_id ] ) ) {
@@ -172,14 +174,16 @@ class PLL_WP_Import extends WP_Import {
 
 			if ( ! empty( $new_translations ) ) {
 				$u['case'][] = $wpdb->prepare( 'WHEN %d THEN %s', $this->processed_terms[ $term['term_id'] ], serialize( $new_translations ) );
-				$u['in'][] = (int) $this->processed_terms[ $term['term_id'] ];
+				$u['in'][]   = (int) $this->processed_terms[ $term['term_id'] ];
 			}
 		}
 
 		if ( ! empty( $u ) ) {
-			$wpdb->query( "UPDATE $wpdb->term_taxonomy
+			$wpdb->query(
+				"UPDATE $wpdb->term_taxonomy
 				SET description = ( CASE term_id " . implode( ' ', $u['case'] ) . ' END )
-				WHERE term_id IN ( ' . implode( ',', $u['in'] ) . ' )' );
+				WHERE term_id IN ( ' . implode( ',', $u['in'] ) . ' )'
+			);
 		}
 	}
 }

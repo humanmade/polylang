@@ -26,13 +26,23 @@ class Admin_Static_Pages_Test extends PLL_UnitTestCase {
 	}
 
 	function test_deactivate_editor_for_page_for_posts() {
-		$en = $this->factory->post->create( array( 'post_type' => 'page', 'post_content' => '' ) );
+		$en = $this->factory->post->create(
+			[
+				'post_type' => 'page',
+				'post_content' => '',
+			]
+		);
 		self::$polylang->model->post->set_language( $en, 'en' );
 
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_for_posts', $en );
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'page', 'post_content' => '' ) ); // Content must be empty to deactivate editor.
+		$fr = $this->factory->post->create(
+			[
+				'post_type' => 'page',
+				'post_content' => '',
+			]
+		); // Content must be empty to deactivate editor.
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr' ) );
 
@@ -49,19 +59,34 @@ class Admin_Static_Pages_Test extends PLL_UnitTestCase {
 
 	// Bug introduced in 2.2.2 and fixed in 2.2.3
 	function test_editor_on_page() {
-		$en = $this->factory->post->create( array( 'post_type' => 'page', 'post_content' => '' ) );
+		$en = $this->factory->post->create(
+			[
+				'post_type' => 'page',
+				'post_content' => '',
+			]
+		);
 		self::$polylang->model->post->set_language( $en, 'en' );
 
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_for_posts', $en );
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'page', 'post_content' => '' ) ); // Content must be empty to deactivate editor.
+		$fr = $this->factory->post->create(
+			[
+				'post_type' => 'page',
+				'post_content' => '',
+			]
+		); // Content must be empty to deactivate editor.
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr' ) );
 
 		self::$polylang->model->clean_languages_cache();
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'page', 'post_content' => '' ) ); // Content must be empty to deactivate editor.
+		$fr = $this->factory->post->create(
+			[
+				'post_type' => 'page',
+				'post_content' => '',
+			]
+		); // Content must be empty to deactivate editor.
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' );

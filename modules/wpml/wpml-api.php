@@ -17,16 +17,16 @@ class PLL_WPML_API {
 	public function __construct() {
 		// Site Wide Language informations
 
-		add_filter( 'wpml_active_languages', array( $this, 'wpml_active_languages' ), 10, 2 );
-		add_filter( 'wpml_display_language_names', array( $this, 'wpml_display_language_names' ), 10, 5 );
+		add_filter( 'wpml_active_languages', [ $this, 'wpml_active_languages' ], 10, 2 );
+		add_filter( 'wpml_display_language_names', [ $this, 'wpml_display_language_names' ], 10, 5 );
 		// wpml_translated_language_name      => not applicable
 		add_filter( 'wpml_current_language', 'pll_current_language', 10, 0 );
 		add_filter( 'wpml_default_language', 'pll_default_language', 10, 0 );
 		// wpml_add_language_selector         => not implemented
 		// wpml_footer_language_selector      => not applicable
-		add_action( 'wpml_add_language_form_field', array( $this, 'wpml_add_language_form_field' ) );
-		add_filter( 'wpml_language_is_active', array( $this, 'wpml_language_is_active' ), 10, 2 );
-		add_filter( 'wpml_is_rtl', array( $this, 'wpml_is_rtl' ) );
+		add_action( 'wpml_add_language_form_field', [ $this, 'wpml_add_language_form_field' ] );
+		add_filter( 'wpml_language_is_active', [ $this, 'wpml_language_is_active' ], 10, 2 );
+		add_filter( 'wpml_is_rtl', [ $this, 'wpml_is_rtl' ] );
 		// wpml_language_form_input_field     => See wpml_add_language_form_field
 		// wpml_language_has_switched         => not implemented
 
@@ -34,7 +34,7 @@ class PLL_WPML_API {
 
 		add_filter( 'wpml_post_language_details', 'wpml_get_language_information', 10, 2 );
 		// wpml_switch_language               => not implemented
-		add_filter( 'wpml_element_language_code', array( $this, 'wpml_element_language_code' ), 10, 3 );
+		add_filter( 'wpml_element_language_code', [ $this, 'wpml_element_language_code' ], 10, 3 );
 		// wpml_element_language_details      => not applicable
 
 		// Retrieving Localized Content
@@ -42,17 +42,17 @@ class PLL_WPML_API {
 		add_filter( 'wpml_home_url', 'pll_home_url', 10, 0 );
 		add_filter( 'wpml_element_link', 'icl_link_to_element', 10, 7 );
 		add_filter( 'wpml_object_id', 'icl_object_id', 10, 4 );
-		add_filter( 'wpml_translate_single_string', array( $this, 'wpml_translate_single_string' ), 10, 4 );
+		add_filter( 'wpml_translate_single_string', [ $this, 'wpml_translate_single_string' ], 10, 4 );
 		// wpml_translate_string              => not applicable
 		// wpml_unfiltered_admin_string       => not implemented
-		add_filter( 'wpml_permalink', array( $this, 'wpml_permalink' ), 10, 2 );
+		add_filter( 'wpml_permalink', [ $this, 'wpml_permalink' ], 10, 2 );
 		// wpml_elements_without_translations => not implemented
-		add_filter( 'wpml_get_translated_slug', array( $this, 'wpml_get_translated_slug' ), 10, 3 );
+		add_filter( 'wpml_get_translated_slug', [ $this, 'wpml_get_translated_slug' ], 10, 3 );
 
 		// Finding the Translation State of Content
 
 		// wpml_element_translation_type
-		add_filter( 'wpml_element_has_translations', array( $this, 'wpml_element_has_translations' ), 10, 3 );
+		add_filter( 'wpml_element_has_translations', [ $this, 'wpml_element_has_translations' ], 10, 3 );
 		// wpml_master_post_from_duplicate    => not applicable
 		// wpml_post_duplicates               => not applicable
 
@@ -122,7 +122,7 @@ class PLL_WPML_API {
 	 * @since 2.0
 	 */
 	public function wpml_add_language_form_field() {
-		$lang = pll_current_language();
+		$lang  = pll_current_language();
 		$field = sprintf( '<input type="hidden" name="lang" value="%s" />', esc_attr( $lang ) );
 		$field = apply_filters( 'wpml_language_form_input_field', $field, $lang );
 		echo $field;
@@ -164,8 +164,8 @@ class PLL_WPML_API {
 	 * @return string
 	 */
 	public function wpml_element_language_code( $language_code, $args ) {
-		$type = $args['element_type'];
-		$id = $args['element_id'];
+		$type     = $args['element_type'];
+		$id       = $args['element_id'];
 		$pll_type = ( 'post' == $type || pll_is_translated_post_type( $type ) ) ? 'post' : ( 'term' == $type || pll_is_translated_taxonomy( $type ) ? 'term' : false );
 		if ( 'term' === $pll_type && $term = wpcom_vip_get_term_by( 'term_taxonomy_id', $id ) ) {
 			$id = $term->term_id;
@@ -240,7 +240,7 @@ class PLL_WPML_API {
 	 * @return bool
 	 */
 	public function wpml_element_has_translations( $null, $id, $type ) {
-		$pll_type = ( 'post' == $type || pll_is_translated_post_type( $type ) ) ? 'post' : ( 'term' == $type || pll_is_translated_taxonomy( $type ) ? 'term' : false );
+		$pll_type                           = ( 'post' == $type || pll_is_translated_post_type( $type ) ) ? 'post' : ( 'term' == $type || pll_is_translated_taxonomy( $type ) ? 'term' : false );
 		return ( $pll_type && $translations = call_user_func( "pll_get_{$pll_type}_translations", $id ) ) ? count( $translations ) > 1 : false;
 	}
 }

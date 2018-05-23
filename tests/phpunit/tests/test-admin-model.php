@@ -10,13 +10,13 @@ class Admin_Model_Test extends PLL_UnitTestCase {
 	}
 
 	function update_language( $lang, $args ) {
-		foreach ( array( 'name', 'slug', 'locale', 'term_group' ) as $key ) {
+		foreach ( [ 'name', 'slug', 'locale', 'term_group' ] as $key ) {
 			$defaults[ $key ] = $lang->$key;
 		}
-		$args['rtl'] = $lang->is_rtl;
-		$args['flag'] = $lang->flag_code;
+		$args['rtl']     = $lang->is_rtl;
+		$args['flag']    = $lang->flag_code;
 		$args['lang_id'] = $lang->term_id;
-		$args = wp_parse_args( $args, $defaults );
+		$args            = wp_parse_args( $args, $defaults );
 		self::$polylang->model->update_language( $args );
 		unset( $GLOBALS['wp_settings_errors'] ); // clean "errors"
 	}
@@ -30,12 +30,12 @@ class Admin_Model_Test extends PLL_UnitTestCase {
 
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr' ) );
 
-		$this->update_language( self::$polylang->model->get_language( 'en' ), array( 'slug' => 'eng' ) );
+		$this->update_language( self::$polylang->model->get_language( 'en' ), [ 'slug' => 'eng' ] );
 		$this->assertFalse( self::$polylang->model->get_language( 'en' ) );
 		$this->assertEquals( 'eng', self::$polylang->options['default_lang'] );
 		$this->assertEquals( 'eng', self::$polylang->model->post->get_language( $en )->slug );
 
-		$this->update_language( self::$polylang->model->get_language( 'fr' ), array( 'slug' => 'fra' ) );
+		$this->update_language( self::$polylang->model->get_language( 'fr' ), [ 'slug' => 'fra' ] );
 		$this->assertEquals( $fr, self::$polylang->model->post->get( $en, 'fra' ) );
 		$this->assertEquals( $en, self::$polylang->model->post->get( $fr, 'eng' ) );
 
@@ -54,27 +54,27 @@ class Admin_Model_Test extends PLL_UnitTestCase {
 		self::$polylang->model->post->set_language( $post_id, 'fr' );
 
 		// 2 posts in non translated post types
-		$this->factory->post->create( array( 'post_type' => 'nav_menu_item' ) );
-		$this->factory->post->create( array( 'post_type' => 'cpt' ) );
+		$this->factory->post->create( [ 'post_type' => 'nav_menu_item' ] );
+		$this->factory->post->create( [ 'post_type' => 'cpt' ] );
 
 		// 2 posts without language
 		$expected['posts'][] = $this->factory->post->create();
-		$expected['posts'][] = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$expected['posts'][] = $this->factory->post->create( [ 'post_type' => 'page' ] );
 
 		// 2 terms with language
-		$term_id = $this->factory->term->create( array( 'taxonomy' => 'category' ) );
+		$term_id = $this->factory->term->create( [ 'taxonomy' => 'category' ] );
 		self::$polylang->model->term->set_language( $term_id, 'en' );
 
-		$term_id = $this->factory->term->create( array( 'taxonomy' => 'post_tag' ) );
+		$term_id = $this->factory->term->create( [ 'taxonomy' => 'post_tag' ] );
 		self::$polylang->model->term->set_language( $term_id, 'fr' );
 
 		// 2 terms in non translated taxonomies
-		$this->factory->term->create( array( 'taxonomy' => 'nav_menu' ) );
-		$this->factory->term->create( array( 'taxonomy' => 'tax' ) );
+		$this->factory->term->create( [ 'taxonomy' => 'nav_menu' ] );
+		$this->factory->term->create( [ 'taxonomy' => 'tax' ] );
 
 		// 2 terms without language
-		$expected['terms'][] = $this->factory->term->create( array( 'taxonomy' => 'category' ) );
-		$expected['terms'][] = $this->factory->term->create( array( 'taxonomy' => 'post_tag' ) );
+		$expected['terms'][] = $this->factory->term->create( [ 'taxonomy' => 'category' ] );
+		$expected['terms'][] = $this->factory->term->create( [ 'taxonomy' => 'post_tag' ] );
 
 		$nolang = self::$polylang->model->get_objects_with_no_lang();
 
@@ -87,20 +87,30 @@ class Admin_Model_Test extends PLL_UnitTestCase {
 	}
 
 	function test_set_language_in_mass_for_posts() {
-		foreach ( $this->factory->post->create_many( 2, array() ) as $p ) {
+		foreach ( $this->factory->post->create_many( 2, [] ) as $p ) {
 			self::$polylang->model->post->set_language( $p, 'en' );
 		}
 
-		foreach ( $this->factory->post->create_many( 2, array() ) as $p ) {
+		foreach ( $this->factory->post->create_many( 2, [] ) as $p ) {
 			self::$polylang->model->post->set_language( $p, 'fr' );
 		}
 
 		$posts = $this->factory->post->create_many( 2 );
 		self::$polylang->model->set_language_in_mass( 'post', $posts, 'fr' );
 
-		$posts = get_posts( array( 'fields' => 'ids', 'posts_per_page' => -1 ) );
-		$languages = wp_list_pluck( array_map( array( self::$polylang->model->post, 'get_language' ), $posts ), 'slug' );
-		$this->assertEquals( array( 'fr' => 4, 'en' => 2 ), array_count_values( $languages ) );
+		$posts     = get_posts(
+			[
+				'fields' => 'ids',
+				'posts_per_page' => -1,
+			]
+		);
+		$languages = wp_list_pluck( array_map( [ self::$polylang->model->post, 'get_language' ], $posts ), 'slug' );
+		$this->assertEquals(
+			[
+				'fr' => 4,
+				'en' => 2,
+			], array_count_values( $languages )
+		);
 		$this->assertEmpty( get_terms( 'post_translations' ) ); // no translation group for posts
 	}
 
@@ -116,9 +126,19 @@ class Admin_Model_Test extends PLL_UnitTestCase {
 		$tags = $this->factory->tag->create_many( 2 );
 		self::$polylang->model->set_language_in_mass( 'term', $tags, 'fr' );
 
-		$terms = get_terms( 'post_tag', array( 'hide_empty' => false, 'fields' => 'ids' ) );
-		$languages = wp_list_pluck( array_map( array( self::$polylang->model->term, 'get_language' ), $terms ), 'slug' );
-		$this->assertEquals( array( 'fr' => 4, 'en' => 2 ), array_count_values( $languages ) );
+		$terms     = get_terms(
+			'post_tag', [
+				'hide_empty' => false,
+				'fields' => 'ids',
+			]
+		);
+		$languages = wp_list_pluck( array_map( [ self::$polylang->model->term, 'get_language' ], $terms ), 'slug' );
+		$this->assertEquals(
+			[
+				'fr' => 4,
+				'en' => 2,
+			], array_count_values( $languages )
+		);
 		$this->assertCount( 7, get_terms( 'term_translations' ) ); // one translation group per tag + 1 for default categories
 	}
 }

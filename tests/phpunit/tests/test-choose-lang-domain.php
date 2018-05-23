@@ -20,19 +20,19 @@ class Choose_Lang_Domain_Test extends PLL_UnitTestCase {
 
 		$this->server = $_SERVER; // save this
 
-		$this->hosts = array(
+		$this->hosts = [
 			'en' => 'http://example.org',
 			'fr' => 'http://example.fr',
 			'de' => 'http://example.de',
-		);
+		];
 
 		self::$polylang->options['hide_default'] = 1;
-		self::$polylang->options['force_lang'] = 3;
-		self::$polylang->options['domains'] = $this->hosts;
+		self::$polylang->options['force_lang']   = 3;
+		self::$polylang->options['domains']      = $this->hosts;
 
 		// switch to pretty permalinks
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->set_permalink_structure( $this->structure );
 
 		self::$polylang->model->post->register_taxonomy(); // needs this for 'lang' query var
@@ -55,8 +55,8 @@ class Choose_Lang_Domain_Test extends PLL_UnitTestCase {
 	// overrides WP_UnitTestCase::go_to
 	function go_to( $url ) {
 		// copy paste of WP_UnitTestCase::go_to
-		$_GET = $_POST = array();
-		foreach ( array( 'query_string', 'id', 'postdata', 'authordata', 'day', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages', 'pagenow' ) as $v ) {
+		$_GET = $_POST = [];
+		foreach ( [ 'query_string', 'id', 'postdata', 'authordata', 'day', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages', 'pagenow' ] as $v ) {
 			if ( isset( $GLOBALS[ $v ] ) ) {
 				unset( $GLOBALS[ $v ] );
 			}
@@ -90,8 +90,8 @@ class Choose_Lang_Domain_Test extends PLL_UnitTestCase {
 
 		// restart copy paste of WP_UnitTestCase::go_to
 		$GLOBALS['wp_the_query'] = new WP_Query();
-		$GLOBALS['wp_query'] = $GLOBALS['wp_the_query'];
-		$GLOBALS['wp'] = new WP();
+		$GLOBALS['wp_query']     = $GLOBALS['wp_the_query'];
+		$GLOBALS['wp']           = new WP();
 		_cleanup_query_vars();
 
 		$GLOBALS['wp']->main( $parts['query'] );
@@ -107,21 +107,21 @@ class Choose_Lang_Domain_Test extends PLL_UnitTestCase {
 		$this->go_to( $this->hosts['fr'] );
 		$this->assertEquals( 'fr', self::$polylang->curlang->slug );
 		$this->assertQueryTrue( 'is_home', 'is_front_page' );
-		$this->assertEquals( array( get_post( $fr ) ), $GLOBALS['wp_query']->posts ); // bug introduced in 1.8.0.1, fixed in 1.8.0.2
+		$this->assertEquals( [ get_post( $fr ) ], $GLOBALS['wp_query']->posts ); // bug introduced in 1.8.0.1, fixed in 1.8.0.2
 		$this->assertEquals( trailingslashit( $this->hosts['en'] ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
 
 		$this->go_to( $this->hosts['en'] );
 		$this->assertEquals( 'en', self::$polylang->curlang->slug );
 		$this->assertQueryTrue( 'is_home', 'is_front_page' );
-		$this->assertEquals( array( get_post( $en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $en ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEquals( trailingslashit( $this->hosts['fr'] ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'fr' ) ) );
 	}
 
 	function test_single_post() {
-		$en = $this->factory->post->create( array( 'post_title' => 'test' ) );
+		$en = $this->factory->post->create( [ 'post_title' => 'test' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_title' => 'essai' ) );
+		$fr = $this->factory->post->create( [ 'post_title' => 'essai' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->go_to( $this->hosts['fr'] . '/essai/' );

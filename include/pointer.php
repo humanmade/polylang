@@ -33,7 +33,7 @@ class PLL_Pointer {
 	 */
 	public function __construct( $args ) {
 		$this->args = $args;
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
 	/**
@@ -48,7 +48,7 @@ class PLL_Pointer {
 		}
 
 		// Add pointer javascript
-		add_action( 'admin_print_footer_scripts', array( $this, 'print_js' ) );
+		add_action( 'admin_print_footer_scripts', [ $this, 'print_js' ] );
 
 		wp_enqueue_style( 'wp-pointer' );
 		wp_enqueue_script( 'wp-pointer' );
@@ -70,7 +70,8 @@ class PLL_Pointer {
 
 			// all the buttons use the standard WP ajax action to remember the pointer has been dismissed
 			foreach ( $this->args['buttons'] as $button ) {
-				$b .= sprintf( "
+				$b .= sprintf(
+					"
 					$( '<a>' ).addClass( '%s' ).html( '%s' ).css( 'margin-left', '10px' ).click( function() {
 						$.post( ajaxurl, {
 							pointer: '%s',
@@ -87,7 +88,8 @@ class PLL_Pointer {
 			}
 		}
 
-		$js = sprintf( "
+		$js = sprintf(
+			"
 			//<![CDATA[
 			jQuery( document ).ready( function( $ ) {
 				var pointer = $( '#%s' ).pointer( {

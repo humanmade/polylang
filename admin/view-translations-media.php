@@ -29,9 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						esc_attr( $translation_id ),
 						$this->links->edit_post_translation_link( $translation_id )
 					);
-				}
-
-				// No translation
+				} // No translation
 				else {
 					echo $this->links->new_post_translation_link( $post_id, $language );
 				}

@@ -20,7 +20,7 @@ class PLL_Frontend_Links extends PLL_Links {
 		parent::__construct( $polylang );
 
 		$this->curlang = &$polylang->curlang;
-		$this->cache = new PLL_Cache();
+		$this->cache   = new PLL_Cache();
 
 	}
 
@@ -54,20 +54,16 @@ class PLL_Frontend_Links extends PLL_Links {
 		 * @param int    $queried_object_id Queried object id
 		 */
 		if ( ! $url = apply_filters( 'pll_pre_translation_url', '', $language, $queried_object_id ) ) {
-			$qv = $wp_query->query_vars;
+			$qv   = $wp_query->query_vars;
 			$hide = $this->options['default_lang'] == $language->slug && $this->options['hide_default'];
 
 			// Post and attachment
 			if ( is_single() && ( $this->options['media_support'] || ! is_attachment() ) && ( $id = $this->model->post->get( $queried_object_id, $language ) ) && $this->current_user_can_read( $id ) ) {
 				$url = get_permalink( $id );
-			}
-
-			// Page
+			} // Page
 			elseif ( is_page() && ( $id = $this->model->post->get( $queried_object_id, $language ) ) && $this->current_user_can_read( $id ) ) {
 				$url = get_page_link( $id );
-			}
-
-			elseif ( is_search() ) {
+			} elseif ( is_search() ) {
 				$url = $this->get_archive_url( $language );
 
 				// Special case for search filtered by translated taxonomies: taxonomy terms are translated in the translation url
@@ -75,34 +71,39 @@ class PLL_Frontend_Links extends PLL_Links {
 					foreach ( $wp_query->tax_query->queries as $tax_query ) {
 						if ( ! empty( $tax_query['taxonomy'] ) && $this->model->is_translated_taxonomy( $tax_query['taxonomy'] ) ) {
 
-							$tax = get_taxonomy( $tax_query['taxonomy'] );
-							$terms = get_terms( $tax->name, array( 'fields' => 'id=>slug' ) ); // Filtered by current language
+							$tax   = get_taxonomy( $tax_query['taxonomy'] );
+							$terms = get_terms( $tax->name, [ 'fields' => 'id=>slug' ] ); // Filtered by current language
 
 							foreach ( $tax_query['terms'] as $slug ) {
 								$term_id = array_search( $slug, $terms ); // What is the term_id corresponding to taxonomy term?
 								if ( $term_id && $term_id = $this->model->term->get_translation( $term_id, $language ) ) { // Get the translated term_id
 									$term = get_term( $term_id, $tax->name );
-									$url = str_replace( $slug, $term->slug, $url );
+									$url  = str_replace( $slug, $term->slug, $url );
 								}
 							}
 						}
 					}
 				}
-			}
-
-			// Translated taxonomy
+			} // Translated taxonomy
 			// Take care that is_tax() is false for categories and tags
 			elseif ( ( is_category() || is_tag() || is_tax() ) && ( $term = get_queried_object() ) && $this->model->is_translated_taxonomy( $term->taxonomy ) ) {
 				$lang = $this->model->term->get_language( $term->term_id );
 
 				if ( ! $lang || $language->slug == $lang->slug ) {
 					$url = wpcom_vip_get_term_link( $term, $term->taxonomy ); // Self link
-				}
-
-				elseif ( $tr_id = $this->model->term->get_translation( $term->term_id, $language ) ) {
+				} elseif ( $tr_id = $this->model->term->get_translation( $term->term_id, $language ) ) {
 					if ( $tr_term = get_term( $tr_id, $term->taxonomy ) ) {
 						// Check if translated term ( or children ) have posts
-						$count = $tr_term->count || ( is_taxonomy_hierarchical( $term->taxonomy ) && array_sum( wp_list_pluck( get_terms( $term->taxonomy, array( 'child_of' => $tr_term->term_id, 'lang' => $language->slug ) ), 'count' ) ) );
+						$count = $tr_term->count || ( is_taxonomy_hierarchical( $term->taxonomy ) && array_sum(
+							wp_list_pluck(
+								get_terms(
+									$term->taxonomy, [
+										'child_of' => $tr_term->term_id,
+										'lang' => $language->slug,
+									]
+								), 'count'
+							)
+						) );
 
 						/**
 						 * Filter whether to hide an archive translation url
@@ -114,17 +115,15 @@ class PLL_Frontend_Links extends PLL_Links {
 						 * @param string $lang The language code of the translation
 						 * @param array  $args Arguments used to evaluated the number of posts in the archive
 						 */
-						if ( ! apply_filters( 'pll_hide_archive_translation_url', ! $count, $language->slug, array( 'taxonomy' => $term->taxonomy ) ) ) {
+						if ( ! apply_filters( 'pll_hide_archive_translation_url', ! $count, $language->slug, [ 'taxonomy' => $term->taxonomy ] ) ) {
 							$url = wpcom_vip_get_term_link( $tr_term, $term->taxonomy );
 						}
 					}
 				}
-			}
-
-			// Post type archive
+			} // Post type archive
 			elseif ( is_post_type_archive() ) {
 				if ( $this->model->is_translated_post_type( $qv['post_type'] ) ) {
-					$args = array( 'post_type' => $qv['post_type'] );
+					$args  = [ 'post_type' => $qv['post_type'] ];
 					$count = $this->model->count_posts( $language, $args );
 
 					/** This filter is documented in frontend/frontend-links.php */
@@ -132,22 +131,18 @@ class PLL_Frontend_Links extends PLL_Links {
 						$url = $this->get_archive_url( $language );
 					}
 				}
-			}
-
-			// Other archives
+			} // Other archives
 			elseif ( is_archive() ) {
-				$keys = array( 'post_type', 'm', 'year', 'monthnum', 'day', 'author', 'author_name' );
-				$keys = array_merge( $keys, $this->model->get_filtered_taxonomies_query_vars() );
-				$args = array_intersect_key( $qv, array_flip( $keys ) );
+				$keys  = [ 'post_type', 'm', 'year', 'monthnum', 'day', 'author', 'author_name' ];
+				$keys  = array_merge( $keys, $this->model->get_filtered_taxonomies_query_vars() );
+				$args  = array_intersect_key( $qv, array_flip( $keys ) );
 				$count = $this->model->count_posts( $language, $args );
 
 				/** This filter is documented in frontend/frontend-links.php */
 				if ( ! apply_filters( 'pll_hide_archive_translation_url', ! $count, $language->slug, $args ) ) {
 					$url = $this->get_archive_url( $language );
 				}
-			}
-
-			// Front page when it is the list of posts
+			} // Front page when it is the list of posts
 			elseif ( is_front_page() ) {
 				$url = $this->get_home_url( $language );
 			}

@@ -17,13 +17,13 @@ class PLL_WPSEO {
 		}
 
 		if ( PLL() instanceof PLL_Frontend ) {
-			add_filter( 'option_wpseo_titles', array( $this, 'wpseo_translate_titles' ) );
+			add_filter( 'option_wpseo_titles', [ $this, 'wpseo_translate_titles' ] );
 
 			// Reloads options once the language has been defined to enable translations
 			// Useful only when the language is set from content
 			if ( version_compare( WPSEO_VERSION, '7.0', '<' ) && did_action( 'wp_loaded' ) ) {
 				$wpseo_front = WPSEO_Frontend::get_instance();
-				$options = WPSEO_Options::get_option_names();
+				$options     = WPSEO_Options::get_option_names();
 				foreach ( $options as $opt ) {
 					$wpseo_front->options = array_merge( $wpseo_front->options, (array) get_option( $opt ) );
 				}
@@ -32,33 +32,33 @@ class PLL_WPSEO {
 			// Filters sitemap queries to remove inactive language or to get
 			// one sitemap per language when using multiple domains or subdomains
 			// because WPSEO does not accept several domains or subdomains in one sitemap
-			add_filter( 'wpseo_posts_join', array( $this, 'wpseo_posts_join' ), 10, 2 );
-			add_filter( 'wpseo_posts_where', array( $this, 'wpseo_posts_where' ), 10, 2 );
-			add_filter( 'wpseo_typecount_join', array( $this, 'wpseo_posts_join' ), 10, 2 );
-			add_filter( 'wpseo_typecount_where', array( $this, 'wpseo_posts_where' ), 10, 2 );
+			add_filter( 'wpseo_posts_join', [ $this, 'wpseo_posts_join' ], 10, 2 );
+			add_filter( 'wpseo_posts_where', [ $this, 'wpseo_posts_where' ], 10, 2 );
+			add_filter( 'wpseo_typecount_join', [ $this, 'wpseo_posts_join' ], 10, 2 );
+			add_filter( 'wpseo_typecount_where', [ $this, 'wpseo_posts_where' ], 10, 2 );
 
 			if ( PLL()->options['force_lang'] > 1 ) {
 				add_filter( 'wpseo_enable_xml_sitemap_transient_caching', '__return_false' ); // Disable cache! otherwise WPSEO keeps only one domain (thanks to Junaid Bhura)
-				add_filter( 'home_url', array( $this, 'wpseo_home_url' ), 10, 2 ); // Fix home_url
+				add_filter( 'home_url', [ $this, 'wpseo_home_url' ], 10, 2 ); // Fix home_url
 			} else {
 				// Get all terms in all languages when the language is set from the content or directory name
-				add_filter( 'get_terms_args', array( $this, 'wpseo_remove_terms_filter' ) );
+				add_filter( 'get_terms_args', [ $this, 'wpseo_remove_terms_filter' ] );
 
 				// Add the homepages for all languages to the sitemap when the front page displays posts
 				if ( ! get_option( 'page_on_front' ) ) {
-					add_filter( 'wpseo_sitemap_post_content', array( $this, 'add_language_home_urls' ) );
+					add_filter( 'wpseo_sitemap_post_content', [ $this, 'add_language_home_urls' ] );
 				}
 			}
 
-			add_filter( 'pll_home_url_white_list', array( $this, 'wpseo_home_url_white_list' ) );
-			add_action( 'wpseo_opengraph', array( $this, 'wpseo_ogp' ), 2 );
-			add_filter( 'wpseo_canonical', array( $this, 'wpseo_canonical' ) );
+			add_filter( 'pll_home_url_white_list', [ $this, 'wpseo_home_url_white_list' ] );
+			add_action( 'wpseo_opengraph', [ $this, 'wpseo_ogp' ], 2 );
+			add_filter( 'wpseo_canonical', [ $this, 'wpseo_canonical' ] );
 		} else {
-			add_action( 'admin_init', array( $this, 'wpseo_register_strings' ) );
+			add_action( 'admin_init', [ $this, 'wpseo_register_strings' ] );
 
 			// Primary category
-			add_filter( 'pll_copy_post_metas', array( $this, 'copy_post_metas' ) );
-			add_filter( 'pll_translate_post_meta', array( $this, 'translate_post_meta' ), 10, 3 );
+			add_filter( 'pll_copy_post_metas', [ $this, 'copy_post_metas' ] );
+			add_filter( 'pll_translate_post_meta', [ $this, 'translate_post_meta' ], 10, 3 );
 		}
 	}
 
@@ -69,19 +69,34 @@ class PLL_WPSEO {
 	 */
 	function wpseo_register_strings() {
 		$options = get_option( 'wpseo_titles' );
-		foreach ( get_post_types( array( 'public' => true, '_builtin' => false ) ) as $t ) {
+		foreach ( get_post_types(
+			[
+				'public' => true,
+				'_builtin' => false,
+			]
+		) as $t ) {
 			if ( pll_is_translated_post_type( $t ) ) {
-				$this->_wpseo_register_strings( $options, array( 'title-' . $t, 'metadesc-' . $t ) );
+				$this->_wpseo_register_strings( $options, [ 'title-' . $t, 'metadesc-' . $t ] );
 			}
 		}
-		foreach ( get_post_types( array( 'has_archive' => true, '_builtin' => false ) ) as $t ) {
+		foreach ( get_post_types(
+			[
+				'has_archive' => true,
+				'_builtin' => false,
+			]
+		) as $t ) {
 			if ( pll_is_translated_post_type( $t ) ) {
-				$this->_wpseo_register_strings( $options, array( 'title-ptarchive-' . $t, 'metadesc-ptarchive-' . $t, 'bctitle-ptarchive-' . $t ) );
+				$this->_wpseo_register_strings( $options, [ 'title-ptarchive-' . $t, 'metadesc-ptarchive-' . $t, 'bctitle-ptarchive-' . $t ] );
 			}
 		}
-		foreach ( get_taxonomies( array( 'public' => true, '_builtin' => false ) ) as $t ) {
+		foreach ( get_taxonomies(
+			[
+				'public' => true,
+				'_builtin' => false,
+			]
+		) as $t ) {
 			if ( pll_is_translated_taxonomy( $t ) ) {
-				$this->_wpseo_register_strings( $options, array( 'title-tax-' . $t, 'metadesc-tax-' . $t ) );
+				$this->_wpseo_register_strings( $options, [ 'title-tax-' . $t, 'metadesc-tax-' . $t ] );
 			}
 		}
 	}
@@ -114,19 +129,34 @@ class PLL_WPSEO {
 	 */
 	function wpseo_translate_titles( $options ) {
 		if ( PLL() instanceof PLL_Frontend ) {
-			foreach ( get_post_types( array( 'public' => true, '_builtin' => false ) ) as $t ) {
+			foreach ( get_post_types(
+				[
+					'public' => true,
+					'_builtin' => false,
+				]
+			) as $t ) {
 				if ( pll_is_translated_post_type( $t ) ) {
-					$options = $this->_wpseo_translate_titles( $options, array( 'title-' . $t, 'metadesc-' . $t ) );
+					$options = $this->_wpseo_translate_titles( $options, [ 'title-' . $t, 'metadesc-' . $t ] );
 				}
 			}
-			foreach ( get_post_types( array( 'has_archive' => true, '_builtin' => false ) ) as $t ) {
+			foreach ( get_post_types(
+				[
+					'has_archive' => true,
+					'_builtin' => false,
+				]
+			) as $t ) {
 				if ( pll_is_translated_post_type( $t ) ) {
-					$options = $this->_wpseo_translate_titles( $options, array( 'title-ptarchive-' . $t, 'metadesc-ptarchive-' . $t, 'bctitle-ptarchive-' . $t ) );
+					$options = $this->_wpseo_translate_titles( $options, [ 'title-ptarchive-' . $t, 'metadesc-ptarchive-' . $t, 'bctitle-ptarchive-' . $t ] );
 				}
 			}
-			foreach ( get_taxonomies( array( 'public' => true, '_builtin' => false ) ) as $t ) {
+			foreach ( get_taxonomies(
+				[
+					'public' => true,
+					'_builtin' => false,
+				]
+			) as $t ) {
 				if ( pll_is_translated_taxonomy( $t ) ) {
-					$options = $this->_wpseo_translate_titles( $options, array( 'title-tax-' . $t, 'metadesc-tax-' . $t ) );
+					$options = $this->_wpseo_translate_titles( $options, [ 'title-tax-' . $t, 'metadesc-tax-' . $t ] );
 				}
 			}
 		}
@@ -162,10 +192,10 @@ class PLL_WPSEO {
 	 */
 	protected function wpseo_get_active_languages() {
 		$languages = PLL()->model->get_languages_list();
-		if ( wp_list_filter( $languages, array( 'active' => false ) ) ) {
-			return wp_list_pluck( wp_list_filter( $languages, array( 'active' => false ), 'NOT' ), 'slug' );
+		if ( wp_list_filter( $languages, [ 'active' => false ] ) ) {
+			return wp_list_pluck( wp_list_filter( $languages, [ 'active' => false ], 'NOT' ), 'slug' );
 		}
-		return array();
+		return [];
 	}
 
 	/**
@@ -233,15 +263,17 @@ class PLL_WPSEO {
 		global $wpseo_sitemaps;
 		$renderer = version_compare( WPSEO_VERSION, '3.2', '<' ) ? $wpseo_sitemaps : $wpseo_sitemaps->renderer;
 
-		$languages = wp_list_pluck( wp_list_filter( PLL()->model->get_languages_list(), array( 'active' => false ), 'NOT' ), 'slug' );
+		$languages = wp_list_pluck( wp_list_filter( PLL()->model->get_languages_list(), [ 'active' => false ], 'NOT' ), 'slug' );
 
 		foreach ( $languages as $lang ) {
 			if ( empty( PLL()->options['hide_default'] ) || pll_default_language() !== $lang ) {
-				$str .= $renderer->sitemap_url( array(
-					'loc' => pll_home_url( $lang ),
-					'pri' => 1,
-					'chf' => apply_filters( 'wpseo_sitemap_homepage_change_freq', 'daily', pll_home_url( $lang ) ),
-				) );
+				$str .= $renderer->sitemap_url(
+					[
+						'loc' => pll_home_url( $lang ),
+						'pri' => 1,
+						'chf' => apply_filters( 'wpseo_sitemap_homepage_change_freq', 'daily', pll_home_url( $lang ) ),
+					]
+				);
 			}
 		}
 		return $str;
@@ -256,7 +288,7 @@ class PLL_WPSEO {
 	 * @return array
 	 */
 	public function wpseo_home_url_white_list( $arr ) {
-		return array_merge( $arr, array( array( 'file' => 'wordpress-seo' ) ) );
+		return array_merge( $arr, [ [ 'file' => 'wordpress-seo' ] ] );
 	}
 
 	/**

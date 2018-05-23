@@ -15,10 +15,17 @@ class PLL_MO extends MO {
 	 */
 	public function __construct() {
 		if ( ! post_type_exists( 'polylang_mo' ) ) {
-			$labels = array( 'name' => __( 'Strings translations', 'polylang' ) );
-			register_post_type( 'polylang_mo', array( 'labels' => $labels, 'rewrite' => false, 'query_var' => false, '_pll' => true ) );
+			$labels = [ 'name' => __( 'Strings translations', 'polylang' ) ];
+			register_post_type(
+				'polylang_mo', [
+					'labels' => $labels,
+					'rewrite' => false,
+					'query_var' => false,
+					'_pll' => true,
+				]
+			);
 
-			add_action( 'pll_add_language', array( $this, 'clean_cache' ) );
+			add_action( 'pll_add_language', [ $this, 'clean_cache' ] );
 		}
 	}
 
@@ -34,19 +41,19 @@ class PLL_MO extends MO {
 
 		// Would be convenient to store the whole object but it would take a huge space in DB
 		// So let's keep only the strings in an array
-		$strings = array();
+		$strings = [];
 		foreach ( $this->entries as $entry ) {
-			$strings[] = array( $entry->singular, $this->translate( $entry->singular ) );
+			$strings[] = [ $entry->singular, $this->translate( $entry->singular ) ];
 		}
 
 		$strings = wp_slash( $strings ); // Avoid breaking slashed strings in update_post_meta. See https://codex.wordpress.org/Function_Reference/update_post_meta#Character_Escaping
 
 		if ( empty( $lang->mo_id ) ) {
-			$post = array(
+			$post  = [
 				'post_title'  => 'polylang_mo_' . $lang->term_id,
 				'post_status' => 'private', // To avoid a conflict with WP Super Cache. See https://wordpress.org/support/topic/polylang_mo-and-404s-take-2
 				'post_type'   => 'polylang_mo',
-			);
+			];
 			$mo_id = wp_insert_post( $post );
 			update_post_meta( $mo_id, '_pll_strings_translations', $strings );
 		} else {

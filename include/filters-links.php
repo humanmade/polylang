@@ -16,31 +16,31 @@ class PLL_Filters_Links {
 	 * @param object $polylang
 	 */
 	public function __construct( &$polylang ) {
-		$this->links = &$polylang->links;
+		$this->links       = &$polylang->links;
 		$this->links_model = &$polylang->links_model;
-		$this->model = &$polylang->model;
-		$this->options = &$polylang->options;
-		$this->curlang = &$polylang->curlang;
+		$this->model       = &$polylang->model;
+		$this->options     = &$polylang->options;
+		$this->curlang     = &$polylang->curlang;
 
 		// Low priority on links filters to come after any other modifications
 		if ( $this->options['force_lang'] ) {
-			add_filter( 'post_link', array( $this, 'post_type_link' ), 20, 2 );
-			add_filter( '_get_page_link', array( $this, '_get_page_link' ), 20, 2 );
+			add_filter( 'post_link', [ $this, 'post_type_link' ], 20, 2 );
+			add_filter( '_get_page_link', [ $this, '_get_page_link' ], 20, 2 );
 		}
 
-		add_filter( 'post_type_link', array( $this, 'post_type_link' ), 20, 2 );
-		add_filter( 'term_link', array( $this, 'term_link' ), 20, 3 );
+		add_filter( 'post_type_link', [ $this, 'post_type_link' ], 20, 2 );
+		add_filter( 'term_link', [ $this, 'term_link' ], 20, 3 );
 
 		if ( $this->options['force_lang'] > 0 ) {
-			add_filter( 'attachment_link', array( $this, 'attachment_link' ), 20, 2 );
+			add_filter( 'attachment_link', [ $this, 'attachment_link' ], 20, 2 );
 		}
 
 		if ( 3 === $this->options['force_lang'] ) {
-			add_filter( 'preview_post_link', array( $this, 'preview_post_link' ), 20 );
+			add_filter( 'preview_post_link', [ $this, 'preview_post_link' ], 20 );
 		}
 
 		// Rewrites post types archives links to filter them by language
-		add_filter( 'post_type_archive_link', array( $this, 'post_type_archive_link' ), 20, 2 );
+		add_filter( 'post_type_archive_link', [ $this, 'post_type_archive_link' ], 20, 2 );
 	}
 
 	/**

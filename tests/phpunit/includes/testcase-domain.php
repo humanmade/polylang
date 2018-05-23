@@ -55,9 +55,9 @@ class PLL_Domain_UnitTestCase extends PLL_UnitTestCase {
 
 	function test_get_language_from_url() {
 		// hack $_SERVER
-		$server = $_SERVER;
+		$server                 = $_SERVER;
 		$_SERVER['REQUEST_URI'] = '/test/';
-		$_SERVER['HTTP_HOST'] = parse_url( $this->hosts['fr'], PHP_URL_HOST );
+		$_SERVER['HTTP_HOST']   = parse_url( $this->hosts['fr'], PHP_URL_HOST );
 		$this->assertEquals( 'fr', self::$polylang->links_model->get_language_from_url() );
 
 		// clean up
@@ -71,15 +71,15 @@ class PLL_Domain_UnitTestCase extends PLL_UnitTestCase {
 
 	function test_allowed_redirect_hosts() {
 		$hosts = str_replace( 'http://', '', array_values( $this->hosts ) );
-		$this->assertEquals( $hosts, self::$polylang->links_model->allowed_redirect_hosts( array() ) );
+		$this->assertEquals( $hosts, self::$polylang->links_model->allowed_redirect_hosts( [] ) );
 		$this->assertEquals( $this->hosts['fr'], wp_validate_redirect( $this->hosts['fr'] ) );
 	}
 
 	function test_upload_dir() {
 		// hack $_SERVER
-		$server = $_SERVER;
+		$server                 = $_SERVER;
 		$_SERVER['REQUEST_URI'] = '/test/';
-		$_SERVER['HTTP_HOST'] = parse_url( $this->hosts['fr'], PHP_URL_HOST );
+		$_SERVER['HTTP_HOST']   = parse_url( $this->hosts['fr'], PHP_URL_HOST );
 		if ( function_exists( 'wp_get_upload_dir' ) ) {
 			$uploads = wp_get_upload_dir(); // Since WP 4.5
 		} else {

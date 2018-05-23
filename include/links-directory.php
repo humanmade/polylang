@@ -25,7 +25,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		if ( did_action( 'pll_init' ) ) {
 			$this->init();
 		} else {
-			add_action( 'pll_init', array( $this, 'init' ) );
+			add_action( 'pll_init', [ $this, 'init' ] );
 		}
 	}
 
@@ -38,11 +38,11 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		if ( did_action( 'setup_theme' ) ) {
 			$this->add_permastruct();
 		} else {
-			add_action( 'setup_theme', array( $this, 'add_permastruct' ), 2 );
+			add_action( 'setup_theme', [ $this, 'add_permastruct' ], 2 );
 		}
 
 		// Make sure to prepare rewrite rules when flushing
-		add_action( 'pre_option_rewrite_rules', array( $this, 'prepare_rewrite_rules' ) );
+		add_action( 'pre_option_rewrite_rules', [ $this, 'prepare_rewrite_rules' ] );
 	}
 
 	/**
@@ -91,7 +91,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 
 			$pattern = str_replace( '/', '\/', $root );
 			$pattern = '#' . $pattern . ( $this->options['rewrite'] ? '' : 'language\/' ) . '(' . implode( '|', $languages ) . ')(\/|$)#';
-			$url = preg_replace( $pattern, $root, $url );
+			$url     = preg_replace( $pattern, $root, $url );
 		}
 		return $url;
 	}
@@ -117,7 +117,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 
 		$pattern = parse_url( $root . ( $this->options['rewrite'] ? '' : 'language/' ), PHP_URL_PATH );
 		$pattern = str_replace( '/', '\/', $pattern );
-		$pattern = '#' . $pattern . '(' . implode( '|', $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) . ')(\/|$)#';
+		$pattern = '#' . $pattern . '(' . implode( '|', $this->model->get_languages_list( [ 'fields' => 'slug' ] ) ) . ')(\/|$)#';
 		return preg_match( $pattern, trailingslashit( $path ), $matches ) ? $matches[1] : ''; // $matches[1] is the slug of the requested language
 	}
 
@@ -146,7 +146,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		// The 3rd parameter structure has been modified in WP 3.4
 		// Leads to error 404 for pages when there is no language created yet
 		if ( $this->model->get_languages_list() ) {
-			add_permastruct( 'language', $this->options['rewrite'] ? '%language%' : 'language/%language%', array( 'with_front' => false ) );
+			add_permastruct( 'language', $this->options['rewrite'] ? '%language%' : 'language/%language%', [ 'with_front' => false ] );
 		}
 	}
 
@@ -166,10 +166,10 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 			add_filter( 'language_rewrite_rules', '__return_empty_array' );
 
 			foreach ( $this->get_rewrite_rules_filters() as $type ) {
-				add_filter( $type . '_rewrite_rules', array( $this, 'rewrite_rules' ) );
+				add_filter( $type . '_rewrite_rules', [ $this, 'rewrite_rules' ] );
 			}
 
-			add_filter( 'rewrite_rules_array', array( $this, 'rewrite_rules' ) ); // needed for post type archives
+			add_filter( 'rewrite_rules_array', [ $this, 'rewrite_rules' ] ); // needed for post type archives
 		}
 		return $pre;
 	}
@@ -188,11 +188,11 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		$filter = str_replace( '_rewrite_rules', '', current_filter() );
 
 		global $wp_rewrite;
-		$newrules = array();
+		$newrules = [];
 
-		$languages = $this->model->get_languages_list( array( 'fields' => 'slug' ) );
+		$languages = $this->model->get_languages_list( [ 'fields' => 'slug' ] );
 		if ( $this->options['hide_default'] ) {
-			$languages = array_diff( $languages, array( $this->options['default_lang'] ) );
+			$languages = array_diff( $languages, [ $this->options['default_lang'] ] );
 		}
 
 		if ( ! empty( $languages ) ) {
@@ -200,7 +200,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		}
 
 		// For custom post type archives
-		$cpts = array_intersect( $this->model->get_translated_post_types(), get_post_types( array( '_builtin' => false ) ) );
+		$cpts = array_intersect( $this->model->get_translated_post_types(), get_post_types( [ '_builtin' => false ] ) );
 		$cpts = $cpts ? '#post_type=(' . implode( '|', $cpts ) . ')#' : '';
 
 		foreach ( $rules as $key => $rule ) {
@@ -217,26 +217,24 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 				 * @param string      $filter  current set of rules being modified
 				 * @param string|bool $archive custom post post type archive name or false if it is not a cpt archive
 				 */
-				if ( isset( $slug ) && apply_filters( 'pll_modify_rewrite_rule', true, array( $key => $rule ), $filter, false ) ) {
+				if ( isset( $slug ) && apply_filters( 'pll_modify_rewrite_rule', true, [ $key => $rule ], $filter, false ) ) {
 					$newrules[ $slug . str_replace( $wp_rewrite->root, '', ltrim( $key, '^' ) ) ] = str_replace(
-						array( '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '[1]', '?' ),
-						array( '[9]', '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '?lang=$matches[1]&' ),
+						[ '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '[1]', '?' ],
+						[ '[9]', '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '?lang=$matches[1]&' ],
 						$rule
 					); // Should be enough!
 				}
 
 				$newrules[ $key ] = $rule;
-			}
-
-			// Rewrite rules filtered by language
+			} // Rewrite rules filtered by language
 			elseif ( in_array( $filter, $this->always_rewrite ) || in_array( $filter, $this->model->get_filtered_taxonomies() ) || ( $cpts && preg_match( $cpts, $rule, $matches ) && ! strpos( $rule, 'name=' ) ) || ( 'rewrite_rules_array' != $filter && $this->options['force_lang'] ) ) {
 
 				/** This filter is documented in include/links-directory.php */
-				if ( apply_filters( 'pll_modify_rewrite_rule', true, array( $key => $rule ), $filter, empty( $matches[1] ) ? false : $matches[1] ) ) {
+				if ( apply_filters( 'pll_modify_rewrite_rule', true, [ $key => $rule ], $filter, empty( $matches[1] ) ? false : $matches[1] ) ) {
 					if ( isset( $slug ) ) {
 						$newrules[ $slug . str_replace( $wp_rewrite->root, '', ltrim( $key, '^' ) ) ] = str_replace(
-							array( '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '[1]', '?' ),
-							array( '[9]', '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '?lang=$matches[1]&' ),
+							[ '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '[1]', '?' ],
+							[ '[9]', '[8]', '[7]', '[6]', '[5]', '[4]', '[3]', '[2]', '?lang=$matches[1]&' ],
 							$rule
 						); // Should be enough!
 					}
@@ -247,9 +245,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 				} else {
 					$newrules[ $key ] = $rule;
 				}
-			}
-
-			// Unmodified rules
+			} // Unmodified rules
 			else {
 				$newrules[ $key ] = $rule;
 			}

@@ -9,7 +9,7 @@ class Columns_Test extends PLL_UnitTestCase {
 		self::create_language( 'en_US' );
 		self::create_language( 'fr_FR' );
 
-		self::$editor = self::factory()->user->create( array( 'role' => 'editor' ) );
+		self::$editor = self::factory()->user->create( [ 'role' => 'editor' ] );
 	}
 
 	function setUp() {
@@ -18,7 +18,7 @@ class Columns_Test extends PLL_UnitTestCase {
 		// set a user to pass current_user_can tests
 		wp_set_current_user( self::$editor );
 
-		self::$polylang->links = new PLL_Admin_Links( self::$polylang );
+		self::$polylang->links           = new PLL_Admin_Links( self::$polylang );
 		self::$polylang->filters_columns = new PLL_Admin_Filters_Columns( self::$polylang );
 	}
 
@@ -27,7 +27,7 @@ class Columns_Test extends PLL_UnitTestCase {
 
 		parent::tearDown();
 
-		$_REQUEST = $_GET = $_POST = array();
+		$_REQUEST = $_GET = $_POST = [];
 	}
 
 	function test_post_with_no_language() {
@@ -116,7 +116,7 @@ class Columns_Test extends PLL_UnitTestCase {
 
 	function test_term_with_no_language() {
 		$GLOBALS['post_type'] = 'post';
-		$GLOBALS['taxonomy'] = 'category';
+		$GLOBALS['taxonomy']  = 'category';
 
 		$term_id = $this->factory->category->create();
 
@@ -128,7 +128,7 @@ class Columns_Test extends PLL_UnitTestCase {
 
 	function test_term_language() {
 		$GLOBALS['post_type'] = 'post';
-		$GLOBALS['taxonomy'] = 'category';
+		$GLOBALS['taxonomy']  = 'category';
 
 		$en = $this->factory->category->create();
 		self::$polylang->model->term->set_language( $en, 'en' );
@@ -148,7 +148,7 @@ class Columns_Test extends PLL_UnitTestCase {
 
 	function test_untranslated_term() {
 		$GLOBALS['post_type'] = 'post';
-		$GLOBALS['taxonomy'] = 'category';
+		$GLOBALS['taxonomy']  = 'category';
 
 		$en = $this->factory->category->create();
 		self::$polylang->model->term->set_language( $en, 'en' );
@@ -166,7 +166,7 @@ class Columns_Test extends PLL_UnitTestCase {
 
 	function test_translated_term() {
 		$GLOBALS['post_type'] = 'post';
-		$GLOBALS['taxonomy'] = 'category';
+		$GLOBALS['taxonomy']  = 'category';
 
 		$en = $this->factory->category->create();
 		self::$polylang->model->term->set_language( $en, 'en' );
@@ -189,11 +189,11 @@ class Columns_Test extends PLL_UnitTestCase {
 
 	function test_add_post_column() {
 		// We need to call directly the filter "manage_{$screen->id}_columns" due to the static var in get_column_headers()
-		$list_table = _get_list_table( 'WP_Posts_List_Table', array( 'screen' => 'edit.php' ) );
+		$list_table                                    = _get_list_table( 'WP_Posts_List_Table', [ 'screen' => 'edit.php' ] );
 		list( $columns, $hidden, $sortable, $primary ) = $list_table->get_column_info();
-		$columns = array_intersect_key( $columns, array_flip( array( 'comments' ) ) ); // Keep only the Comments column
-		$columns = apply_filters( 'manage_edit-post_columns', $columns );
-		$columns = array_keys( $columns );
+		$columns                                       = array_intersect_key( $columns, array_flip( [ 'comments' ] ) ); // Keep only the Comments column
+		$columns                                       = apply_filters( 'manage_edit-post_columns', $columns );
+		$columns                                       = array_keys( $columns );
 		$en = array_search( 'language_en', $columns );
 
 		$this->assertNotFalse( $en );
@@ -204,19 +204,19 @@ class Columns_Test extends PLL_UnitTestCase {
 	function test_add_post_column_with_filter() {
 		// We need to call directly the filter "manage_{$screen->id}_columns" due to the static var in get_column_headers()
 		self::$polylang->filter_lang = self::$polylang->model->get_language( 'en' );
-		$columns = apply_filters( 'manage_edit-post_columns', array() );
-		$columns = array_keys( $columns );
+		$columns                     = apply_filters( 'manage_edit-post_columns', [] );
+		$columns                     = array_keys( $columns );
 		$this->assertFalse( array_search( 'language_en', $columns ) );
 		$this->assertNotFalse( array_search( 'language_fr', $columns ) );
 	}
 
 	function test_add_term_column() {
 		// We need to call directly the filter "manage_{$screen->id}_columns" due to the static var in get_column_headers()
-		$list_table = _get_list_table( 'WP_Terms_List_Table', array( 'screen' => 'edit-tags.php' ) );
+		$list_table                                    = _get_list_table( 'WP_Terms_List_Table', [ 'screen' => 'edit-tags.php' ] );
 		list( $columns, $hidden, $sortable, $primary ) = $list_table->get_column_info();
-		$columns = array_intersect_key( $columns, array_flip( array( 'posts' ) ) ); // Keep only the Count column
-		$columns = apply_filters( 'manage_edit-post_tag_columns', $columns );
-		$columns = array_keys( $columns );
+		$columns                                       = array_intersect_key( $columns, array_flip( [ 'posts' ] ) ); // Keep only the Count column
+		$columns                                       = apply_filters( 'manage_edit-post_tag_columns', $columns );
+		$columns                                       = array_keys( $columns );
 		$en = array_search( 'language_en', $columns );
 
 		$this->assertNotFalse( $en );
@@ -227,8 +227,8 @@ class Columns_Test extends PLL_UnitTestCase {
 	function test_add_term_column_with_filter() {
 		// We need to call directly the filter "manage_{$screen->id}_columns" due to the static var in get_column_headers()
 		self::$polylang->filter_lang = self::$polylang->model->get_language( 'fr' );
-		$columns = apply_filters( 'manage_edit-post_tag_columns', array() );
-		$columns = array_keys( $columns );
+		$columns                     = apply_filters( 'manage_edit-post_tag_columns', [] );
+		$columns                     = array_keys( $columns );
 		$this->assertFalse( array_search( 'language_fr', $columns ) );
 		$this->assertNotFalse( array_search( 'language_en', $columns ) );
 	}
@@ -237,14 +237,14 @@ class Columns_Test extends PLL_UnitTestCase {
 		$en = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$list_table = _get_list_table( 'WP_Posts_List_Table', array( 'screen' => 'edit.php' ) );
+		$list_table = _get_list_table( 'WP_Posts_List_Table', [ 'screen' => 'edit.php' ] );
 		$list_table->prepare_items();
 		$GLOBALS['post'] = $GLOBALS['wp_the_query']->post; // Needed by touch_time
 
 		ob_start();
 		$list_table->inline_edit();
 		$form = ob_get_clean();
-		$doc = new DomDocument();
+		$doc  = new DomDocument();
 		$doc->loadHTML( $form );
 		$xpath = new DOMXpath( $doc );
 

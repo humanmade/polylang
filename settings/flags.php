@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * the key is the flag file name (without the extension)
  * the value is the Country name
  */
-$flags = array(
+$flags = [
 	'ad' => __( 'Andorra', 'polylang' ),
 	'ae' => __( 'United Arab Emirates', 'polylang' ),
 	'af' => __( 'Afghanistan', 'polylang' ),
@@ -261,7 +261,7 @@ $flags = array(
 	'za' => __( 'South Africa', 'polylang' ),
 	'zm' => __( 'Zambia', 'polylang' ),
 	'zw' => __( 'Zimbabwe', 'polylang' ),
-);
+];
 
 /**
  * Filter the list of predefined flags

@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<div class="metabox-holder">
 				<?php
 				wp_nonce_field( 'closedpostboxes', 'closedpostboxesnonce', false );
-				do_meta_boxes( 'settings_page_mlang', 'normal', array() );
+				do_meta_boxes( 'settings_page_mlang', 'normal', [] );
 				?>
 			</div>
 		</div><!-- col-wrap -->
@@ -37,16 +37,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<?php
 					wp_nonce_field( 'add-lang', '_wpnonce_add-lang' );
 
-				if ( ! empty( $edit_lang ) ) {
-					?>
-					<input type="hidden" name="pll_action" value="update" />
-					<input type="hidden" name="lang_id" value="<?php echo esc_attr( $edit_lang->term_id ); ?>" />
+					if ( ! empty( $edit_lang ) ) {
+						?>
+						<input type="hidden" name="pll_action" value="update" />
+						<input type="hidden" name="lang_id" value="<?php echo esc_attr( $edit_lang->term_id ); ?>" />
 					<?php
-				} else {
-					?>
-					<input type="hidden" name="pll_action" value="add" />
-					<?php
-				}
+					} else {
+						?>
+						<input type="hidden" name="pll_action" value="add" />
+						<?php
+					}
 				?>
 				<div class="form-field">
 					<label for="lang_list"><?php esc_html_e( 'Choose a language', 'polylang' ); ?></label>

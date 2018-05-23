@@ -18,30 +18,30 @@ class PLL_Admin_Filters extends PLL_Filters {
 		parent::__construct( $polylang );
 
 		// Widgets languages filter
-		add_action( 'in_widget_form', array( $this, 'in_widget_form' ), 10, 3 );
-		add_filter( 'widget_update_callback', array( $this, 'widget_update_callback' ), 10, 4 );
+		add_action( 'in_widget_form', [ $this, 'in_widget_form' ], 10, 3 );
+		add_filter( 'widget_update_callback', [ $this, 'widget_update_callback' ], 10, 4 );
 
 		// Language management for users
-		add_action( 'personal_options_update', array( $this, 'personal_options_update' ) );
-		add_action( 'edit_user_profile_update', array( $this, 'personal_options_update' ) );
-		add_action( 'personal_options', array( $this, 'personal_options' ) );
+		add_action( 'personal_options_update', [ $this, 'personal_options_update' ] );
+		add_action( 'edit_user_profile_update', [ $this, 'personal_options_update' ] );
+		add_action( 'personal_options', [ $this, 'personal_options' ] );
 
 		// Upgrades languages files after a core upgrade ( timing is important )
 		// Backward compatibility WP < 4.0 *AND* Polylang < 1.6
-		add_action( '_core_updated_successfully', array( $this, 'upgrade_languages' ), 1 ); // since WP 3.3
+		add_action( '_core_updated_successfully', [ $this, 'upgrade_languages' ], 1 ); // since WP 3.3
 
 		// Upgrades plugins and themes translations files
-		add_filter( 'themes_update_check_locales', array( $this, 'update_check_locales' ) );
-		add_filter( 'plugins_update_check_locales', array( $this, 'update_check_locales' ) );
+		add_filter( 'themes_update_check_locales', [ $this, 'update_check_locales' ] );
+		add_filter( 'plugins_update_check_locales', [ $this, 'update_check_locales' ] );
 
 		// We need specific filters for German and Danish
-		$specific_locales = array( 'da_DK', 'de_DE', 'de_DE_formal', 'de_CH', 'de_CH_informal', 'ca', 'sr_RS', 'bs_BA' );
-		if ( array_intersect( $this->model->get_languages_list( array( 'fields' => 'locale' ) ), $specific_locales ) ) {
-			add_filter( 'sanitize_title', array( $this, 'sanitize_title' ), 10, 3 );
-			add_filter( 'sanitize_user', array( $this, 'sanitize_user' ), 10, 3 );
+		$specific_locales = [ 'da_DK', 'de_DE', 'de_DE_formal', 'de_CH', 'de_CH_informal', 'ca', 'sr_RS', 'bs_BA' ];
+		if ( array_intersect( $this->model->get_languages_list( [ 'fields' => 'locale' ] ), $specific_locales ) ) {
+			add_filter( 'sanitize_title', [ $this, 'sanitize_title' ], 10, 3 );
+			add_filter( 'sanitize_user', [ $this, 'sanitize_user' ], 10, 3 );
 		}
 
-		add_filter( 'admin_body_class', array( $this, 'admin_body_class' ) );
+		add_filter( 'admin_body_class', [ $this, 'admin_body_class' ] );
 	}
 
 	/**
@@ -60,19 +60,25 @@ class PLL_Admin_Filters extends PLL_Filters {
 		// Saving the widget reloads the form. And curiously the action is in $_REQUEST but neither in $_POST, not in $_GET.
 		if ( ( isset( $screen ) && 'widgets' === $screen->base ) || ( isset( $_REQUEST['action'] ) && 'save-widget' === $_REQUEST['action'] ) || isset( $GLOBALS['wp_customize'] ) ) {
 			$dropdown = new PLL_Walker_Dropdown();
-			printf( '<p><label for="%1$s">%2$s %3$s</label></p>',
+			printf(
+				'<p><label for="%1$s">%2$s %3$s</label></p>',
 				esc_attr( $widget->id . '_lang_choice' ),
 				esc_html__( 'The widget is displayed for:', 'polylang' ),
 				$dropdown->walk(
 					array_merge(
-						array( (object) array( 'slug' => 0, 'name' => __( 'All languages', 'polylang' ) ) ),
+						[
+							(object) [
+								'slug' => 0,
+								'name' => __( 'All languages', 'polylang' ),
+							],
+						],
 						$this->model->get_languages_list()
 					),
-					array(
+					[
 						'name'        => $widget->id . '_lang_choice',
 						'class'       => 'tags-input',
 						'selected'    => empty( $instance['pll_lang'] ) ? '' : $instance['pll_lang'],
-					)
+					]
 				)
 			);
 		}
@@ -91,7 +97,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @return array Widget options
 	 */
 	public function widget_update_callback( $instance, $new_instance, $old_instance, $widget ) {
-		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( array( 'fields' => 'slug' ) ) ) ) {
+		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( [ 'fields' => 'slug' ] ) ) ) {
 			$instance['pll_lang'] = $_POST[ $key ];
 		} else {
 			unset( $instance['pll_lang'] );
@@ -111,13 +117,13 @@ class PLL_Admin_Filters extends PLL_Filters {
 		// Admin language
 		// FIXME Backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$user_lang = in_array( $_POST['user_lang'], $this->model->get_languages_list( array( 'fields' => 'locale' ) ) ) ? $_POST['user_lang'] : 0;
+			$user_lang = in_array( $_POST['user_lang'], $this->model->get_languages_list( [ 'fields' => 'locale' ] ) ) ? $_POST['user_lang'] : 0;
 			update_user_meta( $user_id, 'locale', $user_lang );
 		}
 
 		// Biography translations
 		foreach ( $this->model->get_languages_list() as $lang ) {
-			$meta = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
+			$meta        = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
 			$description = empty( $_POST[ 'description_' . $lang->slug ] ) ? '' : trim( $_POST[ 'description_' . $lang->slug ] );
 
 			/** This filter is documented in wp-includes/user.php */
@@ -137,7 +143,8 @@ class PLL_Admin_Filters extends PLL_Filters {
 		// FIXME: Backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
 			$dropdown = new PLL_Walker_Dropdown();
-			printf( '
+			printf(
+				'
 				<tr>
 					<th><label for="user_lang">%s</label></th>
 					<td>%s</td>
@@ -145,14 +152,19 @@ class PLL_Admin_Filters extends PLL_Filters {
 				esc_html__( 'Admin language', 'polylang' ),
 				$dropdown->walk(
 					array_merge(
-						array( (object) array( 'locale' => 0, 'name' => __( 'WordPress default', 'polylang' ) ) ),
+						[
+							(object) [
+								'locale' => 0,
+								'name' => __( 'WordPress default', 'polylang' ),
+							],
+						],
 						$this->model->get_languages_list()
 					),
-					array(
+					[
 						'name'        => 'user_lang',
 						'value'       => 'locale',
 						'selected'    => get_user_meta( $profileuser->ID, 'locale', true ),
-					)
+					]
 				)
 			);
 		}
@@ -164,7 +176,8 @@ class PLL_Admin_Filters extends PLL_Filters {
 			/** This filter is documented in wp-includes/user.php */
 			$description = apply_filters( 'user_description', get_user_meta( $profileuser->ID, $meta, true ) ); // Applies WP default filter wp_kses_data
 
-			printf( '<input type="hidden" class="biography" name="%s___%s" value="%s" />',
+			printf(
+				'<input type="hidden" class="biography" name="%s___%s" value="%s" />',
 				esc_attr( $lang->slug ),
 				esc_attr( $lang->name ),
 				esc_attr( $description )
@@ -199,7 +212,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @return array list of locales to update
 	 */
 	function update_check_locales( $locales ) {
-		return $this->model->get_languages_list( array( 'fields' => 'locale' ) );
+		return $this->model->get_languages_list( [ 'fields' => 'locale' ] );
 	}
 
 	/**
@@ -233,9 +246,9 @@ class PLL_Admin_Filters extends PLL_Filters {
 
 		if ( ! $once && 'save' == $context && ! empty( $this->curlang ) && ! empty( $title ) ) {
 			$once = true;
-			add_filter( 'locale', array( $this, 'get_locale' ), 20 ); // After the filter for the admin interface
+			add_filter( 'locale', [ $this, 'get_locale' ], 20 ); // After the filter for the admin interface
 			$title = sanitize_title( $raw_title, '', $context );
-			remove_filter( 'locale', array( $this, 'get_locale' ), 20 );
+			remove_filter( 'locale', [ $this, 'get_locale' ], 20 );
 			$once = false;
 		}
 		return $title;
@@ -256,9 +269,9 @@ class PLL_Admin_Filters extends PLL_Filters {
 
 		if ( ! $once && ! empty( $this->curlang ) ) {
 			$once = true;
-			add_filter( 'locale', array( $this, 'get_locale' ), 20 ); // After the filter for the admin interface
+			add_filter( 'locale', [ $this, 'get_locale' ], 20 ); // After the filter for the admin interface
 			$username = sanitize_user( $raw_username, '', $strict );
-			remove_filter( 'locale', array( $this, 'get_locale' ), 20 );
+			remove_filter( 'locale', [ $this, 'get_locale' ], 20 );
 			$once = false;
 		}
 		return $username;

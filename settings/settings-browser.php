@@ -15,15 +15,17 @@ class PLL_Settings_Browser extends PLL_Settings_Module {
 	 * @param object $polylang polylang object
 	 */
 	public function __construct( &$polylang ) {
-		parent::__construct( $polylang, array(
-			'module'        => 'browser',
-			'title'         => __( 'Detect browser language', 'polylang' ),
-			'description'   => __( 'When the front page is visited, set the language according to the browser preference', 'polylang' ),
-			'active_option' => $this->is_available() ? 'browser' : false,
-		) );
+		parent::__construct(
+			$polylang, [
+				'module'        => 'browser',
+				'title'         => __( 'Detect browser language', 'polylang' ),
+				'description'   => __( 'When the front page is visited, set the language according to the browser preference', 'polylang' ),
+				'active_option' => $this->is_available() ? 'browser' : false,
+			]
+		);
 
 		if ( ! class_exists( 'PLL_Xdata_Domain', true ) ) {
-			add_action( 'admin_print_footer_scripts', array( $this, 'print_js' ) );
+			add_action( 'admin_print_footer_scripts', [ $this, 'print_js' ] );
 		}
 	}
 
@@ -61,8 +63,7 @@ class PLL_Settings_Browser extends PLL_Settings_Module {
 		if ( parent::is_active() && 3 > $this->options['force_lang'] ) {
 			$func = 'removeClass( "inactive" ).addClass( "active" )';
 			$link = sprintf( '<span class="deactivate">%s</span>', $this->action_links['deactivate'] );
-		}
-		else {
+		} else {
 			$func = 'removeClass( "active" ).addClass( "inactive" )';
 			$link = sprintf( '<span class="activate">%s</span>', $this->action_links['activate'] );
 		}

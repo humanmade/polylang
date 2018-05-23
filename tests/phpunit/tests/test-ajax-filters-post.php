@@ -10,7 +10,7 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 		self::create_language( 'fr_FR' );
 		self::create_language( 'es_ES' );
 
-		self::$editor = self::factory()->user->create( array( 'role' => 'editor' ) );
+		self::$editor = self::factory()->user->create( [ 'role' => 'editor' ] );
 	}
 
 	function setUp() {
@@ -18,9 +18,9 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 		remove_all_actions( 'admin_init' ); // to save ( a lot of ) time as WP will attempt to update core and plugins
 
 		wp_set_current_user( self::$editor ); // set a user to pass current_user_can tests
-		self::$polylang = new PLL_Admin( self::$polylang->links_model );
+		self::$polylang               = new PLL_Admin( self::$polylang->links_model );
 		self::$polylang->filters_post = new PLL_Admin_Filters_Post( self::$polylang );
-		self::$polylang->links = new PLL_Admin_Links( self::$polylang );
+		self::$polylang->links        = new PLL_Admin_Links( self::$polylang );
 	}
 
 	function tearDown() {
@@ -33,25 +33,35 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 		self::$polylang->filters_term = new PLL_Admin_Filters_Term( self::$polylang ); // we need this for categories and tags
 
 		// categories
-		$en = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'test cat' ) );
+		$en = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'test cat',
+			]
+		);
 		self::$polylang->model->term->set_language( $en, 'en' );
 
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'essai cat' ) );
+		$fr = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'essai cat',
+			]
+		);
 		self::$polylang->model->term->set_language( $fr, 'fr' );
 
 		// the post
 		$post_id = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $post_id, 'en' );
 
-		$_POST = array(
+		$_POST = [
 			'action'      => 'post_lang_choice',
 			'_pll_nonce'  => wp_create_nonce( 'pll_language' ),
 			'lang'        => 'fr',
 			'post_type'   => 'post',
 			'post_id'     => $post_id,
 			'pll_post_id' => $post_id,
-			'taxonomies'  => array( 'category', 'post_tag' ),
-		);
+			'taxonomies'  => [ 'category', 'post_tag' ],
+		];
 
 		$_REQUEST['lang'] = $_POST['lang'];
 		self::$polylang->set_current_language();
@@ -65,7 +75,7 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 
 		// translations
 		$form = $xml->response[0]->translations->response_data;
-		$doc = new DomDocument();
+		$doc  = new DomDocument();
 		$doc->loadHTML( $form );
 		$xpath = new DOMXpath( $doc );
 
@@ -87,24 +97,34 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 		self::$polylang->filters = new PLL_Admin_Filters( self::$polylang ); // we need this for the pages dropdown
 
 		// possible parents
-		$en = $this->factory->post->create( array( 'post_title' => 'test', 'post_type' => 'page' ) );
+		$en = $this->factory->post->create(
+			[
+				'post_title' => 'test',
+				'post_type' => 'page',
+			]
+		);
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_title' => 'essai', 'post_type' => 'page' ) );
+		$fr = $this->factory->post->create(
+			[
+				'post_title' => 'essai',
+				'post_type' => 'page',
+			]
+		);
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		// the post
-		$post_id = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$post_id = $this->factory->post->create( [ 'post_type' => 'page' ] );
 		self::$polylang->model->post->set_language( $post_id, 'en' );
 
-		$_POST = array(
+		$_POST = [
 			'action'      => 'post_lang_choice',
 			'_pll_nonce'  => wp_create_nonce( 'pll_language' ),
 			'lang'        => 'fr',
 			'post_type'   => 'page',
 			'post_id'     => $post_id,
 			'pll_post_id' => $post_id,
-		);
+		];
 
 		$_REQUEST['lang'] = $_POST['lang'];
 		self::$polylang->set_current_language();
@@ -118,7 +138,7 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 
 		// translations
 		$form = $xml->response[0]->translations->response_data;
-		$doc = new DomDocument();
+		$doc  = new DomDocument();
 		$doc->loadHTML( $form );
 		$xpath = new DOMXpath( $doc );
 
@@ -137,21 +157,21 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 	}
 
 	function test_posts_not_translated() {
-		$en = $this->factory->post->create( array( 'post_title' => 'test english' ) );
+		$en = $this->factory->post->create( [ 'post_title' => 'test english' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_title' => 'test français' ) );
+		$fr = $this->factory->post->create( [ 'post_title' => 'test français' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr' ) );
 
-		$searched = $this->factory->post->create( array( 'post_title' => 'test searched' ) );
+		$searched = $this->factory->post->create( [ 'post_title' => 'test searched' ] );
 		self::$polylang->model->post->set_language( $searched, 'en' );
 
 		$fr = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
-		$_GET = array(
+		$_GET = [
 			'action'               => 'pll_posts_not_translated',
 			'_pll_nonce'           => wp_create_nonce( 'pll_language' ),
 			'term'                 => 'tes',
@@ -159,7 +179,7 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 			'translation_language' => 'en',
 			'post_type'            => 'post',
 			'pll_post_id'          => $fr,
-		);
+		];
 
 		self::$polylang->set_current_language();
 
@@ -188,7 +208,7 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 		}
 
 		$this->assertCount( 2, $response );
-		$this->assertEqualSets( array( $searched, $en ), wp_list_pluck( $response, 'id' ) );
+		$this->assertEqualSets( [ $searched, $en ], wp_list_pluck( $response, 'id' ) );
 	}
 
 	function test_save_post_from_quick_edit() {
@@ -201,12 +221,12 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'es' ) );
 
 		// Switch to a free language in the translation group
-		$_REQUEST = $_POST = array(
+		$_REQUEST = $_POST = [
 			'action'             => 'inline-save',
 			'post_ID'            => $post_id,
 			'inline_lang_choice' => 'fr',
 			'_inline_edit'       => wp_create_nonce( 'inlineeditnonce' ),
-		);
+		];
 
 		try {
 			$this->_handleAjax( 'inline-save' );
@@ -216,8 +236,18 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 
 		$this->assertEquals( 'fr', self::$polylang->model->post->get_language( $post_id )->slug );
 		$this->assertEquals( 'es', self::$polylang->model->post->get_language( $es )->slug );
-		$this->assertEqualSets( array( 'fr' => $post_id, 'es' => $es ), self::$polylang->model->post->get_translations( $post_id ) );
-		$this->assertEqualSets( array( 'fr' => $post_id, 'es' => $es ), self::$polylang->model->post->get_translations( $es ) );
+		$this->assertEqualSets(
+			[
+				'fr' => $post_id,
+				'es' => $es,
+			], self::$polylang->model->post->get_translations( $post_id )
+		);
+		$this->assertEqualSets(
+			[
+				'fr' => $post_id,
+				'es' => $es,
+			], self::$polylang->model->post->get_translations( $es )
+		);
 
 		// Switch to a *non* free language in the translation group
 		$_REQUEST['inline_lang_choice'] = $_POST['inline_lang_choice'] = 'es';
@@ -230,13 +260,13 @@ class Ajax_Filters_Post_Test extends PLL_Ajax_UnitTestCase {
 
 		$this->assertEquals( 'es', self::$polylang->model->post->get_language( $post_id )->slug );
 		$this->assertEquals( 'es', self::$polylang->model->post->get_language( $es )->slug );
-		$this->assertEquals( array( 'es' => $post_id ), self::$polylang->model->post->get_translations( $post_id ) );
+		$this->assertEquals( [ 'es' => $post_id ], self::$polylang->model->post->get_translations( $post_id ) );
 
 		// For some reason the last assertion does not work in WP < 4.6
 		if ( version_compare( $GLOBALS['wp_version'], '4.6', '<' ) ) {
 			$this->markTestIncomplete();
 		}
 
-		$this->assertEquals( array( 'es' => $es ), self::$polylang->model->post->get_translations( $es ) );
+		$this->assertEquals( [ 'es' => $es ], self::$polylang->model->post->get_translations( $es ) );
 	}
 }

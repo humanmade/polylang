@@ -19,46 +19,46 @@ class PLL_Frontend_Filters extends PLL_Filters {
 		parent::__construct( $polylang );
 
 		// Filters the WordPress locale
-		add_filter( 'locale', array( $this, 'get_locale' ) );
+		add_filter( 'locale', [ $this, 'get_locale' ] );
 
 		// Filter sticky posts by current language
-		add_filter( 'option_sticky_posts', array( $this, 'option_sticky_posts' ) );
+		add_filter( 'option_sticky_posts', [ $this, 'option_sticky_posts' ] );
 
 		// Adds cache domain when querying terms
-		add_filter( 'get_terms_args', array( $this, 'get_terms_args' ) );
+		add_filter( 'get_terms_args', [ $this, 'get_terms_args' ] );
 
 		// Filters categories and post tags by language
-		add_filter( 'terms_clauses', array( $this, 'terms_clauses' ), 10, 3 );
-		add_action( 'pre_get_posts', array( $this, 'set_tax_query_lang' ), 999 );
-		add_action( 'posts_selection', array( $this, 'unset_tax_query_lang' ), 0 );
+		add_filter( 'terms_clauses', [ $this, 'terms_clauses' ], 10, 3 );
+		add_action( 'pre_get_posts', [ $this, 'set_tax_query_lang' ], 999 );
+		add_action( 'posts_selection', [ $this, 'unset_tax_query_lang' ], 0 );
 
 		// Rewrites archives links to filter them by language
-		add_filter( 'getarchives_join', array( $this, 'getarchives_join' ), 10, 2 );
-		add_filter( 'getarchives_where', array( $this, 'getarchives_where' ), 10, 2 );
+		add_filter( 'getarchives_join', [ $this, 'getarchives_join' ], 10, 2 );
+		add_filter( 'getarchives_where', [ $this, 'getarchives_where' ], 10, 2 );
 
 		// Filters the widgets according to the current language
-		add_filter( 'widget_display_callback', array( $this, 'widget_display_callback' ), 10, 2 );
-		add_filter( 'sidebars_widgets', array( $this, 'sidebars_widgets' ) );
+		add_filter( 'widget_display_callback', [ $this, 'widget_display_callback' ], 10, 2 );
+		add_filter( 'sidebars_widgets', [ $this, 'sidebars_widgets' ] );
 
 		if ( $this->options['media_support'] ) {
-			add_filter( 'widget_media_image_instance', array( $this, 'widget_media_instance' ), 1 ); // Since WP 4.8
+			add_filter( 'widget_media_image_instance', [ $this, 'widget_media_instance' ], 1 ); // Since WP 4.8
 		}
 
 		// Strings translation ( must be applied before WordPress applies its default formatting filters )
-		foreach ( array( 'widget_text', 'widget_title', 'option_blogname', 'option_blogdescription', 'option_date_format', 'option_time_format' ) as $filter ) {
+		foreach ( [ 'widget_text', 'widget_title', 'option_blogname', 'option_blogdescription', 'option_date_format', 'option_time_format' ] as $filter ) {
 			add_filter( $filter, 'pll__', 1 );
 		}
 
 		// Translates biography
-		add_filter( 'get_user_metadata', array( $this, 'get_user_metadata' ), 10, 4 );
+		add_filter( 'get_user_metadata', [ $this, 'get_user_metadata' ], 10, 4 );
 
 		// Set posts and terms language when created from frontend ( ex with P2 theme )
-		add_action( 'save_post', array( $this, 'save_post' ), 200, 2 );
-		add_action( 'create_term', array( $this, 'save_term' ), 10, 3 );
-		add_action( 'edit_term', array( $this, 'save_term' ), 10, 3 );
+		add_action( 'save_post', [ $this, 'save_post' ], 200, 2 );
+		add_action( 'create_term', [ $this, 'save_term' ], 10, 3 );
+		add_action( 'edit_term', [ $this, 'save_term' ], 10, 3 );
 
 		if ( $this->options['media_support'] ) {
-			add_action( 'add_attachment', array( $this, 'set_default_language' ) );
+			add_action( 'add_attachment', [ $this, 'set_default_language' ] );
 		}
 
 		// Support theme customizer
@@ -70,7 +70,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 
 		// FIXME test get_user_locale for backward compatibility with WP < 4.7
 		if ( Polylang::is_ajax_on_front() && function_exists( 'get_user_locale' ) ) {
-			add_filter( 'load_textdomain_mofile', array( $this, 'load_textdomain_mofile' ) );
+			add_filter( 'load_textdomain_mofile', [ $this, 'load_textdomain_mofile' ] );
 		}
 	}
 
@@ -104,8 +104,8 @@ class PLL_Frontend_Filters extends PLL_Filters {
 				$posts = array_map( 'intval', $posts );
 				$posts = implode( ',', $posts );
 
-				$languages = $this->model->get_languages_list( array( 'fields' => 'term_taxonomy_id' ) );
-				$_posts = array_fill_keys( $languages, array() ); // Init with empty arrays
+				$languages = $this->model->get_languages_list( [ 'fields' => 'term_taxonomy_id' ] );
+				$_posts    = array_fill_keys( $languages, [] ); // Init with empty arrays
 				$languages = implode( ',', $languages );
 
 				$relations = $wpdb->get_results( "SELECT object_id, term_taxonomy_id FROM {$wpdb->term_relationships} WHERE object_id IN ({$posts}) AND term_taxonomy_id IN ({$languages})" );
@@ -140,7 +140,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 			$lang = $this->curlang->slug;
 		}
 
-		$key = '_' . ( is_array( $lang ) ? implode( ',', $lang ) : $lang );
+		$key                  = '_' . ( is_array( $lang ) ? implode( ',', $lang ) : $lang );
 		$args['cache_domain'] = empty( $args['cache_domain'] ) ? 'pll' . $key : $args['cache_domain'] . $key;
 		return $args;
 	}
@@ -253,7 +253,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 				}
 
 				$widget_settings = $wp_registered_widgets[ $widget ]['callback'][0]->get_settings();
-				$number = $wp_registered_widgets[ $widget ]['params'][0]['number'];
+				$number          = $wp_registered_widgets[ $widget ]['params'][0]['number'];
 
 				// Remove the widget if not visible in the current language
 				if ( ! empty( $widget_settings[ $number ]['pll_lang'] ) && $widget_settings[ $number ]['pll_lang'] !== $this->curlang->slug ) {
@@ -276,7 +276,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 	public function widget_media_instance( $instance ) {
 		if ( empty( $instance['pll_lang'] ) && $instance['attachment_id'] && $tr_id = pll_get_post( $instance['attachment_id'] ) ) {
 			$instance['attachment_id'] = $tr_id;
-			$attachment = get_post( $tr_id );
+			$attachment                = get_post( $tr_id );
 
 			if ( $instance['caption'] && ! empty( $attachment->post_excerpt ) ) {
 				$instance['caption'] = $attachment->post_excerpt;

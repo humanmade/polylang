@@ -6,7 +6,10 @@
  * @since 1.2
  */
 class PLL_Walker_Dropdown extends Walker {
-	var $db_fields = array( 'parent' => 'parent', 'id' => 'id' );
+	var $db_fields = [
+		'parent' => 'parent',
+		'id' => 'id',
+	];
 
 	/**
 	 * Outputs one element
@@ -19,8 +22,8 @@ class PLL_Walker_Dropdown extends Walker {
 	 * @param array  $args              An array of additional arguments.
 	 * @param int    $current_object_id ID of the current item.
 	 */
-	function start_el( &$output, $element, $depth = 0, $args = array(), $current_object_id = 0 ) {
-		$value = $args['value'];
+	function start_el( &$output, $element, $depth = 0, $args = [], $current_object_id = 0 ) {
+		$value   = $args['value'];
 		$output .= sprintf(
 			"\t" . '<option value="%1$s"%2$s%3$s>%4$s</option>' . "\n",
 			esc_attr( $element->$value ),
@@ -43,7 +46,7 @@ class PLL_Walker_Dropdown extends Walker {
 	 * @param string $output            Passed by reference. Used to append additional content.
 	 */
 	function display_element( $element, &$children_elements, $max_depth, $depth = 0, $args, &$output ) {
-		$element = (object) $element; // Make sure we have an object
+		$element         = (object) $element; // Make sure we have an object
 		$element->parent = $element->id = 0; // Don't care about this
 		parent::display_element( $element, $children_elements, $max_depth, $depth, $args, $output );
 	}
@@ -67,20 +70,25 @@ class PLL_Walker_Dropdown extends Walker {
 	 * @param array $args
 	 * @return string
 	 */
-	function walk( $elements, $args = array() ) {
+	function walk( $elements, $args = [] ) {
 		$output = '';
-		$args = wp_parse_args( $args, array( 'value' => 'slug', 'name' => 'lang_choice' ) );
+		$args   = wp_parse_args(
+			$args, [
+				'value' => 'slug',
+				'name' => 'lang_choice',
+			]
+		);
 
 		if ( ! empty( $args['flag'] ) ) {
-			$current = wp_list_filter( $elements, array( $args['value'] => $args['selected'] ) );
-			$lang = reset( $current );
-			$output = sprintf(
+			$current = wp_list_filter( $elements, [ $args['value'] => $args['selected'] ] );
+			$lang    = reset( $current );
+			$output  = sprintf(
 				'<span class="pll-select-flag">%s</span>',
 				empty( $lang->flag ) ? esc_html( $lang->slug ) : $lang->flag
 			);
 		}
 
-		$output .= sprintf(
+		$output  .= sprintf(
 			'<select name="%1$s"%2$s%3$s%4$s>' . "\n" . '%5$s' . "\n" . '</select>' . "\n",
 			$name = esc_attr( $args['name'] ),
 			isset( $args['id'] ) && ! $args['id'] ? '' : ' id="' . ( empty( $args['id'] ) ? $name : esc_attr( $args['id'] ) ) . '"',

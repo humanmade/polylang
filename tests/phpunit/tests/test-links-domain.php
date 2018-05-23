@@ -7,15 +7,15 @@ class Links_Domain_Test extends PLL_Domain_UnitTestCase {
 
 		global $wp_rewrite;
 
-		$this->hosts = array(
+		$this->hosts = [
 			'en' => 'http://example.org',
 			'fr' => 'http://example.fr',
 			'de' => 'http://example.de',
-		);
+		];
 
 		self::$polylang->options['hide_default'] = 1;
-		self::$polylang->options['force_lang'] = 3;
-		self::$polylang->options['domains'] = $this->hosts;
+		self::$polylang->options['force_lang']   = 3;
+		self::$polylang->options['domains']      = $this->hosts;
 
 		// switch to pretty permalinks
 		$wp_rewrite->init();
@@ -42,7 +42,7 @@ class Links_Domain_Test extends PLL_Domain_UnitTestCase {
 	// Bug fixed in version 2.1.2
 	function test_second_level_domain() {
 		self::$polylang->options['domains']['fr'] = 'http://example.org.fr';
-		self::$polylang->links_model = self::$polylang->model->get_links_model();
+		self::$polylang->links_model              = self::$polylang->model->get_links_model();
 
 		$url = 'http://example.org.fr';
 
@@ -66,7 +66,7 @@ class Links_Domain_Test extends PLL_Domain_UnitTestCase {
 
 		// non www. to www.
 		self::$polylang->options['domains']['fr'] = 'http://www.example.fr';
-		$_SERVER['HTTP_HOST'] = 'example.fr';
+		$_SERVER['HTTP_HOST']                     = 'example.fr';
 		$this->assertEquals( 'http://www.example.fr', $filters_links->check_canonical_url( 'http://' . $_SERVER['HTTP_HOST'], false ) );
 		$this->assertEquals( 'http://www.example.fr/test/', $filters_links->check_canonical_url( 'http://' . $_SERVER['HTTP_HOST'] . '/test/', false ) );
 	}

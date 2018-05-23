@@ -21,32 +21,32 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		parent::__construct( $polylang );
 
 		$this->curlang = &$polylang->curlang;
-		$this->cache = new PLL_Cache();
+		$this->cache   = new PLL_Cache();
 
 		// Rewrites author and date links to filter them by language
-		foreach ( array( 'feed_link', 'author_link', 'search_link', 'year_link', 'month_link', 'day_link' ) as $filter ) {
-			add_filter( $filter, array( $this, 'archive_link' ), 20 );
+		foreach ( [ 'feed_link', 'author_link', 'search_link', 'year_link', 'month_link', 'day_link' ] as $filter ) {
+			add_filter( $filter, [ $this, 'archive_link' ], 20 );
 		}
 
 		// Meta in the html head section
-		add_action( 'wp_head', array( $this, 'wp_head' ) );
+		add_action( 'wp_head', [ $this, 'wp_head' ] );
 
 		// Modifies the home url
 		if ( ! defined( 'PLL_FILTER_HOME_URL' ) || PLL_FILTER_HOME_URL ) {
-			add_filter( 'home_url', array( $this, 'home_url' ), 10, 2 );
+			add_filter( 'home_url', [ $this, 'home_url' ], 10, 2 );
 		}
 
 		if ( $this->options['force_lang'] > 1 ) {
 			// Rewrites next and previous post links when not automatically done by WordPress
-			add_filter( 'get_pagenum_link', array( $this, 'archive_link' ), 20 );
+			add_filter( 'get_pagenum_link', [ $this, 'archive_link' ], 20 );
 
 			// Rewrites ajax url
-			add_filter( 'admin_url', array( $this, 'admin_url' ), 10, 2 );
+			add_filter( 'admin_url', [ $this, 'admin_url' ], 10, 2 );
 		}
 
 		// Redirects to canonical url before WordPress redirect_canonical
 		// but after Nextgen Gallery which hacks $_SERVER['REQUEST_URI'] !!! and restores it in 'template_redirect' with priority 1
-		add_action( 'template_redirect', array( $this, 'check_canonical_url' ), 4 );
+		add_action( 'template_redirect', [ $this, 'check_canonical_url' ], 4 );
 	}
 
 	/**
@@ -137,9 +137,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 				/** This filter is documented in include/filters-links.php */
 				$_link = apply_filters( 'pll_term_link', $_link, $this->curlang, $term );
-			}
-
-			else {
+			} else {
 				$_link = parent::term_link( $link, $term, $tax );
 			}
 			$this->cache->set( $cache_key, $_link );
@@ -171,14 +169,14 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 			// Prepare the list of languages to remove the country code
 			foreach ( array_keys( $urls ) as $locale ) {
-				$split = explode( '-', $locale );
+				$split                = explode( '-', $locale );
 				$languages[ $locale ] = reset( $split );
 			}
 
 			$count = array_count_values( $languages );
 
 			foreach ( $urls as $locale => $url ) {
-				$lang = $count[ $languages[ $locale ] ] > 1 ? $locale : $languages[ $locale ]; // Output the country code only when necessary
+				$lang               = $count[ $languages[ $locale ] ] > 1 ? $locale : $languages[ $locale ]; // Output the country code only when necessary
 				$hreflangs[ $lang ] = $url;
 			}
 
@@ -236,12 +234,14 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			 *
 			 * @param array $args
 			 */
-			$white_list = apply_filters( 'pll_home_url_white_list', array(
-				array( 'file' => $theme_root ),
-				array( 'function' => 'wp_nav_menu' ),
-				array( 'function' => 'login_footer' ),
-				array( 'function' => 'get_custom_logo' ),
-			) );
+			$white_list = apply_filters(
+				'pll_home_url_white_list', [
+					[ 'file' => $theme_root ],
+					[ 'function' => 'wp_nav_menu' ],
+					[ 'function' => 'login_footer' ],
+					[ 'function' => 'get_custom_logo' ],
+				]
+			);
 		}
 
 		// We don't want to filter the home url in these cases
@@ -257,10 +257,12 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			 *
 			 * @param array $args
 			 */
-			$black_list = apply_filters( 'pll_home_url_black_list', array(
-				array( 'file' => 'searchform.php' ), // Since WP 3.6 searchform.php is passed through get_search_form
-				array( 'function' => 'get_search_form' ),
-			) );
+			$black_list = apply_filters(
+				'pll_home_url_black_list', [
+					[ 'file' => 'searchform.php' ], // Since WP 3.6 searchform.php is passed through get_search_form
+					[ 'function' => 'get_search_form' ],
+				]
+			);
 		}
 
 		$traces = version_compare( PHP_VERSION, '5.2.5', '>=' ) ? debug_backtrace( false ) : debug_backtrace();
@@ -276,7 +278,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 			foreach ( $white_list as $v ) {
 				if ( ( isset( $trace['function'], $v['function'] ) && $trace['function'] == $v['function'] ) ||
-					( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) && in_array( $trace['function'], array( 'home_url', 'get_home_url', 'bloginfo', 'get_bloginfo' ) ) ) ) {
+					( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) && in_array( $trace['function'], [ 'home_url', 'get_home_url', 'bloginfo', 'get_bloginfo' ] ) ) ) {
 					$ok = true;
 				}
 			}
@@ -335,21 +337,15 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			if ( isset( $post->ID ) && $this->model->is_translated_post_type( $post->post_type ) ) {
 				$language = $this->model->post->get_language( (int) $post->ID );
 			}
-		}
-
-		elseif ( is_category() || is_tag() || is_tax() ) {
+		} elseif ( is_category() || is_tag() || is_tax() ) {
 			$obj = $wp_query->get_queried_object();
 			if ( $this->model->is_translated_taxonomy( $obj->taxonomy ) ) {
 				$language = $this->model->term->get_language( (int) $obj->term_id );
 			}
-		}
-
-		elseif ( $wp_query->is_posts_page ) {
-			$obj = $wp_query->get_queried_object();
+		} elseif ( $wp_query->is_posts_page ) {
+			$obj      = $wp_query->get_queried_object();
 			$language = $this->model->post->get_language( (int) $obj->ID );
-		}
-
-		elseif ( is_404() && ! empty( $wp_query->query['page_id'] ) && $id = get_query_var( 'page_id' ) ) {
+		} elseif ( is_404() && ! empty( $wp_query->query['page_id'] ) && $id = get_query_var( 'page_id' ) ) {
 			// Special case for page shortlinks when using subdomains or multiple domains
 			// Needed because redirect_canonical doesn't accept to change the domain name
 			$language = $this->model->post->get_language( (int) $id );
@@ -359,20 +355,20 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 			foreach ( $this->options['domains'] as $lang => $domain ) {
 				$host = parse_url( $domain, PHP_URL_HOST );
 				if ( 'www.' . $_SERVER['HTTP_HOST'] === $host || 'www.' . $host === $_SERVER['HTTP_HOST'] ) {
-					$language = $this->model->get_language( $lang );
+					$language     = $this->model->get_language( $lang );
 					$redirect_url = str_replace( '://' . $_SERVER['HTTP_HOST'], '://' . $host, $requested_url );
 				}
 			}
 		}
 
 		if ( empty( $language ) ) {
-			$language = $this->curlang;
+			$language     = $this->curlang;
 			$redirect_url = $requested_url;
 		} elseif ( empty( $redirect_url ) ) {
 			// First get the canonical url evaluated by WP
 			// Workaround a WP bug which removes the port for some urls and get it back at second call to redirect_canonical
 			$_redirect_url = ( ! $_redirect_url = redirect_canonical( $requested_url, false ) ) ? $requested_url : $_redirect_url;
-			$redirect_url = ( ! $redirect_url = redirect_canonical( $_redirect_url, false ) ) ? $_redirect_url : $redirect_url;
+			$redirect_url  = ( ! $redirect_url = redirect_canonical( $_redirect_url, false ) ) ? $_redirect_url : $redirect_url;
 
 			// Then get the right language code in url
 			$redirect_url = $this->options['force_lang'] ?

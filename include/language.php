@@ -58,17 +58,15 @@ class PLL_Language {
 			foreach ( $language as $prop => $value ) {
 				$this->$prop = $value;
 			}
-		}
-
-		// Build the object from taxonomies
+		} // Build the object from taxonomies
 		else {
 			foreach ( $language as $prop => $value ) {
-				$this->$prop = in_array( $prop, array( 'term_id', 'term_taxonomy_id', 'count' ) ) ? (int) $language->$prop : $language->$prop;
+				$this->$prop = in_array( $prop, [ 'term_id', 'term_taxonomy_id', 'count' ] ) ? (int) $language->$prop : $language->$prop;
 			}
 
-			$this->tl_term_id = (int) $term_language->term_id;
+			$this->tl_term_id          = (int) $term_language->term_id;
 			$this->tl_term_taxonomy_id = (int) $term_language->term_taxonomy_id;
-			$this->tl_count = (int) $term_language->count;
+			$this->tl_count            = (int) $term_language->count;
 
 			// The description field can contain any property
 			// Backward compatibility for is_rtl
@@ -111,7 +109,7 @@ class PLL_Language {
 
 		// Custom flags ?
 		if ( file_exists( PLL_LOCAL_DIR . ( $file = '/' . $this->locale . '.png' ) ) || file_exists( PLL_LOCAL_DIR . ( $file = '/' . $this->locale . '.jpg' ) ) ) {
-			$url = content_url( '/polylang' . $file );
+			$url                         = content_url( '/polylang' . $file );
 			$flags['custom_flag']['url'] = esc_url_raw( $url );
 			$flags['custom_flag']['src'] = esc_url( $url );
 		}
@@ -139,7 +137,8 @@ class PLL_Language {
 			 * @param string $flag html markup of the flag or empty string
 			 * @param string $slug language code
 			 */
-			$this->{$key} = apply_filters( 'pll_get_flag', empty( $flag['src'] ) ? '' :
+			$this->{$key} = apply_filters(
+				'pll_get_flag', empty( $flag['src'] ) ? '' :
 				sprintf(
 					'<img src="%s" title="%s" alt="%s" />',
 					$flag['src'],
@@ -160,17 +159,17 @@ class PLL_Language {
 	public function set_custom_flag() {
 		// Overwrite with custom flags on frontend only
 		if ( ! empty( $this->custom_flag ) ) {
-			$this->flag = $this->custom_flag;
+			$this->flag     = $this->custom_flag;
 			$this->flag_url = $this->custom_flag_url;
 			unset( $this->custom_flag, $this->custom_flag_url ); // hide this
 		}
 
 		// Set url scheme, also for default flags
 		if ( is_ssl() ) {
-			$this->flag = str_replace( 'http://', 'https://', $this->flag );
+			$this->flag     = str_replace( 'http://', 'https://', $this->flag );
 			$this->flag_url = str_replace( 'http://', 'https://', $this->flag_url );
 		} else {
-			$this->flag = str_replace( 'https://', 'http://', $this->flag );
+			$this->flag     = str_replace( 'https://', 'http://', $this->flag );
 			$this->flag_url = str_replace( 'https://', 'http://', $this->flag_url );
 		}
 	}
@@ -195,7 +194,7 @@ class PLL_Language {
 	 */
 	public function set_home_url( $search_url, $home_url ) {
 		$this->search_url = $search_url;
-		$this->home_url = $home_url;
+		$this->home_url   = $home_url;
 	}
 
 	/**
@@ -206,12 +205,10 @@ class PLL_Language {
 	 */
 	public function set_home_url_scheme() {
 		if ( is_ssl() ) {
-			$this->home_url = str_replace( 'http://', 'https://', $this->home_url );
+			$this->home_url   = str_replace( 'http://', 'https://', $this->home_url );
 			$this->search_url = str_replace( 'http://', 'https://', $this->search_url );
-		}
-
-		else {
-			$this->home_url = str_replace( 'https://', 'http://', $this->home_url );
+		} else {
+			$this->home_url   = str_replace( 'https://', 'http://', $this->home_url );
 			$this->search_url = str_replace( 'https://', 'http://', $this->search_url );
 		}
 	}

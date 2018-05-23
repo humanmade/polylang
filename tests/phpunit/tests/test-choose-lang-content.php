@@ -19,12 +19,12 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 		global $wp_rewrite;
 
 		self::$polylang->options['hide_default'] = 1;
-		self::$polylang->options['force_lang'] = 0;
-		self::$polylang->options['browser'] = 0;
+		self::$polylang->options['force_lang']   = 0;
+		self::$polylang->options['browser']      = 0;
 
 		// switch to pretty permalinks
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->set_permalink_structure( $this->structure );
 
 		self::$polylang->model->post->register_taxonomy(); // needs this for 'lang' query var
@@ -42,8 +42,8 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	// overrides WP_UnitTestCase::go_to
 	function go_to( $url ) {
 		// copy paste of WP_UnitTestCase::go_to
-		$_GET = $_POST = array();
-		foreach ( array( 'query_string', 'id', 'postdata', 'authordata', 'day', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages', 'pagenow' ) as $v ) {
+		$_GET = $_POST = [];
+		foreach ( [ 'query_string', 'id', 'postdata', 'authordata', 'day', 'currentmonth', 'page', 'pages', 'multipage', 'more', 'numpages', 'pagenow' ] as $v ) {
 			if ( isset( $GLOBALS[ $v ] ) ) {
 				unset( $GLOBALS[ $v ] );
 			}
@@ -76,8 +76,8 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 
 		// restart copy paste of WP_UnitTestCase::go_to
 		$GLOBALS['wp_the_query'] = new WP_Query();
-		$GLOBALS['wp_query'] = $GLOBALS['wp_the_query'];
-		$GLOBALS['wp'] = new WP();
+		$GLOBALS['wp_query']     = $GLOBALS['wp_the_query'];
+		$GLOBALS['wp']           = new WP();
 		_cleanup_query_vars();
 
 		$GLOBALS['wp']->main( $parts['query'] );
@@ -100,10 +100,10 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	}
 
 	function test_single_post() {
-		$en = $this->factory->post->create( array( 'post_title' => 'test' ) );
+		$en = $this->factory->post->create( [ 'post_title' => 'test' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_title' => 'essai' ) );
+		$fr = $this->factory->post->create( [ 'post_title' => 'essai' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->go_to( home_url( '/essai/' ) );
@@ -114,10 +114,20 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	}
 
 	function test_page() {
-		$en = $this->factory->post->create( array( 'post_title' => 'test', 'post_type' => 'page' ) );
+		$en = $this->factory->post->create(
+			[
+				'post_title' => 'test',
+				'post_type' => 'page',
+			]
+		);
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_title' => 'essai', 'post_type' => 'page' ) );
+		$fr = $this->factory->post->create(
+			[
+				'post_title' => 'essai',
+				'post_type' => 'page',
+			]
+		);
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->go_to( home_url( '/essai/' ) );
@@ -128,7 +138,12 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	}
 
 	function test_category_default_lang() {
-		$en = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'test' ) );
+		$en = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'test',
+			]
+		);
 		self::$polylang->model->term->set_language( $en, 'en' );
 
 		$this->go_to( home_url( '/category/test/' ) );
@@ -136,7 +151,12 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	}
 
 	function test_category_non_default_lang() {
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'essai' ) );
+		$fr = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'essai',
+			]
+		);
 		self::$polylang->model->term->set_language( $fr, 'fr' );
 
 		$this->go_to( home_url( '/category/essai/' ) );
@@ -144,7 +164,12 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	}
 
 	function test_post_tag_default_lang() {
-		$en = $this->factory->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'test' ) );
+		$en = $this->factory->term->create(
+			[
+				'taxonomy' => 'post_tag',
+				'name' => 'test',
+			]
+		);
 		self::$polylang->model->term->set_language( $en, 'en' );
 
 		$this->go_to( home_url( '/tag/test/' ) );
@@ -152,7 +177,12 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	}
 
 	function test_post_tag_non_default_lang() {
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'essai' ) );
+		$fr = $this->factory->term->create(
+			[
+				'taxonomy' => 'post_tag',
+				'name' => 'essai',
+			]
+		);
 		self::$polylang->model->term->set_language( $fr, 'fr' );
 
 		$this->go_to( home_url( '/tag/essai/' ) );
@@ -160,10 +190,10 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	}
 
 	function test_archive() {
-		$en = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00' ) );
+		$en = $this->factory->post->create( [ 'post_date' => '2007-09-04 00:00:00' ] );
 		self::$polylang->model->term->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00' ) );
+		$fr = $this->factory->post->create( [ 'post_date' => '2007-09-04 00:00:00' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->go_to( home_url( '/fr/2007/' ) );
@@ -176,10 +206,10 @@ class Choose_Lang_Content_Test extends PLL_UnitTestCase {
 	function test_archive_with_default_permalinks() {
 		$GLOBALS['wp_rewrite']->set_permalink_structure( '' );
 
-		$en = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00' ) );
+		$en = $this->factory->post->create( [ 'post_date' => '2007-09-04 00:00:00' ] );
 		self::$polylang->model->term->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00' ) );
+		$fr = $this->factory->post->create( [ 'post_date' => '2007-09-04 00:00:00' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$this->go_to( home_url( '?year=2007&lang=fr' ) );

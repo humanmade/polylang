@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class PLL_Plugin_Updater {
 
 	private $api_url     = '';
-	private $api_data    = array();
+	private $api_data    = [];
 	private $name        = '';
 	private $slug        = '';
 	private $version     = '';
@@ -61,11 +61,11 @@ class PLL_Plugin_Updater {
 	 */
 	public function init() {
 
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
-		add_filter( 'plugins_api', array( $this, 'plugins_api_filter' ), 10, 3 );
+		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_update' ] );
+		add_filter( 'plugins_api', [ $this, 'plugins_api_filter' ], 10, 3 );
 		remove_action( 'after_plugin_row_' . $this->name, 'wp_plugin_update_row', 10 );
-		add_action( 'after_plugin_row_' . $this->name, array( $this, 'show_update_notification' ), 10, 2 );
-		add_action( 'admin_init', array( $this, 'show_changelog' ) );
+		add_action( 'after_plugin_row_' . $this->name, [ $this, 'show_update_notification' ], 10, 2 );
+		add_action( 'admin_init', [ $this, 'show_changelog' ] );
 
 	}
 
@@ -101,7 +101,12 @@ class PLL_Plugin_Updater {
 		$version_info = $this->get_cached_version_info();
 
 		if ( false === $version_info ) {
-			$version_info = $this->api_request( 'plugin_latest_version', array( 'slug' => $this->slug, 'beta' => $this->beta ) );
+			$version_info = $this->api_request(
+				'plugin_latest_version', [
+					'slug' => $this->slug,
+					'beta' => $this->beta,
+				]
+			);
 
 			$this->set_version_info_cache( $version_info );
 
@@ -135,11 +140,11 @@ class PLL_Plugin_Updater {
 			return;
 		}
 
-		if( ! current_user_can( 'update_plugins' ) ) {
+		if ( ! current_user_can( 'update_plugins' ) ) {
 			return;
 		}
 
-		if( ! is_multisite() ) {
+		if ( ! is_multisite() ) {
 			return;
 		}
 
@@ -148,7 +153,7 @@ class PLL_Plugin_Updater {
 		}
 
 		// Remove our filter on the site transient
-		remove_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ), 10 );
+		remove_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_update' ], 10 );
 
 		$update_cache = get_site_transient( 'update_plugins' );
 
@@ -159,7 +164,12 @@ class PLL_Plugin_Updater {
 			$version_info = $this->get_cached_version_info();
 
 			if ( false === $version_info ) {
-				$version_info = $this->api_request( 'plugin_latest_version', array( 'slug' => $this->slug, 'beta' => $this->beta ) );
+				$version_info = $this->api_request(
+					'plugin_latest_version', [
+						'slug' => $this->slug,
+						'beta' => $this->beta,
+					]
+				);
 
 				$this->set_version_info_cache( $version_info );
 			}
@@ -174,7 +184,7 @@ class PLL_Plugin_Updater {
 
 			}
 
-			$update_cache->last_checked = current_time( 'timestamp' );
+			$update_cache->last_checked           = current_time( 'timestamp' );
 			$update_cache->checked[ $this->name ] = $this->version;
 
 			set_site_transient( 'update_plugins', $update_cache );
@@ -186,7 +196,7 @@ class PLL_Plugin_Updater {
 		}
 
 		// Restore our filter
-		add_filter( 'pre_set_site_transient_update_plugins', array( $this, 'check_update' ) );
+		add_filter( 'pre_set_site_transient_update_plugins', [ $this, 'check_update' ] );
 
 		if ( ! empty( $update_cache->response[ $this->name ] ) && version_compare( $this->version, $version_info->new_version, '<' ) ) {
 
@@ -216,7 +226,7 @@ class PLL_Plugin_Updater {
 					'<a target="_blank" class="thickbox" href="' . esc_url( $changelog_link ) . '">',
 					esc_html( $version_info->new_version ),
 					'</a>',
-					'<a href="' . esc_url( wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $this->name, 'upgrade-plugin_' . $this->name ) ) .'">',
+					'<a href="' . esc_url( wp_nonce_url( self_admin_url( 'update.php?action=upgrade-plugin&plugin=' ) . $this->name, 'upgrade-plugin_' . $this->name ) ) . '">',
 					'</a>'
 				);
 			}
@@ -251,14 +261,14 @@ class PLL_Plugin_Updater {
 
 		}
 
-		$to_send = array(
+		$to_send = [
 			'slug'   => $this->slug,
 			'is_ssl' => is_ssl(),
-			'fields' => array(
-				'banners' => array(),
-				'reviews' => false
-			)
-		);
+			'fields' => [
+				'banners' => [],
+				'reviews' => false,
+			],
+		];
 
 		$cache_key = 'edd_api_request_' . md5( serialize( $this->slug . $this->api_data['license'] . $this->beta ) );
 
@@ -276,14 +286,13 @@ class PLL_Plugin_Updater {
 			if ( false !== $api_response ) {
 				$_data = $api_response;
 			}
-
 		} else {
 			$_data = $edd_api_request_transient;
 		}
 
 		// Convert sections into an associative array, since we're getting an object, but Core expects an array.
 		if ( isset( $_data->sections ) && ! is_array( $_data->sections ) ) {
-			$new_sections = array();
+			$new_sections = [];
 			foreach ( $_data->sections as $key => $value ) {
 				$new_sections[ $key ] = $value;
 			}
@@ -293,7 +302,7 @@ class PLL_Plugin_Updater {
 
 		// Convert banners into an associative array, since we're getting an object, but Core expects an array.
 		if ( isset( $_data->banners ) && ! is_array( $_data->banners ) ) {
-			$new_banners = array();
+			$new_banners = [];
 			foreach ( $_data->banners as $key => $value ) {
 				$new_banners[ $key ] = $value;
 			}
@@ -342,11 +351,11 @@ class PLL_Plugin_Updater {
 			return;
 		}
 
-		if( $this->api_url == trailingslashit (home_url() ) ) {
+		if ( $this->api_url == trailingslashit( home_url() ) ) {
 			return false; // Don't allow a plugin to ping itself
 		}
 
-		$api_params = array(
+		$api_params = [
 			'edd_action' => 'get_version',
 			'license'    => ! empty( $data['license'] ) ? $data['license'] : '',
 			'item_name'  => isset( $data['item_name'] ) ? $data['item_name'] : false,
@@ -356,10 +365,16 @@ class PLL_Plugin_Updater {
 			'author'     => $data['author'],
 			'url'        => home_url(),
 			'beta'       => ! empty( $data['beta'] ),
-		);
+		];
 
 		$verify_ssl = $this->verify_ssl();
-		$request    = wp_remote_post( $this->api_url, array( 'timeout' => 15, 'sslverify' => $verify_ssl, 'body' => $api_params ) );
+		$request    = wp_remote_post(
+			$this->api_url, [
+				'timeout' => 15,
+				'sslverify' => $verify_ssl,
+				'body' => $api_params,
+			]
+		);
 
 		if ( ! is_wp_error( $request ) ) {
 			$request = json_decode( wp_remote_retrieve_body( $request ) );
@@ -375,8 +390,8 @@ class PLL_Plugin_Updater {
 			$request->banners = maybe_unserialize( $request->banners );
 		}
 
-		if( ! empty( $request->sections ) ) {
-			foreach( $request->sections as $key => $section ) {
+		if ( ! empty( $request->sections ) ) {
+			foreach ( $request->sections as $key => $section ) {
 				$request->$key = (array) $section;
 			}
 		}
@@ -388,20 +403,20 @@ class PLL_Plugin_Updater {
 
 		global $edd_plugin_data;
 
-		if( empty( $_REQUEST['edd_sl_action'] ) || 'view_plugin_changelog' != $_REQUEST['edd_sl_action'] ) {
+		if ( empty( $_REQUEST['edd_sl_action'] ) || 'view_plugin_changelog' != $_REQUEST['edd_sl_action'] ) {
 			return;
 		}
 
-		if( empty( $_REQUEST['plugin'] ) ) {
+		if ( empty( $_REQUEST['plugin'] ) ) {
 			return;
 		}
 
-		if( empty( $_REQUEST['slug'] ) ) {
+		if ( empty( $_REQUEST['slug'] ) ) {
 			return;
 		}
 
-		if( ! current_user_can( 'update_plugins' ) ) {
-			wp_die( __( 'You do not have permission to install plugin updates', 'polylang' ), __( 'Error', 'polylang' ), array( 'response' => 403 ) );
+		if ( ! current_user_can( 'update_plugins' ) ) {
+			wp_die( __( 'You do not have permission to install plugin updates', 'polylang' ), __( 'Error', 'polylang' ), [ 'response' => 403 ] );
 		}
 
 		$data         = $edd_plugin_data[ $_REQUEST['slug'] ];
@@ -409,25 +424,30 @@ class PLL_Plugin_Updater {
 		$cache_key    = md5( 'edd_plugin_' . sanitize_key( $_REQUEST['plugin'] ) . '_' . $beta . '_version_info' );
 		$version_info = $this->get_cached_version_info( $cache_key );
 
-		if( false === $version_info ) {
+		if ( false === $version_info ) {
 
-			$api_params = array(
+			$api_params = [
 				'edd_action' => 'get_version',
 				'item_name'  => isset( $data['item_name'] ) ? $data['item_name'] : false,
 				'item_id'    => isset( $data['item_id'] ) ? $data['item_id'] : false,
 				'slug'       => $_REQUEST['slug'],
 				'author'     => $data['author'],
 				'url'        => home_url(),
-				'beta'       => ! empty( $data['beta'] )
-			);
+				'beta'       => ! empty( $data['beta'] ),
+			];
 
 			$verify_ssl = $this->verify_ssl();
-			$request    = wp_remote_post( $this->api_url, array( 'timeout' => 15, 'sslverify' => $verify_ssl, 'body' => $api_params ) );
+			$request    = wp_remote_post(
+				$this->api_url, [
+					'timeout' => 15,
+					'sslverify' => $verify_ssl,
+					'body' => $api_params,
+				]
+			);
 
 			if ( ! is_wp_error( $request ) ) {
 				$version_info = json_decode( wp_remote_retrieve_body( $request ) );
 			}
-
 
 			if ( ! empty( $version_info ) && isset( $version_info->sections ) ) {
 				$version_info->sections = maybe_unserialize( $version_info->sections );
@@ -435,8 +455,8 @@ class PLL_Plugin_Updater {
 				$version_info = false;
 			}
 
-			if( ! empty( $version_info ) ) {
-				foreach( $version_info->sections as $key => $section ) {
+			if ( ! empty( $version_info ) ) {
+				foreach ( $version_info->sections as $key => $section ) {
 					$version_info->$key = (array) $section;
 				}
 			}
@@ -445,7 +465,7 @@ class PLL_Plugin_Updater {
 
 		}
 
-		if( ! empty( $version_info ) && isset( $version_info->sections['changelog'] ) ) {
+		if ( ! empty( $version_info ) && isset( $version_info->sections['changelog'] ) ) {
 			echo '<div style="background:#fff;padding:10px;">' . $version_info->sections['changelog'] . '</div>';
 		}
 
@@ -454,13 +474,13 @@ class PLL_Plugin_Updater {
 
 	public function get_cached_version_info( $cache_key = '' ) {
 
-		if( empty( $cache_key ) ) {
+		if ( empty( $cache_key ) ) {
 			$cache_key = $this->cache_key;
 		}
 
 		$cache = get_option( $cache_key );
 
-		if( empty( $cache['timeout'] ) || current_time( 'timestamp' ) > $cache['timeout'] ) {
+		if ( empty( $cache['timeout'] ) || current_time( 'timestamp' ) > $cache['timeout'] ) {
 			return false; // Cache is expired
 		}
 
@@ -470,14 +490,14 @@ class PLL_Plugin_Updater {
 
 	public function set_version_info_cache( $value = '', $cache_key = '' ) {
 
-		if( empty( $cache_key ) ) {
+		if ( empty( $cache_key ) ) {
 			$cache_key = $this->cache_key;
 		}
 
-		$data = array(
+		$data = [
 			'timeout' => strtotime( '+3 hours', current_time( 'timestamp' ) ),
-			'value'   => json_encode( $value )
-		);
+			'value'   => json_encode( $value ),
+		];
 
 		update_option( $cache_key, $data, 'no' );
 

@@ -4,14 +4,14 @@ class Create_Delete_Languages_Test extends PLL_UnitTestCase {
 
 	function test_add_and_delete_language() {
 		// first language
-		$args = array(
+		$args = [
 			'name' => 'English',
 			'slug' => 'en',
 			'locale' => 'en_US',
 			'rtl' => 0,
 			'flag' => 'us',
 			'term_group' => 2,
-		);
+		];
 
 		$this->assertTrue( self::$polylang->model->add_language( $args ) );
 		unset( $GLOBALS['wp_settings_errors'] ); // clean "errors"
@@ -25,14 +25,14 @@ class Create_Delete_Languages_Test extends PLL_UnitTestCase {
 		$this->assertEquals( 2, $lang->term_group );
 
 		// second language (rtl)
-		$args = array(
+		$args = [
 			'name' => 'العربية',
 			'slug' => 'ar',
 			'locale' => 'ar',
 			'rtl' => 1,
 			'flag' => 'arab',
 			'term_group' => 1,
-		);
+		];
 
 		$this->assertTrue( self::$polylang->model->add_language( $args ) );
 		unset( $GLOBALS['wp_settings_errors'] ); // clean "errors"
@@ -53,7 +53,7 @@ class Create_Delete_Languages_Test extends PLL_UnitTestCase {
 		$this->assertEquals( 'en', $default_cat_lang->slug );
 
 		// check language order
-		$this->assertEqualSetsWithIndex( array( 'ar', 'en' ), self::$polylang->model->get_languages_list( array( 'fields' => 'slug' ) ) );
+		$this->assertEqualSetsWithIndex( [ 'ar', 'en' ], self::$polylang->model->get_languages_list( [ 'fields' => 'slug' ] ) );
 
 		// attempt to create a language with the same slug as an existing one
 		self::create_language( 'en_GB' );
@@ -70,27 +70,27 @@ class Create_Delete_Languages_Test extends PLL_UnitTestCase {
 		// delete the last language
 		$lang = self::$polylang->model->get_language( 'ar' );
 		self::$polylang->model->delete_language( $lang->term_id );
-		$this->assertEquals( array(), self::$polylang->model->get_languages_list() );
+		$this->assertEquals( [], self::$polylang->model->get_languages_list() );
 	}
 
 	// Bug fixed in 2.3
 	function test_unique_language_code_if_same_as_locale() {
 		// First language
-		$args = array(
+		$args = [
 			'name' => 'العربية',
 			'slug' => 'a', // Intentional mistake
 			'locale' => 'ar',
 			'rtl' => 1,
 			'flag' => 'arab',
 			'term_group' => 1,
-		);
+		];
 
 		$this->assertTrue( self::$polylang->model->add_language( $args ) );
 		unset( $GLOBALS['wp_settings_errors'] ); // clean "errors"
 
-		$lang = self::$polylang->model->get_language( 'ar' );
+		$lang            = self::$polylang->model->get_language( 'ar' );
 		$args['lang_id'] = $lang->term_id;
-		$args['slug'] = 'ar';
+		$args['slug']    = 'ar';
 		$this->assertTrue( self::$polylang->model->update_language( $args ) );
 		unset( $GLOBALS['wp_settings_errors'] ); // clean "errors"
 
@@ -100,44 +100,44 @@ class Create_Delete_Languages_Test extends PLL_UnitTestCase {
 	function test_invalid_languages() {
 		global $wp_settings_errors;
 
-		$args = array(
+		$args = [
 			'name' => '',
 			'slug' => 'en',
 			'locale' => 'en_US',
 			'rtl' => 0,
 			'flag' => 'us',
 			'term_group' => 1,
-		);
+		];
 
 		$this->assertFalse( self::$polylang->model->add_language( $args ) );
 		$this->assertEquals( 'The language must have a name', $wp_settings_errors[0]['message'] );
-		$wp_settings_errors = array(); // clean "errors"
+		$wp_settings_errors = []; // clean "errors"
 
-		$args['name'] = 'English';
+		$args['name']   = 'English';
 		$args['locale'] = 'EN';
 
 		$this->assertFalse( self::$polylang->model->add_language( $args ) );
 		$this->assertEquals( 'Enter a valid WordPress locale', $wp_settings_errors[0]['message'] );
-		$wp_settings_errors = array(); // clean "errors"
+		$wp_settings_errors = []; // clean "errors"
 
 		$args['locale'] = 'en-US';
 
 		$this->assertFalse( self::$polylang->model->add_language( $args ) );
 		$this->assertEquals( 'Enter a valid WordPress locale', $wp_settings_errors[0]['message'] );
-		$wp_settings_errors = array(); // clean "errors"
+		$wp_settings_errors = []; // clean "errors"
 
 		$args['locale'] = 'en_US';
-		$args['slug'] = 'EN';
+		$args['slug']   = 'EN';
 
 		$this->assertFalse( self::$polylang->model->add_language( $args ) );
 		$this->assertEquals( 'The language code contains invalid characters', $wp_settings_errors[0]['message'] );
-		$wp_settings_errors = array(); // clean "errors"
+		$wp_settings_errors = []; // clean "errors"
 
 		$args['slug'] = 'en';
 		$args['flag'] = 'en';
 		$this->assertFalse( self::$polylang->model->add_language( $args ) );
 		$this->assertEquals( 'The flag does not exist', $wp_settings_errors[0]['message'] );
-		$wp_settings_errors = array(); // clean "errors"
+		$wp_settings_errors = []; // clean "errors"
 	}
 }
 

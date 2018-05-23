@@ -16,26 +16,38 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 	 * @param object $polylang polylang object
 	 */
 	public function __construct( &$polylang ) {
-		parent::__construct( $polylang, array(
-			'module'      => 'cpt',
-			'title'       => __( 'Custom post types and Taxonomies', 'polylang' ),
-			'description' => __( 'Activate the languages and translations management for the custom post types and taxonomies.', 'polylang' ),
-		) );
+		parent::__construct(
+			$polylang, [
+				'module'      => 'cpt',
+				'title'       => __( 'Custom post types and Taxonomies', 'polylang' ),
+				'description' => __( 'Activate the languages and translations management for the custom post types and taxonomies.', 'polylang' ),
+			]
+		);
 
-		$public_post_types = get_post_types( array( 'public' => true, '_builtin' => false ) );
+		$public_post_types = get_post_types(
+			[
+				'public' => true,
+				'_builtin' => false,
+			]
+		);
 		/** This filter is documented in include/model.php */
 		$this->post_types = array_unique( apply_filters( 'pll_get_post_types', $public_post_types, true ) );
 
-		$programmatically_active_post_types = array_unique( apply_filters( 'pll_get_post_types', array(), false ) );
+		$programmatically_active_post_types = array_unique( apply_filters( 'pll_get_post_types', [], false ) );
 		/** This filter is documented in include/model.php */
 		$this->disabled_post_types = array_intersect( $programmatically_active_post_types, $this->post_types );
 
-		$public_taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ) );
-		$public_taxonomies = array_diff( $public_taxonomies, get_taxonomies( array( '_pll' => true ) ) );
+		$public_taxonomies = get_taxonomies(
+			[
+				'public' => true,
+				'_builtin' => false,
+			]
+		);
+		$public_taxonomies = array_diff( $public_taxonomies, get_taxonomies( [ '_pll' => true ] ) );
 		/** This filter is documented in include/model.php */
 		$this->taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', $public_taxonomies, true ) );
 
-		$programmatically_active_taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', array(), false ) );
+		$programmatically_active_taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', [], false ) );
 		/** This filter is documented in include/model.php */
 		$this->disabled_taxonomies = array_intersect( $programmatically_active_taxonomies, $this->taxonomies );
 	}
@@ -113,8 +125,8 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 	 * @param array $options
 	 */
 	protected function update( $options ) {
-		foreach ( array( 'post_types', 'taxonomies' ) as $key ) {
-			$newoptions[ $key ] = empty( $options[ $key ] ) ? array() : array_keys( $options[ $key ], 1 );
+		foreach ( [ 'post_types', 'taxonomies' ] as $key ) {
+			$newoptions[ $key ] = empty( $options[ $key ] ) ? [] : array_keys( $options[ $key ], 1 );
 		}
 		return $newoptions; // Take care to return only validated options
 	}

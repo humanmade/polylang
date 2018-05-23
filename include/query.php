@@ -7,7 +7,7 @@
  */
 class PLL_Query {
 
-	static protected $excludes = array(
+	static protected $excludes = [
 		'p',
 		'post_parent',
 		'attachment',
@@ -28,7 +28,7 @@ class PLL_Query {
 		'tag_slug__in',
 		'tag_slug__and',
 		'post_parent__in',
-	);
+	];
 
 	/**
 	 * Constructor
@@ -58,9 +58,7 @@ class PLL_Query {
 			foreach ( $tax_queries as $tax_query ) {
 				if ( isset( $tax_query['taxonomy'] ) && $this->model->is_translated_taxonomy( $tax_query['taxonomy'] ) && ! ( isset( $tax_query['operator'] ) && 'NOT IN' === $tax_query['operator'] ) ) {
 					return true;
-				}
-
-				// Nested queries
+				} // Nested queries
 				elseif ( is_array( $tax_query ) && $this->have_translated_taxonomy( $tax_query ) ) {
 					return true;
 				}
@@ -78,7 +76,7 @@ class PLL_Query {
 	 * @return array queried taxonomies
 	 */
 	public function get_queried_taxonomies() {
-		return isset( $this->query->tax_query->queried_terms ) ? array_keys( wp_list_filter( $this->query->tax_query->queried_terms, array( 'operator' => 'NOT IN' ), 'NOT' ) ) : array();
+		return isset( $this->query->tax_query->queried_terms ) ? array_keys( wp_list_filter( $this->query->tax_query->queried_terms, [ 'operator' => 'NOT IN' ], 'NOT' ) ) : [];
 	}
 
 	/**
@@ -91,21 +89,21 @@ class PLL_Query {
 	 */
 	public function set_language( $lang ) {
 		// Defining directly the tax_query ( rather than setting 'lang' avoids transforming the query by WP )
-		$lang_query = array(
+		$lang_query = [
 			'taxonomy' => 'language',
 			'field'    => 'term_taxonomy_id', // Since WP 3.5
 			'terms'    => $lang->term_taxonomy_id,
 			'operator' => 'IN',
-		);
+		];
 
 		$tax_query = &$this->query->query_vars['tax_query'];
 
 		if ( isset( $tax_query['relation'] ) && 'OR' === $tax_query['relation'] ) {
-			$tax_query = array(
+			$tax_query = [
 				$lang_query,
-				array( $tax_query ),
+				[ $tax_query ],
 				'relation' => 'AND',
-			);
+			];
 		} else {
 			$tax_query[] = $lang_query;
 		}
@@ -149,7 +147,7 @@ class PLL_Query {
 				}
 			}
 
-			$taxonomies = array_intersect( $this->model->get_translated_taxonomies(), get_taxonomies( array( '_builtin' => false ) ) );
+			$taxonomies = array_intersect( $this->model->get_translated_taxonomies(), get_taxonomies( [ '_builtin' => false ] ) );
 
 			foreach ( $taxonomies as $tax ) {
 				$tax = get_taxonomy( $tax );

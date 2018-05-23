@@ -19,11 +19,11 @@ class PLL_Install_Base {
 		$this->plugin_basename = $plugin_basename;
 
 		// Manages plugin activation and deactivation
-		register_activation_hook( $plugin_basename, array( $this, 'activate' ) );
-		register_deactivation_hook( $plugin_basename, array( $this, 'deactivate' ) );
+		register_activation_hook( $plugin_basename, [ $this, 'activate' ] );
+		register_deactivation_hook( $plugin_basename, [ $this, 'deactivate' ] );
 
 		// Blog creation on multisite
-		add_action( 'wpmu_new_blog', array( $this, 'wpmu_new_blog' ), 5 ); // Before WP attempts to send mails which can break on some PHP versions
+		add_action( 'wpmu_new_blog', [ $this, 'wpmu_new_blog' ], 5 ); // Before WP attempts to send mails which can break on some PHP versions
 	}
 
 	/**
@@ -55,9 +55,7 @@ class PLL_Install_Base {
 				'activate' == $what ? $this->_activate() : $this->_deactivate();
 			}
 			restore_current_blog();
-		}
-
-		// Single blog
+		} // Single blog
 		else {
 			'activate' == $what ? $this->_activate() : $this->_deactivate();
 		}

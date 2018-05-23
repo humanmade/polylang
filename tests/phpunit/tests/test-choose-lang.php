@@ -43,8 +43,13 @@ class Choose_Lang_Test extends PLL_UnitTestCase {
 	// bug fixed in 1.8
 	// see https://wordpress.org/support/topic/browser-detection
 	function test_browser_preferred_language_with_same_slug() {
-		self::create_language( 'en_GB', array( 'term_group' => 2 ) );
-		self::create_language( 'en_US', array( 'slug' => 'us', 'term_group' => 1 ) );
+		self::create_language( 'en_GB', [ 'term_group' => 2 ] );
+		self::create_language(
+			'en_US', [
+				'slug' => 'us',
+				'term_group' => 1,
+			]
+		);
 
 		// only languages with posts will be accepted
 		$post_id = $this->factory->post->create();

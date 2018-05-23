@@ -31,30 +31,30 @@ class WPML_Config_Test extends PLL_UnitTestCase {
 
 	function prepare_options() {
 		// mirror options defined in the sample wpml-config.xml
-		$my_plugins_options = array(
+		$my_plugins_options = [
 			'option_name_1' => 'val1',
 			'option_name_2' => 'val2',
-			'options_group_1' => array(
+			'options_group_1' => [
 				'sub_option_name_11' => 'val11',
 				'sub_option_name_12' => 'val12',
-			),
-			'options_group_2' => array(
+			],
+			'options_group_2' => [
 				'sub_key_21' => 'val21',
-				'sub_key_22' => array(
+				'sub_key_22' => [
 					'sub_sub_221' => 'val221',
-					'sub_sub_222' => array(
+					'sub_sub_222' => [
 						'sub_sub_sub_2221' => 'val2221',
-					),
-				),
-			),
-		);
+					],
+				],
+			],
+		];
 		update_option( 'my_plugins_options', $my_plugins_options );
 		update_option( 'simple_string_option', 'val' );
 	}
 
 	function translate_options( $slug ) {
 		$language = self::$polylang->model->get_language( $slug );
-		$mo = new PLL_MO();
+		$mo       = new PLL_MO();
 		$mo->import_from_db( $language );
 		$mo->add_entry( $mo->make_entry( 'val', "val_$slug" ) );
 		$mo->add_entry( $mo->make_entry( 'val1', "val1_$slug" ) );
@@ -126,8 +126,13 @@ class WPML_Config_Test extends PLL_UnitTestCase {
 		$this->assertFalse( self::$polylang->model->is_translated_post_type( 'DVD' ) );
 
 		// settings
-		$post_types = get_post_types( array( 'public' => true, '_builtin' => false ) );
-		$post_types = array_diff( $post_types, get_post_types( array( '_pll' => true ) ) );
+		$post_types = get_post_types(
+			[
+				'public' => true,
+				'_builtin' => false,
+			]
+		);
+		$post_types = array_diff( $post_types, get_post_types( [ '_pll' => true ] ) );
 		$post_types = array_unique( apply_filters( 'pll_get_post_types', $post_types, true ) );
 		$this->assertNotContains( 'book', $post_types );
 		$this->assertNotContains( 'DVD', $post_types );
@@ -149,8 +154,13 @@ class WPML_Config_Test extends PLL_UnitTestCase {
 		$this->assertFalse( self::$polylang->model->is_translated_taxonomy( 'publisher' ) );
 
 		// settings
-		$taxonomies = get_taxonomies( array( 'public' => true, '_builtin' => false ) );
-		$taxonomies = array_diff( $taxonomies, get_taxonomies( array( '_pll' => true ) ) );
+		$taxonomies = get_taxonomies(
+			[
+				'public' => true,
+				'_builtin' => false,
+			]
+		);
+		$taxonomies = array_diff( $taxonomies, get_taxonomies( [ '_pll' => true ] ) );
 		$taxonomies = array_unique( apply_filters( 'pll_get_taxonomies', $taxonomies, true ) );
 		$this->assertNotContains( 'genre', $taxonomies );
 		$this->assertNotContains( 'publisher', $taxonomies );

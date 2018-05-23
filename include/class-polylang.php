@@ -28,7 +28,7 @@ class Polylang {
 	 */
 	public function __construct() {
 		require_once PLL_INC . '/functions.php'; // VIP functions
-		spl_autoload_register( array( $this, 'autoload' ) ); // Autoload classes
+		spl_autoload_register( [ $this, 'autoload' ] ); // Autoload classes
 
 		$install = new PLL_Install( POLYLANG_BASENAME );
 
@@ -39,7 +39,7 @@ class Polylang {
 
 		// Plugin initialization
 		// Take no action before all plugins are loaded
-		add_action( 'plugins_loaded', array( $this, 'init' ), 1 );
+		add_action( 'plugins_loaded', [ $this, 'init' ], 1 );
 
 		// Override load text domain waiting for the language to be defined
 		// Here for plugins which load text domain as soon as loaded :(
@@ -67,11 +67,11 @@ class Polylang {
 			return;
 		}
 
-		$class = str_replace( '_', '-', strtolower( substr( $class, 4 ) ) );
-		$to_find = array( 'media', 'share', 'slug', 'slugs', 'sync', 'translate', 'wpml', 'xdata', 'rest' );
-		$dir = implode( '-', array_intersect( explode( '-', $class ), $to_find ) );
+		$class   = str_replace( '_', '-', strtolower( substr( $class, 4 ) ) );
+		$to_find = [ 'media', 'share', 'slug', 'slugs', 'sync', 'translate', 'wpml', 'xdata', 'rest' ];
+		$dir     = implode( '-', array_intersect( explode( '-', $class ), $to_find ) );
 
-		$dirs = array(
+		$dirs = [
 			PLL_FRONT_INC,
 			PLL_MODULES_INC,
 			PLL_MODULES_INC . "/$dir",
@@ -80,7 +80,7 @@ class Polylang {
 			PLL_ADMIN_INC,
 			PLL_SETTINGS_INC,
 			PLL_INC,
-		);
+		];
 
 		foreach ( $dirs as $dir ) {
 			if ( file_exists( $file = "$dir/$class.php" ) ) {
@@ -100,7 +100,7 @@ class Polylang {
 	static public function is_ajax_on_front() {
 		// Special test for plupload which does not use jquery ajax and thus does not pass our ajax prefilter
 		// Special test for customize_save done in frontend but for which we want to load the admin
-		$in = isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], array( 'upload-attachment', 'customize_save' ) );
+		$in               = isset( $_REQUEST['action'] ) && in_array( $_REQUEST['action'], [ 'upload-attachment', 'customize_save' ] );
 		$is_ajax_on_front = wp_doing_ajax() && empty( $_REQUEST['pll_ajax_backend'] ) && ! $in;
 
 		/**
@@ -162,7 +162,7 @@ class Polylang {
 		}
 
 		// Make sure that this filter is *always* added before PLL_Model::get_languages_list() is called for the first time
-		add_filter( 'pll_languages_list', array( 'PLL_Static_Pages', 'pll_languages_list' ), 2, 2 ); // Before PLL_Links_Model
+		add_filter( 'pll_languages_list', [ 'PLL_Static_Pages', 'pll_languages_list' ], 2, 2 ); // Before PLL_Links_Model
 
 		/**
 		 * Filter the model class to use
@@ -172,17 +172,15 @@ class Polylang {
 		 *
 		 * @param string $class either PLL_Model or PLL_Admin_Model
 		 */
-		$class = apply_filters( 'pll_model', PLL_SETTINGS ? 'PLL_Admin_Model' : 'PLL_Model' );
-		$model = new $class( $options );
+		$class       = apply_filters( 'pll_model', PLL_SETTINGS ? 'PLL_Admin_Model' : 'PLL_Model' );
+		$model       = new $class( $options );
 		$links_model = $model->get_links_model();
 
 		if ( PLL_SETTINGS ) {
 			$polylang = new PLL_Settings( $links_model );
-		}
-		elseif ( PLL_ADMIN ) {
+		} elseif ( PLL_ADMIN ) {
 			$polylang = new PLL_Admin( $links_model );
-		}
-		// Do nothing on frontend if no language is defined
+		} // Do nothing on frontend if no language is defined
 		elseif ( $model->get_languages_list() && empty( $_GET['deactivate-polylang'] ) ) {
 			$polylang = new PLL_Frontend( $links_model );
 		}
@@ -205,7 +203,7 @@ class Polylang {
 			 *
 			 * @param object $polylang
 			 */
-			do_action_ref_array( 'pll_pre_init', array( &$polylang ) );
+			do_action_ref_array( 'pll_pre_init', [ &$polylang ] );
 
 			require_once PLL_INC . '/api.php'; // Loads the API
 
@@ -223,7 +221,7 @@ class Polylang {
 			 *
 			 * @param object $polylang
 			 */
-			do_action_ref_array( 'pll_init', array( &$polylang ) );
+			do_action_ref_array( 'pll_init', [ &$polylang ] );
 		}
 	}
 }

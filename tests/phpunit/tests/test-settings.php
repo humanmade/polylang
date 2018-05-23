@@ -19,7 +19,7 @@ class Settings_Test extends PLL_UnitTestCase {
 	function tearDown() {
 		parent::tearDown();
 
-		$_REQUEST = $_GET = $_POST = array();
+		$_REQUEST = $_GET = $_POST = [];
 		unset( $GLOBALS['hook_suffix'], $GLOBALS['current_screen'] );
 	}
 
@@ -28,9 +28,9 @@ class Settings_Test extends PLL_UnitTestCase {
 		$lang = self::$polylang->model->get_language( 'fr' );
 
 		// setup globals
-		$_GET['page'] = 'mlang';
-		$_GET['pll_action'] = $_REQUEST['pll_action'] = 'edit'; // languages_page() tests $_REQUEST
-		$_GET['lang'] = $lang->term_id;
+		$_GET['page']           = 'mlang';
+		$_GET['pll_action']     = $_REQUEST['pll_action'] = 'edit'; // languages_page() tests $_REQUEST
+		$_GET['lang']           = $lang->term_id;
 		$GLOBALS['hook_suffix'] = 'settings_page_mlang';
 		get_admin_page_title();
 		set_current_screen();
@@ -65,7 +65,7 @@ class Settings_Test extends PLL_UnitTestCase {
 			$this->markTestSkipped(); // For some reason, the test dos not work in previous versions
 		}
 
-		$_GET['page'] = 'mlang';
+		$_GET['page']           = 'mlang';
 		$GLOBALS['hook_suffix'] = 'settings_page_mlang';
 		set_current_screen();
 

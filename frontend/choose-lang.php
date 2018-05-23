@@ -18,8 +18,8 @@ abstract class PLL_Choose_Lang {
 	 */
 	public function __construct( &$polylang ) {
 		$this->links_model = &$polylang->links_model;
-		$this->model = &$polylang->model;
-		$this->options = &$polylang->options;
+		$this->model       = &$polylang->model;
+		$this->options     = &$polylang->options;
 
 		$this->curlang = &$polylang->curlang;
 	}
@@ -36,9 +36,9 @@ abstract class PLL_Choose_Lang {
 			$this->set_language( empty( $_REQUEST['lang'] ) ? $this->get_preferred_language() : $this->model->get_language( $_REQUEST['lang'] ) );
 		}
 
-		add_action( 'pre_comment_on_post', array( $this, 'pre_comment_on_post' ) ); // sets the language of comment
-		add_action( 'parse_query', array( $this, 'parse_main_query' ), 2 ); // sets the language in special cases
-		add_action( 'wp', array( $this, 'maybe_setcookie' ), 7 );
+		add_action( 'pre_comment_on_post', [ $this, 'pre_comment_on_post' ] ); // sets the language of comment
+		add_action( 'parse_query', [ $this, 'parse_main_query' ], 2 ); // sets the language in special cases
+		add_action( 'wp', [ $this, 'maybe_setcookie' ], 7 );
 	}
 
 	/**
@@ -113,7 +113,7 @@ abstract class PLL_Choose_Lang {
 	 * @return string|bool the preferred language slug or false
 	 */
 	public function get_preferred_browser_language() {
-		$accept_langs = array();
+		$accept_langs = [];
 
 		if ( isset( $_SERVER['HTTP_ACCEPT_LANGUAGE'] ) ) {
 			// break up string into pieces ( languages and q factors )
@@ -136,12 +136,12 @@ abstract class PLL_Choose_Lang {
 						for ( $j = 0; $j <= $n - 2; $j++ ) {
 							if ( $v[ $j ] < $v[ $j + 1 ] ) {
 								// swap values
-								$temp = $v[ $j ];
-								$v[ $j ] = $v[ $j + 1 ];
+								$temp        = $v[ $j ];
+								$v[ $j ]     = $v[ $j + 1 ];
 								$v[ $j + 1 ] = $temp;
 								// Swap keys
-								$temp = $k[ $j ];
-								$k[ $j ] = $k[ $j + 1 ];
+								$temp        = $k[ $j ];
+								$k[ $j ]     = $k[ $j + 1 ];
 								$k[ $j + 1 ] = $temp;
 							}
 						}
@@ -151,7 +151,7 @@ abstract class PLL_Choose_Lang {
 			}
 		}
 
-		$languages = $this->model->get_languages_list( array( 'hide_empty' => true ) ); // hides languages with no post
+		$languages = $this->model->get_languages_list( [ 'hide_empty' => true ] ); // hides languages with no post
 
 		/**
 		 * Filter the list of languages to use to match the browser preferences
@@ -242,8 +242,7 @@ abstract class PLL_Choose_Lang {
 			 * @since 1.8
 			 */
 			do_action( 'pll_home_requested' );
-		}
-		// redirect to the home page in the right language
+		} // redirect to the home page in the right language
 		// test to avoid crash if get_home_url returns something wrong
 		// FIXME why this happens? http://wordpress.org/support/topic/polylang-crashes-1
 		// don't redirect if $_POST is not empty as it could break other plugins
@@ -301,15 +300,13 @@ abstract class PLL_Choose_Lang {
 		if ( $lang = apply_filters( 'pll_set_language_from_query', false, $query ) ) {
 			$this->set_language( $lang );
 			$this->set_curlang_in_query( $query );
-		}
-
-		// sets is_home on translated home page when it displays posts
+		} // sets is_home on translated home page when it displays posts
 		// is_home must be true on page 2, 3... too
 		// as well as when searching an empty string: http://wordpress.org/support/topic/plugin-polylang-polylang-breaks-search-in-spun-theme
 		elseif ( ( count( $query->query ) == 1 || ( is_paged() && count( $query->query ) == 2 ) || ( isset( $query->query['s'] ) && ! $query->query['s'] ) ) && $lang = get_query_var( 'lang' ) ) {
 			$lang = $this->model->get_language( $lang );
 			$this->set_language( $lang ); // sets the language now otherwise it will be too late to filter sticky posts !
-			$query->is_home = true;
+			$query->is_home    = true;
 			$query->is_archive = $query->is_tax = false;
 		}
 	}

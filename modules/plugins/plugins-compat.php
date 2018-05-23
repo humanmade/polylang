@@ -15,44 +15,44 @@ class PLL_Plugins_Compat {
 	 * @since 1.0
 	 */
 	protected function __construct() {
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 0 );
+		add_action( 'plugins_loaded', [ $this, 'plugins_loaded' ], 0 );
 
 		// WordPress Importer
-		add_action( 'init', array( $this, 'maybe_wordpress_importer' ) );
-		add_filter( 'wp_import_terms', array( $this, 'wp_import_terms' ) );
+		add_action( 'init', [ $this, 'maybe_wordpress_importer' ] );
+		add_filter( 'wp_import_terms', [ $this, 'wp_import_terms' ] );
 
 		// YARPP
-		add_action( 'init', array( $this, 'yarpp_init' ) ); // after Polylang has registered its taxonomy in setup_theme
+		add_action( 'init', [ $this, 'yarpp_init' ] ); // after Polylang has registered its taxonomy in setup_theme
 
 		// Custom field template
-		add_action( 'add_meta_boxes', array( $this, 'cft_copy' ), 10, 2 );
+		add_action( 'add_meta_boxes', [ $this, 'cft_copy' ], 10, 2 );
 
 		// Aqua Resizer
-		add_filter( 'pll_home_url_black_list', array( $this, 'aq_home_url_black_list' ) );
+		add_filter( 'pll_home_url_black_list', [ $this, 'aq_home_url_black_list' ] );
 
 		// Twenty Fourteen
-		add_filter( 'transient_featured_content_ids', array( $this, 'twenty_fourteen_featured_content_ids' ) );
-		add_filter( 'option_featured-content', array( $this, 'twenty_fourteen_option_featured_content' ) );
+		add_filter( 'transient_featured_content_ids', [ $this, 'twenty_fourteen_featured_content_ids' ] );
+		add_filter( 'option_featured-content', [ $this, 'twenty_fourteen_option_featured_content' ] );
 
 		// Duplicate post
-		add_filter( 'option_duplicate_post_taxonomies_blacklist', array( $this, 'duplicate_post_taxonomies_blacklist' ) );
+		add_filter( 'option_duplicate_post_taxonomies_blacklist', [ $this, 'duplicate_post_taxonomies_blacklist' ] );
 
 		// Jetpack
 		$this->jetpack = new PLL_Jetpack(); // Must be loaded before the plugin is active
 
 		// WP Sweep
-		add_filter( 'wp_sweep_excluded_taxonomies', array( $this, 'wp_sweep_excluded_taxonomies' ) );
+		add_filter( 'wp_sweep_excluded_taxonomies', [ $this, 'wp_sweep_excluded_taxonomies' ] );
 
 		// Twenty Seventeen
-		add_action( 'init', array( $this, 'twenty_seventeen_init' ) );
+		add_action( 'init', [ $this, 'twenty_seventeen_init' ] );
 
 		// No category base (works for Yoast SEO too)
-		add_filter( 'get_terms_args', array( $this, 'no_category_base_get_terms_args' ), 5 ); // Before adding cache domain
+		add_filter( 'get_terms_args', [ $this, 'no_category_base_get_terms_args' ], 5 ); // Before adding cache domain
 
 		// WordPress MU Domain Mapping
 		if ( function_exists( 'redirect_to_mapped_domain' ) && ! get_site_option( 'dm_no_primary_domain' ) ) {
 			remove_action( 'template_redirect', 'redirect_to_mapped_domain' );
-			add_action( 'template_redirect', array( $this, 'dm_redirect_to_mapped_domain' ) );
+			add_action( 'template_redirect', [ $this, 'dm_redirect_to_mapped_domain' ] );
 		}
 	}
 
@@ -79,28 +79,28 @@ class PLL_Plugins_Compat {
 	public function plugins_loaded() {
 		// Yoast SEO
 		if ( defined( 'WPSEO_VERSION' ) ) {
-			add_action( 'pll_language_defined', array( $this->wpseo = new PLL_WPSEO(), 'init' ) );
+			add_action( 'pll_language_defined', [ $this->wpseo = new PLL_WPSEO(), 'init' ] );
 		}
 
 		// Cache plugins, with specific test for WP Fastest Cache which doesn't use WP_CACHE
 		if ( ( defined( 'WP_CACHE' ) && WP_CACHE ) || defined( 'WPFC_MAIN_PATH' ) ) {
-			add_action( 'pll_init', array( $this->cache_compat = new PLL_Cache_Compat(), 'init' ) );
+			add_action( 'pll_init', [ $this->cache_compat = new PLL_Cache_Compat(), 'init' ] );
 		}
 
 		// Advanced Custom Fields Pro
 		// The function acf_get_value() is not defined in ACF 4
 		if ( class_exists( 'acf' ) && function_exists( 'acf_get_value' ) && class_exists( 'PLL_ACF' ) ) {
-			add_action( 'init', array( $this->acf = new PLL_ACF(), 'init' ) );
+			add_action( 'init', [ $this->acf = new PLL_ACF(), 'init' ] );
 		}
 
 		// Custom Post Type UI
 		if ( defined( 'CPTUI_VERSION' ) && class_exists( 'PLL_CPTUI' ) ) {
-			add_action( 'pll_init', array( $this->cptui = new PLL_CPTUI(), 'init' ) );
+			add_action( 'pll_init', [ $this->cptui = new PLL_CPTUI(), 'init' ] );
 		}
 
 		// The Event Calendar
 		if ( defined( 'TRIBE_EVENTS_FILE' ) && class_exists( 'PLL_TEC' ) ) {
-			add_action( 'pll_init', array( $this->tec = new PLL_TEC(), 'init' ) );
+			add_action( 'pll_init', [ $this->tec = new PLL_TEC(), 'init' ] );
 		}
 
 		// Beaver Builder
@@ -123,7 +123,7 @@ class PLL_Plugins_Compat {
 	function maybe_wordpress_importer() {
 		if ( defined( 'WP_LOAD_IMPORTERS' ) && class_exists( 'WP_Import' ) ) {
 			remove_action( 'admin_init', 'wordpress_importer_init' );
-			add_action( 'admin_init', array( $this, 'wordpress_importer_init' ) );
+			add_action( 'admin_init', [ $this, 'wordpress_importer_init' ] );
 		}
 	}
 
@@ -138,7 +138,7 @@ class PLL_Plugins_Compat {
 		load_plugin_textdomain( 'wordpress-importer', false, basename( dirname( $class->getFileName() ) ) . '/languages' );
 
 		$GLOBALS['wp_import'] = new PLL_WP_Import();
-		register_importer( 'wordpress', 'WordPress', __( 'Import <strong>posts, pages, comments, custom fields, categories, and tags</strong> from a WordPress export file.', 'wordpress-importer' ), array( $GLOBALS['wp_import'], 'dispatch' ) ); // WPCS: spelling ok.
+		register_importer( 'wordpress', 'WordPress', __( 'Import <strong>posts, pages, comments, custom fields, categories, and tags</strong> from a WordPress export file.', 'wordpress-importer' ), [ $GLOBALS['wp_import'], 'dispatch' ] ); // WPCS: spelling ok.
 	}
 
 	/**
@@ -158,7 +158,7 @@ class PLL_Plugins_Compat {
 			if ( 'language' === $term['term_taxonomy'] ) {
 				$description = maybe_unserialize( $term['term_description'] );
 				if ( empty( $description['flag_code'] ) && isset( $languages[ $description['locale'] ] ) ) {
-					$description['flag_code'] = $languages[ $description['locale'] ]['flag'];
+					$description['flag_code']          = $languages[ $description['locale'] ]['flag'];
 					$terms[ $key ]['term_description'] = serialize( $description );
 				}
 			}
@@ -185,7 +185,7 @@ class PLL_Plugins_Compat {
 	 * @return array
 	 */
 	public function aq_home_url_black_list( $arr ) {
-		return array_merge( $arr, array( array( 'function' => 'aq_resize' ) ) );
+		return array_merge( $arr, [ [ 'function' => 'aq_resize' ] ] );
 	}
 
 	/**
@@ -226,22 +226,24 @@ class PLL_Plugins_Compat {
 
 		// Get featured tag translations
 		$tags = PLL()->model->term->get_translations( $term->term_id );
-		$ids = array();
+		$ids  = [];
 
 		// Query for featured posts in all languages
 		// One query per language to get the correct number of posts per language
 		foreach ( $tags as $tag ) {
-			$_ids = get_posts( array(
-				'lang'        => 0, // avoid language filters
-				'fields'      => 'ids',
-				'numberposts' => Featured_Content::$max_posts,
-				'tax_query'   => array(
-					array(
-						'taxonomy' => 'post_tag',
-						'terms'    => (int) $tag,
-					),
-				),
-			) );
+			$_ids = get_posts(
+				[
+					'lang'        => 0, // avoid language filters
+					'fields'      => 'ids',
+					'numberposts' => Featured_Content::$max_posts,
+					'tax_query'   => [
+						[
+							'taxonomy' => 'post_tag',
+							'terms'    => (int) $tag,
+						],
+					],
+				]
+			);
 
 			$ids = array_merge( $ids, $_ids );
 		}
@@ -282,7 +284,7 @@ class PLL_Plugins_Compat {
 	 */
 	function duplicate_post_taxonomies_blacklist( $taxonomies ) {
 		if ( empty( $taxonomies ) ) {
-			$taxonomies = array(); // As we get an empty string when there is no taxonomy
+			$taxonomies = []; // As we get an empty string when there is no taxonomy
 		}
 
 		$taxonomies[] = 'post_translations';
@@ -299,7 +301,7 @@ class PLL_Plugins_Compat {
 	 * @return array
 	 */
 	public function wp_sweep_excluded_taxonomies( $excluded_taxonomies ) {
-		return array_merge( $excluded_taxonomies, array( 'term_language', 'term_translations' ) );
+		return array_merge( $excluded_taxonomies, [ 'term_language', 'term_translations' ] );
 	}
 
 	/**
@@ -361,10 +363,10 @@ class PLL_Plugins_Compat {
 
 			// If we can't associate the requested domain to a language, redirect to the default domain
 			$hosts = PLL()->links_model->get_hosts();
-			$lang = array_search( $_SERVER['HTTP_HOST'], $hosts );
+			$lang  = array_search( $_SERVER['HTTP_HOST'], $hosts );
 
 			if ( empty( $lang ) ) {
-				$status = get_site_option( 'dm_301_redirect' ) ? '301' : '302'; // Honor status redirect option
+				$status   = get_site_option( 'dm_301_redirect' ) ? '301' : '302'; // Honor status redirect option
 				$redirect = ( is_ssl() ? 'https://' : 'http://' ) . $hosts[ $options['default_lang'] ] . $_SERVER['REQUEST_URI'];
 				wp_redirect( $redirect, $status );
 				exit;

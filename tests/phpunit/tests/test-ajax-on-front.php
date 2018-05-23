@@ -38,7 +38,7 @@ class Ajax_On_Front_Test extends PLL_Ajax_UnitTestCase {
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' );
 		new PLL_Frontend_Filters( self::$polylang );
 
-		add_action( 'wp_ajax_test_locale', array( $this, '_ajax_test_locale' ) );
+		add_action( 'wp_ajax_test_locale', [ $this, '_ajax_test_locale' ] );
 
 		$_REQUEST['action'] = 'test_locale';
 

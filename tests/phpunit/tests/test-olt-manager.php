@@ -3,11 +3,11 @@
 class OLT_Manager_Test extends PLL_UnitTestCase {
 
 	function test_polylang_first() {
-		$plugins = array(
+		$plugins = [
 			'jetpack/jetpack.php',
 			POLYLANG_BASENAME,
 			'woocommerce/woocommerce.php',
-		);
+		];
 
 		update_option( 'active_plugins', $plugins );
 		$active_plugins = get_option( 'active_plugins' );

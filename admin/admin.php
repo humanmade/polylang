@@ -38,8 +38,8 @@ class PLL_Admin extends PLL_Admin_Base {
 		parent::__construct( $links_model );
 
 		// adds a 'settings' link in the plugins table
-		add_filter( 'plugin_action_links_' . POLYLANG_BASENAME, array( $this, 'plugin_action_links' ) );
-		add_action( 'in_plugin_update_message-' . POLYLANG_BASENAME, array( $this, 'plugin_update_message' ), 10, 2 );
+		add_filter( 'plugin_action_links_' . POLYLANG_BASENAME, [ $this, 'plugin_action_links' ] );
+		add_action( 'in_plugin_update_message-' . POLYLANG_BASENAME, [ $this, 'plugin_update_message' ], 10, 2 );
 	}
 
 	/**
@@ -54,7 +54,7 @@ class PLL_Admin extends PLL_Admin_Base {
 		// setup filters for admin pages
 		// priority 5 to make sure filters are there before customize_register is fired
 		if ( $this->model->get_languages_list() ) {
-			add_action( 'wp_loaded', array( $this, 'add_filters' ), 5 );
+			add_action( 'wp_loaded', [ $this, 'add_filters' ], 5 );
 		}
 	}
 
@@ -92,7 +92,7 @@ class PLL_Admin extends PLL_Admin_Base {
 	 */
 	public function add_filters() {
 		// all these are separated just for convenience and maintainability
-		$classes = array( 'Filters', 'Filters_Columns', 'Filters_Post', 'Filters_Term', 'Nav_Menu', 'Sync' );
+		$classes = [ 'Filters', 'Filters_Columns', 'Filters_Post', 'Filters_Term', 'Nav_Menu', 'Sync' ];
 
 		// don't load media filters if option is disabled or if user has no right
 		if ( $this->options['media_support'] && ( $obj = get_post_type_object( 'attachment' ) ) && ( current_user_can( $obj->cap->edit_posts ) || current_user_can( $obj->cap->create_posts ) ) ) {
@@ -109,7 +109,7 @@ class PLL_Admin extends PLL_Admin_Base {
 			 *
 			 * @param string $class class name
 			 */
-			$class = apply_filters( 'pll_' . $obj, 'PLL_Admin_' . $class );
+			$class      = apply_filters( 'pll_' . $obj, 'PLL_Admin_' . $class );
 			$this->$obj = new $class( $this );
 		}
 	}

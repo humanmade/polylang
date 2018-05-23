@@ -15,20 +15,38 @@ class Model_Test extends PLL_UnitTestCase {
 	function test_languages_list() {
 		self::$polylang->model->post->register_taxonomy(); // needed otherwise posts are not counted
 
-		$this->assertEquals( array( 'en', 'fr' ), self::$polylang->model->get_languages_list( array( 'fields' => 'slug' ) ) );
-		$this->assertEquals( array( 'English', 'Français' ), self::$polylang->model->get_languages_list( array( 'fields' => 'name' ) ) );
-		$this->assertEquals( array(), self::$polylang->model->get_languages_list( array( 'hide_empty' => true ) ) );
+		$this->assertEquals( [ 'en', 'fr' ], self::$polylang->model->get_languages_list( [ 'fields' => 'slug' ] ) );
+		$this->assertEquals( [ 'English', 'Français' ], self::$polylang->model->get_languages_list( [ 'fields' => 'name' ] ) );
+		$this->assertEquals( [], self::$polylang->model->get_languages_list( [ 'hide_empty' => true ] ) );
 
 		$post_id = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $post_id, 'en' );
 
-		$this->assertEquals( array( 'en' ), self::$polylang->model->get_languages_list( array( 'fields' => 'slug', 'hide_empty' => true ) ) );
+		$this->assertEquals(
+			[ 'en' ], self::$polylang->model->get_languages_list(
+				[
+					'fields' => 'slug',
+					'hide_empty' => true,
+				]
+			)
+		);
 	}
 
 	function test_term_exists() {
-		$parent = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'parent' ) );
+		$parent = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'parent',
+			]
+		);
 		self::$polylang->model->term->set_language( $parent, 'en' );
-		$child = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'child', 'parent' => $parent ) );
+		$child = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'child',
+				'parent' => $parent,
+			]
+		);
 		self::$polylang->model->term->set_language( $child, 'en' );
 
 		$this->assertEquals( $parent, self::$polylang->model->term_exists( 'parent', 'category', 0, 'en' ) );
@@ -43,34 +61,65 @@ class Model_Test extends PLL_UnitTestCase {
 		$en = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$en = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00', 'post_author' => 1 ) );
+		$en = $this->factory->post->create(
+			[
+				'post_date' => '2007-09-04 00:00:00',
+				'post_author' => 1,
+			]
+		);
 		set_post_format( $en, 'aside' );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
 		$fr = $this->factory->post->create();
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
-		$fr = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00', 'post_author' => 1, 'post_status' => 'draft' ) );
+		$fr = $this->factory->post->create(
+			[
+				'post_date' => '2007-09-04 00:00:00',
+				'post_author' => 1,
+				'post_status' => 'draft',
+			]
+		);
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
-		$fr = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00', 'post_author' => 1 ) );
+		$fr = $this->factory->post->create(
+			[
+				'post_date' => '2007-09-04 00:00:00',
+				'post_author' => 1,
+			]
+		);
 		set_post_format( $fr, 'aside' );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		$language = self::$polylang->model->get_language( 'fr' );
 		$this->assertEquals( 2, self::$polylang->model->count_posts( $language ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'post_format' => 'post-format-aside' ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'year' => 2007 ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'year' => 2007, 'monthnum' => 9 ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'year' => 2007, 'monthnum' => 9, 'day' => 4 ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'm' => 2007 ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'm' => 200709 ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'm' => 20070904 ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'author' => 1 ) ) );
-		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, array( 'author_name' => 'admin' ) ) );
+		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, [ 'post_format' => 'post-format-aside' ] ) );
+		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, [ 'year' => 2007 ] ) );
+		$this->assertEquals(
+			1, self::$polylang->model->count_posts(
+				$language, [
+					'year' => 2007,
+					'monthnum' => 9,
+				]
+			)
+		);
+		$this->assertEquals(
+			1, self::$polylang->model->count_posts(
+				$language, [
+					'year' => 2007,
+					'monthnum' => 9,
+					'day' => 4,
+				]
+			)
+		);
+		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, [ 'm' => 2007 ] ) );
+		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, [ 'm' => 200709 ] ) );
+		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, [ 'm' => 20070904 ] ) );
+		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, [ 'author' => 1 ] ) );
+		$this->assertEquals( 1, self::$polylang->model->count_posts( $language, [ 'author_name' => 'admin' ] ) );
 
 		// Bug fixed in version 2.2.6
-		$this->assertEquals( 2, self::$polylang->model->count_posts( $language, array( 'post_type' => array( 'post', 'page' ) ) ) );
+		$this->assertEquals( 2, self::$polylang->model->count_posts( $language, [ 'post_type' => [ 'post', 'page' ] ] ) );
 	}
 
 	function test_backward_compat_1_8() {
@@ -98,12 +147,12 @@ class Model_Test extends PLL_UnitTestCase {
 		$this->assertEquals( @self::$polylang->model->where_clause( 'en', 'post' ), self::$polylang->model->post->where_clause( 'en' ) );
 
 		// term
-		$en = $this->factory->term->create( array( 'taxonomy' => 'category' ) );
+		$en = $this->factory->term->create( [ 'taxonomy' => 'category' ] );
 		self::$polylang->model->term->set_language( $en, 'en' );
 		$this->assertEquals( 'en', self::$polylang->model->term->get_language( $en )->slug );
 		$this->assertEquals( 'en', @self::$polylang->model->get_term_language( $en )->slug );
 
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'category' ) );
+		$fr = $this->factory->term->create( [ 'taxonomy' => 'category' ] );
 		@self::$polylang->model->set_term_language( $fr, 'fr' );
 		@self::$polylang->model->save_translations( 'term', $en, compact( 'en', 'fr' ) );
 		$this->assertEquals( $en, @self::$polylang->model->get_term( $fr, 'en' ) );
@@ -154,9 +203,9 @@ class Model_Test extends PLL_UnitTestCase {
 	}
 
 	function test_is_translated_post_type() {
-		self::$polylang->options['post_types'] = array(
+		self::$polylang->options['post_types'] = [
 			'trcpt' => 'trcpt',
-		);
+		];
 
 		register_post_type( 'trcpt' ); // translated custom post type
 		register_post_type( 'cpt' ); // *untranslated* custom post type
@@ -164,19 +213,19 @@ class Model_Test extends PLL_UnitTestCase {
 		$this->assertTrue( pll_is_translated_post_type( 'trcpt' ) );
 		$this->assertFalse( pll_is_translated_post_type( 'cpt' ) );
 
-		$this->assertTrue( pll_is_translated_post_type( array( 'trcpt' ) ) );
-		$this->assertFalse( pll_is_translated_post_type( array( 'cpt' ) ) );
+		$this->assertTrue( pll_is_translated_post_type( [ 'trcpt' ] ) );
+		$this->assertFalse( pll_is_translated_post_type( [ 'cpt' ] ) );
 
-		$this->assertTrue( pll_is_translated_post_type( array( 'trcpt', 'cpt' ) ) );
+		$this->assertTrue( pll_is_translated_post_type( [ 'trcpt', 'cpt' ] ) );
 
 		_unregister_post_type( 'cpt' );
 		_unregister_post_type( 'trcpt' );
 	}
 
 	function test_is_translated_taxonomy() {
-		self::$polylang->options['taxonomies'] = array(
+		self::$polylang->options['taxonomies'] = [
 			'trtax' => 'trtax',
-		);
+		];
 
 		register_taxonomy( 'trtax', 'post' ); // translated custom tax
 		register_taxonomy( 'tax', 'post' ); // *untranslated* custom tax
@@ -184,20 +233,20 @@ class Model_Test extends PLL_UnitTestCase {
 		$this->assertTrue( pll_is_translated_taxonomy( 'trtax' ) );
 		$this->assertFalse( pll_is_translated_taxonomy( 'tax' ) );
 
-		$this->assertTrue( pll_is_translated_taxonomy( array( 'trtax' ) ) );
-		$this->assertFalse( pll_is_translated_taxonomy( array( 'tax' ) ) );
+		$this->assertTrue( pll_is_translated_taxonomy( [ 'trtax' ] ) );
+		$this->assertFalse( pll_is_translated_taxonomy( [ 'tax' ] ) );
 
-		$this->assertTrue( pll_is_translated_taxonomy( array( 'trtax', 'tax' ) ) );
+		$this->assertTrue( pll_is_translated_taxonomy( [ 'trtax', 'tax' ] ) );
 
 		_unregister_taxonomy( 'tax' );
 		_unregister_taxonomy( 'trtax' );
 	}
 
 	function test_is_filtered_taxonomy() {
-		$this->assertTrue( self::$polylang->model->is_filtered_taxonomy( array( 'post_format' ) ) );
-		$this->assertFalse( self::$polylang->model->is_filtered_taxonomy( array( 'category' ) ) );
+		$this->assertTrue( self::$polylang->model->is_filtered_taxonomy( [ 'post_format' ] ) );
+		$this->assertFalse( self::$polylang->model->is_filtered_taxonomy( [ 'category' ] ) );
 
-		$this->assertTrue( self::$polylang->model->is_filtered_taxonomy( array( 'post_format', 'category' ) ) );
+		$this->assertTrue( self::$polylang->model->is_filtered_taxonomy( [ 'post_format', 'category' ] ) );
 	}
 }
 

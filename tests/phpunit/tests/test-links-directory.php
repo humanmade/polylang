@@ -2,7 +2,7 @@
 
 class Links_Directory_Test extends PLL_UnitTestCase {
 	protected $structure = '/%postname%/';
-	protected $host = 'http://example.org';
+	protected $host      = 'http://example.org';
 
 	static function wpSetUpBeforeClass() {
 		parent::wpSetUpBeforeClass();
@@ -18,7 +18,7 @@ class Links_Directory_Test extends PLL_UnitTestCase {
 		global $wp_rewrite;
 
 		self::$polylang->options['hide_default'] = 1;
-		self::$polylang->options['rewrite'] = 1;
+		self::$polylang->options['rewrite']      = 1;
 
 		// switch to pretty permalinks
 		$wp_rewrite->init();
@@ -108,7 +108,7 @@ class Links_Directory_Test extends PLL_UnitTestCase {
 		$this->assertEquals( 'fr', self::$polylang->links_model->get_language_from_url() );
 
 		self::$polylang->options['rewrite'] = 0;
-		$_SERVER['REQUEST_URI'] = '/language/fr/test/';
+		$_SERVER['REQUEST_URI']             = '/language/fr/test/';
 		$this->assertEquals( 'fr', self::$polylang->links_model->get_language_from_url() );
 
 		$_SERVER = $server;

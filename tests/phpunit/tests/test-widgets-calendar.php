@@ -30,10 +30,10 @@ class Widget_Calendar_Test extends PLL_UnitTestCase {
 	}
 
 	function test_get_calendar() {
-		$en = $this->factory->post->create( array( 'post_date' => '2007-09-04 00:00:00' ) );
+		$en = $this->factory->post->create( [ 'post_date' => '2007-09-04 00:00:00' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_date' => '2007-09-05 00:00:00' ) );
+		$fr = $this->factory->post->create( [ 'post_date' => '2007-09-05 00:00:00' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		self::$polylang->filters_links = new PLL_Frontend_Filters_Links( self::$polylang );

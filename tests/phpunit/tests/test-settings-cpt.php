@@ -9,8 +9,8 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 		self::$polylang->model->cache = $this->getMockBuilder( 'PLL_Cache' )->getMock();
 		self::$polylang->model->cache->method( 'get' )->willReturn( false );
 
-		self::$polylang->options['post_types'] = array();
-		self::$polylang->options['taxonomies'] = array();
+		self::$polylang->options['post_types'] = [];
+		self::$polylang->options['taxonomies'] = [];
 	}
 
 	function tearDown() {
@@ -70,7 +70,12 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_untranslated_public_post_type() {
-		register_post_type( 'cpt', array( 'public' => true, 'label' => 'CPT' ) );
+		register_post_type(
+			'cpt', [
+				'public' => true,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -83,8 +88,13 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_translated_public_post_type() {
-		self::$polylang->options['post_types'] = array( 'cpt' );
-		register_post_type( 'cpt', array( 'public' => true, 'label' => 'CPT' ) );
+		self::$polylang->options['post_types'] = [ 'cpt' ];
+		register_post_type(
+			'cpt', [
+				'public' => true,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -97,8 +107,13 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_programmatically_translated_public_post_type() {
-		add_filter( 'pll_get_post_types', array( $this, 'filter_translated_post_type_in_settings' ), 10, 2 );
-		register_post_type( 'cpt', array( 'public' => true, 'label' => 'CPT' ) );
+		add_filter( 'pll_get_post_types', [ $this, 'filter_translated_post_type_in_settings' ], 10, 2 );
+		register_post_type(
+			'cpt', [
+				'public' => true,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -111,28 +126,48 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_untranslated_private_post_type() {
-		register_post_type( 'cpt', array( 'public' => false, 'label' => 'CPT' ) );
+		register_post_type(
+			'cpt', [
+				'public' => false,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 		$this->assertEmpty( $module->get_form() );
 	}
 
 	function test_translated_private_post_type() {
-		self::$polylang->options['post_types'] = array( 'cpt' );
-		register_post_type( 'cpt', array( 'public' => false, 'label' => 'CPT' ) );
+		self::$polylang->options['post_types'] = [ 'cpt' ];
+		register_post_type(
+			'cpt', [
+				'public' => false,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 		$this->assertEmpty( $module->get_form() );
 	}
 
 	function test_programmatically_translated_private_post_type() {
-		add_filter( 'pll_get_post_types', array( $this, 'filter_translated_post_type_not_in_settings' ), 10, 2 );
-		register_post_type( 'cpt', array( 'public' => false, 'label' => 'CPT' ) );
+		add_filter( 'pll_get_post_types', [ $this, 'filter_translated_post_type_not_in_settings' ], 10, 2 );
+		register_post_type(
+			'cpt', [
+				'public' => false,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 		$this->assertEmpty( $module->get_form() );
 	}
 
 	function test_untranslated_private_post_type_in_settings() {
-		add_filter( 'pll_get_post_types', array( $this, 'filter_untranslated_post_type_in_settings' ), 10, 2 );
-		register_post_type( 'cpt', array( 'public' => false, 'label' => 'CPT' ) );
+		add_filter( 'pll_get_post_types', [ $this, 'filter_untranslated_post_type_in_settings' ], 10, 2 );
+		register_post_type(
+			'cpt', [
+				'public' => false,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -145,9 +180,14 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_translated_private_post_type_in_settings() {
-		self::$polylang->options['post_types'] = array( 'cpt' );
-		add_filter( 'pll_get_post_types', array( $this, 'filter_untranslated_post_type_in_settings' ), 10, 2 );
-		register_post_type( 'cpt', array( 'public' => false, 'label' => 'CPT' ) );
+		self::$polylang->options['post_types'] = [ 'cpt' ];
+		add_filter( 'pll_get_post_types', [ $this, 'filter_untranslated_post_type_in_settings' ], 10, 2 );
+		register_post_type(
+			'cpt', [
+				'public' => false,
+				'label' => 'CPT',
+			]
+		);
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -160,7 +200,7 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_untranslated_public_taxonomy() {
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => true ) );
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => true ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -173,8 +213,8 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_translated_public_taxonomy() {
-		self::$polylang->options['taxonomies'] = array( 'tax' );
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => true ) );
+		self::$polylang->options['taxonomies'] = [ 'tax' ];
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => true ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -187,8 +227,8 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_programmatically_translated_public_taxonomy() {
-		add_filter( 'pll_get_taxonomies', array( $this, 'filter_translated_taxonomy_in_settings' ), 10, 2 );
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => true ) );
+		add_filter( 'pll_get_taxonomies', [ $this, 'filter_translated_taxonomy_in_settings' ], 10, 2 );
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => true ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -201,29 +241,29 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_untranslated_private_taxonomy() {
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => false ) );
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => false ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 		$this->assertEmpty( $module->get_form() );
 	}
 
 	function test_translated_private_taxonomy() {
-		self::$polylang->options['taxonomies'] = array( 'tax' );
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => false ) );
+		self::$polylang->options['taxonomies'] = [ 'tax' ];
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => false ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$this->assertEmpty( $module->get_form() );
 	}
 
 	function test_programmatically_translated_private_taxonomy() {
-		add_filter( 'pll_get_taxonomies', array( $this, 'filter_translated_taxonomy_not_in_settings' ), 10, 2 );
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => false ) );
+		add_filter( 'pll_get_taxonomies', [ $this, 'filter_translated_taxonomy_not_in_settings' ], 10, 2 );
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => false ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 		$this->assertEmpty( $module->get_form() );
 	}
 
 	function test_untranslated_private_taxonomy_in_settings() {
-		add_filter( 'pll_get_taxonomies', array( $this, 'filter_untranslated_taxonomy_in_settings' ), 10, 2 );
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => false ) );
+		add_filter( 'pll_get_taxonomies', [ $this, 'filter_untranslated_taxonomy_in_settings' ], 10, 2 );
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => false ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();
@@ -236,9 +276,9 @@ class Settings_CPT_Test extends PLL_UnitTestCase {
 	}
 
 	function test_translated_private_taxonomy_in_settings() {
-		self::$polylang->options['taxonomies'] = array( 'tax' );
-		add_filter( 'pll_get_taxonomies', array( $this, 'filter_untranslated_taxonomy_in_settings' ), 10, 2 );
-		register_taxonomy( 'tax', array( 'post' ), array( 'public' => false ) );
+		self::$polylang->options['taxonomies'] = [ 'tax' ];
+		add_filter( 'pll_get_taxonomies', [ $this, 'filter_untranslated_taxonomy_in_settings' ], 10, 2 );
+		register_taxonomy( 'tax', [ 'post' ], [ 'public' => false ] );
 		$module = new PLL_Settings_CPT( self::$polylang );
 
 		$doc = new DomDocument();

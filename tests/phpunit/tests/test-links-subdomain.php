@@ -7,14 +7,14 @@ class Links_Subdomain_Test extends PLL_Domain_UnitTestCase {
 
 		global $wp_rewrite;
 
-		$this->hosts = array(
+		$this->hosts = [
 			'en' => 'http://example.org',
 			'fr' => 'http://fr.example.org',
 			'de' => 'http://de.example.org',
-		);
+		];
 
 		self::$polylang->options['hide_default'] = 1;
-		self::$polylang->options['force_lang'] = 2;
+		self::$polylang->options['force_lang']   = 2;
 
 		// switch to pretty permalinks
 		$wp_rewrite->init();

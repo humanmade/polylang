@@ -17,19 +17,19 @@ abstract class PLL_Base {
 	 */
 	public function __construct( &$links_model ) {
 		$this->links_model = &$links_model;
-		$this->model = &$links_model->model;
-		$this->options = &$this->model->options;
+		$this->model       = &$links_model->model;
+		$this->options     = &$this->model->options;
 
 		$GLOBALS['l10n_unloaded']['pll_string'] = true; // Short-circuit _load_textdomain_just_in_time() for 'pll_string' domain in WP 4.6+
 
-		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
+		add_action( 'widgets_init', [ $this, 'widgets_init' ] );
 
 		// User defined strings translations
-		add_action( 'pll_language_defined', array( $this, 'load_strings_translations' ), 5 );
-		add_action( 'change_locale', array( $this, 'load_strings_translations' ) ); // Since WP 4.7
+		add_action( 'pll_language_defined', [ $this, 'load_strings_translations' ], 5 );
+		add_action( 'change_locale', [ $this, 'load_strings_translations' ] ); // Since WP 4.7
 
 		// Switch_to_blog
-		add_action( 'switch_blog', array( $this, 'switch_blog' ), 10, 2 );
+		add_action( 'switch_blog', [ $this, 'switch_blog' ], 10, 2 );
 	}
 
 	/**
@@ -82,13 +82,13 @@ abstract class PLL_Base {
 	 * @return bool not used by WP but by child class
 	 */
 	public function switch_blog( $new_blog, $old_blog ) {
-		$plugins = ( $sitewide_plugins = get_site_option( 'active_sitewide_plugins' ) ) && is_array( $sitewide_plugins ) ? array_keys( $sitewide_plugins ) : array();
-		$plugins = array_merge( $plugins, get_option( 'active_plugins', array() ) );
+		$plugins = ( $sitewide_plugins = get_site_option( 'active_sitewide_plugins' ) ) && is_array( $sitewide_plugins ) ? array_keys( $sitewide_plugins ) : [];
+		$plugins = array_merge( $plugins, get_option( 'active_plugins', [] ) );
 
 		// 2nd test needed when Polylang is not networked activated
 		// 3rd test needed when Polylang is networked activated and a new site is created
 		if ( $new_blog != $old_blog && in_array( POLYLANG_BASENAME, $plugins ) && get_option( 'polylang' ) ) {
-			$this->options = get_option( 'polylang' ); // Needed for menus
+			$this->options     = get_option( 'polylang' ); // Needed for menus
 			$this->links_model = $this->model->get_links_model();
 			return true;
 		}
@@ -110,13 +110,15 @@ abstract class PLL_Base {
 			if ( is_object( $obj ) && method_exists( $obj, $func ) ) {
 				if ( WP_DEBUG ) {
 					$debug = debug_backtrace();
-					$i = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
-					trigger_error( sprintf(
-						'%1$s was called incorrectly in %3$s on line %4$s: the call to $polylang->%1$s() has been deprecated in Polylang 1.2, use PLL()->%2$s->%1$s() instead.' . "\nError handler",
-						$func, $prop, $debug[ $i ]['file'], $debug[ $i ]['line']
-					) );
+					$i     = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
+					trigger_error(
+						sprintf(
+							'%1$s was called incorrectly in %3$s on line %4$s: the call to $polylang->%1$s() has been deprecated in Polylang 1.2, use PLL()->%2$s->%1$s() instead.' . "\nError handler",
+							$func, $prop, $debug[ $i ]['file'], $debug[ $i ]['line']
+						)
+					);
 				}
-				return call_user_func_array( array( $obj, $func ), $args );
+				return call_user_func_array( [ $obj, $func ], $args );
 			}
 		}
 

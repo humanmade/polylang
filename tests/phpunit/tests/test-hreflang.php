@@ -5,8 +5,8 @@ class Hreflang_Test extends PLL_UnitTestCase {
 	static function wpSetUpBeforeClass() {
 		parent::wpSetUpBeforeClass();
 
-		self::create_language( 'en_GB', array( 'slug' => 'uk' ) );
-		self::create_language( 'en_US', array( 'slug' => 'us' ) );
+		self::create_language( 'en_GB', [ 'slug' => 'uk' ] );
+		self::create_language( 'en_US', [ 'slug' => 'us' ] );
 		self::create_language( 'fr_FR' );
 
 		require_once PLL_INC . '/api.php';
@@ -69,10 +69,10 @@ class Hreflang_Test extends PLL_UnitTestCase {
 	}
 
 	function test_paginated_post() {
-		$uk = $this->factory->post->create( array( 'post_content' => 'en1<!--nextpage-->en2' ) );
+		$uk = $this->factory->post->create( [ 'post_content' => 'en1<!--nextpage-->en2' ] );
 		self::$polylang->model->post->set_language( $uk, 'uk' );
 
-		$us = $this->factory->post->create( array( 'post_content' => 'en1<!--nextpage-->en2' ) );
+		$us = $this->factory->post->create( [ 'post_content' => 'en1<!--nextpage-->en2' ] );
 		self::$polylang->model->post->set_language( $us, 'us' );
 
 		self::$polylang->model->post->save_translations( $uk, compact( 'uk', 'us' ) );

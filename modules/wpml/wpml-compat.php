@@ -22,11 +22,11 @@ class PLL_WPML_Compat {
 		require_once PLL_MODULES_INC . '/wpml/wpml-legacy-api.php';
 		$this->api = new PLL_WPML_API();
 
-		self::$strings = get_option( 'polylang_wpml_strings', array() );
+		self::$strings = get_option( 'polylang_wpml_strings', [] );
 
-		add_action( 'pll_language_defined', array( $this, 'define_constants' ) );
-		add_action( 'pll_no_language_defined', array( $this, 'define_constants' ) );
-		add_filter( 'pll_get_strings', array( $this, 'get_strings' ) );
+		add_action( 'pll_language_defined', [ $this, 'define_constants' ] );
+		add_action( 'pll_no_language_defined', [ $this, 'define_constants' ] );
+		add_filter( 'pll_get_strings', [ $this, 'get_strings' ] );
 	}
 
 	/**
@@ -83,7 +83,13 @@ class PLL_WPML_Compat {
 	 */
 	public function register_string( $context, $name, $string ) {
 		// Registers the string if it does not exist yet (multiline as in WPML)
-		$to_register = array( 'context' => $context, 'name' => $name, 'string' => $string, 'multiline' => true, 'icl' => true );
+		$to_register = [
+			'context' => $context,
+			'name' => $name,
+			'string' => $string,
+			'multiline' => true,
+			'icl' => true,
+		];
 		if ( ! in_array( $to_register, self::$strings ) && $to_register['string'] ) {
 			self::$strings[] = $to_register;
 			update_option( 'polylang_wpml_strings', self::$strings );

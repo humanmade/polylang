@@ -18,16 +18,16 @@ abstract class PLL_Links_Model {
 	 * @param object $model PLL_Model instance
 	 */
 	public function __construct( &$model ) {
-		$this->model = &$model;
+		$this->model   = &$model;
 		$this->options = &$model->options;
 
 		$this->home = home_url();
 
-		add_filter( 'pll_languages_list', array( $this, 'pll_languages_list' ), 4 ); // after PLL_Static_Pages
-		add_filter( 'pll_after_languages_cache', array( $this, 'pll_after_languages_cache' ) );
+		add_filter( 'pll_languages_list', [ $this, 'pll_languages_list' ], 4 ); // after PLL_Static_Pages
+		add_filter( 'pll_after_languages_cache', [ $this, 'pll_after_languages_cache' ] );
 
 		// adds our domains or subdomains to allowed hosts for safe redirection
-		add_filter( 'allowed_redirect_hosts', array( $this, 'allowed_redirect_hosts' ) );
+		add_filter( 'allowed_redirect_hosts', [ $this, 'allowed_redirect_hosts' ] );
 	}
 
 	/**
@@ -52,7 +52,7 @@ abstract class PLL_Links_Model {
 	 * @return array list of hosts
 	 */
 	public function get_hosts() {
-		return array( parse_url( $this->home, PHP_URL_HOST ) );
+		return [ parse_url( $this->home, PHP_URL_HOST ) ];
 	}
 
 	/**
@@ -77,7 +77,7 @@ abstract class PLL_Links_Model {
 	 */
 	protected function set_home_url( $language ) {
 		$search_url = $this->home_url( $language );
-		$home_url = empty( $language->page_on_front ) || $this->options['redirect_lang'] ? $search_url : $this->front_page_url( $language );
+		$home_url   = empty( $language->page_on_front ) || $this->options['redirect_lang'] ? $search_url : $this->front_page_url( $language );
 		$language->set_home_url( $search_url, $home_url );
 	}
 

@@ -16,17 +16,19 @@ class PLL_Settings_Licenses extends PLL_Settings_Module {
 	 * @param object $polylang polylang object
 	 */
 	public function __construct( &$polylang ) {
-		parent::__construct( $polylang, array(
-			'module'        => 'licenses',
-			'title'         => __( 'License keys', 'polylang' ),
-			'description'   => __( 'Manage licenses for Polylang Pro or addons.', 'polylang' ),
-		) );
+		parent::__construct(
+			$polylang, [
+				'module'        => 'licenses',
+				'title'         => __( 'License keys', 'polylang' ),
+				'description'   => __( 'Manage licenses for Polylang Pro or addons.', 'polylang' ),
+			]
+		);
 
 		$this->buttons['cancel'] = sprintf( '<button type="button" class="button button-secondary cancel">%s</button>', __( 'Close' ) );
 
-		$this->items = apply_filters( 'pll_settings_licenses', array() );
+		$this->items = apply_filters( 'pll_settings_licenses', [] );
 
-		add_action( 'wp_ajax_pll_deactivate_license', array( $this, 'deactivate_license' ) );
+		add_action( 'wp_ajax_pll_deactivate_license', [ $this, 'deactivate_license' ] );
 	}
 
 	/**
@@ -80,13 +82,13 @@ class PLL_Settings_Licenses extends PLL_Settings_Module {
 		);
 
 		if ( ! empty( $license ) && is_object( $license ) ) {
-			$now = current_time( 'timestamp' );
+			$now        = current_time( 'timestamp' );
 			$expiration = strtotime( $license->expires, $now );
 
 			// Special case: the license expired after the last check
 			if ( $license->success && $expiration < $now ) {
 				$license->success = false;
-				$license->error = 'expired';
+				$license->error   = 'expired';
 			}
 
 			if ( false === $license->success ) {
@@ -145,7 +147,7 @@ class PLL_Settings_Licenses extends PLL_Settings_Module {
 				if ( 'lifetime' === $license->expires ) {
 					$message = __( 'The license key never expires.', 'polylang' );
 				} elseif ( $expiration > $now && $expiration - $now < ( DAY_IN_SECONDS * 30 ) ) {
-					$class = 'notice-warning notice-alt';
+					$class   = 'notice-warning notice-alt';
 					$message = sprintf(
 						/* translators: %1$s is a date, %2$s is link start tag, %3$s is link end tag. */
 						__( 'Your license key expires soon! It expires on %1$s. %2$sRenew your license key%3$s.', 'polylang' ),
@@ -186,14 +188,25 @@ class PLL_Settings_Licenses extends PLL_Settings_Module {
 			$x = new WP_Ajax_Response();
 			foreach ( $this->items as $item ) {
 				$updated_item = $item->activate_license( sanitize_text_field( $_POST['licenses'][ $item->id ] ) );
-				$x->Add( array( 'what' => 'license-update', 'data' => $item->id, 'supplemental' => array( 'html' => $this->get_row( $updated_item ) ) ) );
+				$x->Add(
+					[
+						'what' => 'license-update',
+						'data' => $item->id,
+						'supplemental' => [ 'html' => $this->get_row( $updated_item ) ],
+					]
+				);
 			}
 
 			// Updated message
 			add_settings_error( 'general', 'settings_updated', __( 'Settings saved.' ), 'updated' );
 			ob_start();
 			settings_errors();
-			$x->Add( array( 'what' => 'success', 'data' => ob_get_clean() ) );
+			$x->Add(
+				[
+					'what' => 'success',
+					'data' => ob_get_clean(),
+				]
+			);
 			$x->send();
 		}
 	}
@@ -211,9 +224,11 @@ class PLL_Settings_Licenses extends PLL_Settings_Module {
 		}
 
 		$id = sanitize_text_field( substr( $_POST['id'], 11 ) );
-		wp_send_json( array(
-			'id' => $id,
-			'html' => $this->get_row( $this->items[ $id ]->deactivate_license() ),
-		) );
+		wp_send_json(
+			[
+				'id' => $id,
+				'html' => $this->get_row( $this->items[ $id ]->deactivate_license() ),
+			]
+		);
 	}
 }

@@ -29,24 +29,24 @@ class PLL_License {
 		$this->author  = $author;
 		$this->api_url = empty( $api_url ) ? $this->api_url : $api_url;
 
-		$licenses = get_option( 'polylang_licenses' );
+		$licenses          = get_option( 'polylang_licenses' );
 		$this->license_key = empty( $licenses[ $this->id ]['key'] ) ? '' : $licenses[ $this->id ]['key'];
 		if ( ! empty( $licenses[ $this->id ]['data'] ) ) {
 			$this->license_data = $licenses[ $this->id ]['data'];
 		}
 
 		// Updater
-		add_action( 'admin_init', array( $this, 'auto_updater' ), 0 );
+		add_action( 'admin_init', [ $this, 'auto_updater' ], 0 );
 
 		// Register settings
-		add_filter( 'pll_settings_licenses', array( $this, 'settings' ) );
+		add_filter( 'pll_settings_licenses', [ $this, 'settings' ] );
 
 		// Weekly schedule
 		if ( ! wp_next_scheduled( 'polylang_check_licenses' ) ) {
 			wp_schedule_event( time(), 'weekly', 'polylang_check_licenses' );
 		}
 
-		add_action( 'polylang_check_licenses', array( $this, 'check_license' ) );
+		add_action( 'polylang_check_licenses', [ $this, 'check_license' ] );
 	}
 
 	/**
@@ -55,12 +55,12 @@ class PLL_License {
 	 * @since 1.9
 	 */
 	public function auto_updater() {
-		$args = array(
+		$args = [
 			'version'   => $this->version,
 			'license'   => $this->license_key,
 			'author'    => $this->author,
 			'item_name' => $this->name,
-		);
+		];
 
 		// Setup the updater
 		new PLL_Plugin_Updater( $this->api_url, $this->file, $args );
@@ -135,21 +135,21 @@ class PLL_License {
 
 		if ( ! empty( $this->license_key ) ) {
 			// Data to send in our API request
-			$api_params = array(
+			$api_params = [
 				'edd_action' => $request,
 				'license'    => $this->license_key,
 				'item_name'  => urlencode( $this->name ),
 				'url'        => home_url(),
-			);
+			];
 
 			// Call the API
 			$response = wp_remote_post(
 				$this->api_url,
-				array(
+				[
 					'timeout'   => 15,
 					'sslverify' => false,
 					'body'      => $api_params,
-				)
+				]
 			);
 
 			// Update the option only if we got a response
@@ -158,8 +158,8 @@ class PLL_License {
 			}
 
 			// Save new license info
-			$licenses[ $this->id ] = array( 'key' => $this->license_key );
-			$data = json_decode( wp_remote_retrieve_body( $response ) );
+			$licenses[ $this->id ] = [ 'key' => $this->license_key ];
+			$data                  = json_decode( wp_remote_retrieve_body( $response ) );
 
 			if ( 'deactivated' !== $data->license ) {
 				$licenses[ $this->id ]['data'] = $this->license_data = $data;

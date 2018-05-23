@@ -17,27 +17,27 @@ class PLL_Admin_Links extends PLL_Links {
 	 * @return string
 	 */
 	public function get_new_post_translation_link( $post_id, $language ) {
-		$post_type = get_post_type( $post_id );
+		$post_type        = get_post_type( $post_id );
 		$post_type_object = get_post_type_object( get_post_type( $post_id ) );
 		if ( ! current_user_can( $post_type_object->cap->create_posts ) ) {
 			return '';
 		}
 
 		if ( 'attachment' == $post_type ) {
-			$args = array(
+			$args = [
 				'action'     => 'translate_media',
 				'from_media' => $post_id,
 				'new_lang'   => $language->slug,
-			);
+			];
 
 			// add nonce for media as we will directly publish a new attachment from a click on this link
 			$link = wp_nonce_url( add_query_arg( $args, admin_url( 'admin.php' ) ), 'translate_media' );
 		} else {
-			$args = array(
+			$args = [
 				'post_type' => $post_type,
 				'from_post' => $post_id,
 				'new_lang'  => $language->slug,
-			);
+			];
 
 			$link = add_query_arg( $args, admin_url( 'post-new.php' ) );
 		}
@@ -82,7 +82,7 @@ class PLL_Admin_Links extends PLL_Links {
 	 * @return string
 	 */
 	public function edit_post_translation_link( $post_id ) {
-		$link = get_edit_post_link( $post_id );
+		$link     = get_edit_post_link( $post_id );
 		$language = $this->model->post->get_language( $post_id );
 		return $link ? sprintf(
 			'<a href="%1$s" class="pll_icon_edit"><span class="screen-reader-text">%2$s</span></a>',
@@ -109,12 +109,12 @@ class PLL_Admin_Links extends PLL_Links {
 			return '';
 		}
 
-		$args = array(
+		$args = [
 			'taxonomy'  => $taxonomy,
 			'post_type' => $post_type,
 			'from_tag'  => $term_id,
 			'new_lang'  => $language->slug,
-		);
+		];
 
 		$link = add_query_arg( $args, admin_url( 'edit-tags.php' ) );
 
@@ -164,7 +164,7 @@ class PLL_Admin_Links extends PLL_Links {
 	 * @return string
 	 */
 	public function edit_term_translation_link( $term_id, $taxonomy, $post_type ) {
-		$link = get_edit_term_link( $term_id, $taxonomy, $post_type );
+		$link     = get_edit_term_link( $term_id, $taxonomy, $post_type );
 		$language = $this->model->term->get_language( $term_id );
 		return $link ? sprintf(
 			'<a href="%1$s" class="pll_icon_edit"><span class="screen-reader-text">%2$s</span></a>',

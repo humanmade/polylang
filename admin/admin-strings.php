@@ -6,7 +6,7 @@
  * @since 1.6
  */
 class PLL_Admin_Strings {
-	static protected $strings = array(); // strings to translate
+	static protected $strings = []; // strings to translate
 	static protected $default_strings; // default strings to register
 
 	/**
@@ -16,7 +16,7 @@ class PLL_Admin_Strings {
 	 */
 	static public function init() {
 		// default strings translations sanitization
-		add_filter( 'pll_sanitize_string_translation', array( __CLASS__, 'sanitize_string_translation' ), 10, 2 );
+		add_filter( 'pll_sanitize_string_translation', [ __CLASS__, 'sanitize_string_translation' ], 10, 2 );
 	}
 
 	/**
@@ -33,7 +33,7 @@ class PLL_Admin_Strings {
 		// backward compatibility with Polylang older than 1.1
 		if ( is_bool( $context ) ) {
 			$multiline = $context;
-			$context = 'Polylang';
+			$context   = 'Polylang';
 		}
 
 		if ( $string && is_scalar( $string ) ) {
@@ -49,16 +49,16 @@ class PLL_Admin_Strings {
 	 * @return array list of all registered strings
 	 */
 	static public function &get_strings() {
-		self::$default_strings = array(
-			'options' => array(
+		self::$default_strings = [
+			'options' => [
 				'blogname'        => __( 'Site Title' ),
 				'blogdescription' => __( 'Tagline' ),
 				'date_format'     => __( 'Date Format' ),
 				'time_format'     => __( 'Time Format' ),
-			),
+			],
 			'widget_title' => __( 'Widget title', 'polylang' ),
 			'widget_text'  => __( 'Widget text', 'polylang' ),
-		);
+		];
 
 		// WP strings
 		foreach ( self::$default_strings['options'] as $option => $string ) {
@@ -81,7 +81,7 @@ class PLL_Admin_Strings {
 				}
 
 				$widget_settings = $wp_registered_widgets[ $widget ]['callback'][0]->get_settings();
-				$number = $wp_registered_widgets[ $widget ]['params'][0]['number'];
+				$number          = $wp_registered_widgets[ $widget ]['params'][0]['number'];
 
 				// don't enable widget translation if the widget is visible in only one language or if there is no title
 				if ( empty( $widget_settings[ $number ]['pll_lang'] ) ) {

@@ -22,7 +22,7 @@ class PLL_Links_Domain extends PLL_Links_Abstract_Domain {
 		$this->hosts = $this->get_hosts();
 
 		// Filter the site url ( mainly to get the correct login form )
-		add_filter( 'site_url', array( $this, 'site_url' ) );
+		add_filter( 'site_url', [ $this, 'site_url' ] );
 	}
 
 
@@ -80,7 +80,7 @@ class PLL_Links_Domain extends PLL_Links_Abstract_Domain {
 	 * @return array list of hosts
 	 */
 	public function get_hosts() {
-		$hosts = array();
+		$hosts = [];
 		foreach ( $this->options['domains'] as $lang => $domain ) {
 			$hosts[ $lang ] = parse_url( $domain, PHP_URL_HOST );
 		}

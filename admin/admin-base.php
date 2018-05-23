@@ -23,11 +23,11 @@ class PLL_Admin_Base extends PLL_Base {
 		load_plugin_textdomain( 'polylang', false, basename( POLYLANG_DIR ) . '/languages' );
 
 		// Adds the link to the languages panel in the WordPress admin menu
-		add_action( 'admin_menu', array( $this, 'add_menus' ) );
+		add_action( 'admin_menu', [ $this, 'add_menus' ] );
 
 		// Setup js scripts and css styles
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
-		add_action( 'admin_print_footer_scripts', array( $this, 'admin_print_footer_scripts' ), 0 ); // High priority in case an ajax request is sent by an immediately invoked function
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+		add_action( 'admin_print_footer_scripts', [ $this, 'admin_print_footer_scripts' ], 0 ); // High priority in case an ajax request is sent by an immediately invoked function
 
 		// Lingotek
 		if ( ! defined( 'POLYLANG_PRO' ) && ( ! defined( 'PLL_LINGOTEK_AD' ) || PLL_LINGOTEK_AD ) ) {
@@ -46,17 +46,17 @@ class PLL_Admin_Base extends PLL_Base {
 			return;
 		}
 
-		$this->links = new PLL_Admin_Links( $this ); // FIXME needed here ?
-		$this->static_pages = new PLL_Admin_Static_Pages( $this ); // FIXME needed here ?
+		$this->links         = new PLL_Admin_Links( $this ); // FIXME needed here ?
+		$this->static_pages  = new PLL_Admin_Static_Pages( $this ); // FIXME needed here ?
 		$this->filters_links = new PLL_Filters_Links( $this ); // FIXME needed here ?
 
 		// Filter admin language for users
 		// We must not call user info before WordPress defines user roles in wp-settings.php
-		add_filter( 'setup_theme', array( $this, 'init_user' ) );
-		add_filter( 'request', array( $this, 'request' ) );
+		add_filter( 'setup_theme', [ $this, 'init_user' ] );
+		add_filter( 'request', [ $this, 'request' ] );
 
 		// Adds the languages in admin bar
-		add_action( 'admin_bar_menu', array( $this, 'admin_bar_menu' ), 100 ); // 100 determines the position
+		add_action( 'admin_bar_menu', [ $this, 'admin_bar_menu' ], 100 ); // 100 determines the position
 	}
 
 	/**
@@ -66,7 +66,7 @@ class PLL_Admin_Base extends PLL_Base {
 	 */
 	public function add_menus() {
 		// Prepare the list of tabs
-		$tabs = array( 'lang' => __( 'Languages', 'polylang' ) );
+		$tabs = [ 'lang' => __( 'Languages', 'polylang' ) ];
 
 		// Only if at least one language has been created
 		if ( $this->model->get_languages_list() ) {
@@ -91,7 +91,7 @@ class PLL_Admin_Base extends PLL_Base {
 				add_menu_page( $title, __( 'Languages', 'polylang' ), 'manage_options', $page, null, 'dashicons-translation' );
 			}
 
-			add_submenu_page( $parent, $title, $title, 'manage_options', $page, array( $this, 'languages_page' ) );
+			add_submenu_page( $parent, $title, $title, 'manage_options', $page, [ $this, 'languages_page' ] );
 		}
 	}
 
@@ -114,12 +114,12 @@ class PLL_Admin_Base extends PLL_Base {
 		// 2 => 1 if loaded even if languages have not been defined yet, 0 otherwise
 		// 3 => 1 if loaded in footer
 		// FIXME: check if I can load more scripts in footer
-		$scripts = array(
-			'post'  => array( array( 'post', 'media', 'async-upload', 'edit' ), array( 'jquery', 'wp-ajax-response', 'post', 'jquery-ui-autocomplete' ), 0, 0 ),
-			'media' => array( array( 'upload' ), array( 'jquery' ), 0, 1 ),
-			'term'  => array( array( 'edit-tags', 'term' ), array( 'jquery', 'wp-ajax-response', 'jquery-ui-autocomplete' ), 0, 1 ),
-			'user'  => array( array( 'profile', 'user-edit' ), array( 'jquery' ), 0, 0 ),
-		);
+		$scripts = [
+			'post'  => [ [ 'post', 'media', 'async-upload', 'edit' ], [ 'jquery', 'wp-ajax-response', 'post', 'jquery-ui-autocomplete' ], 0, 0 ],
+			'media' => [ [ 'upload' ], [ 'jquery' ], 0, 1 ],
+			'term'  => [ [ 'edit-tags', 'term' ], [ 'jquery', 'wp-ajax-response', 'jquery-ui-autocomplete' ], 0, 1 ],
+			'user'  => [ [ 'profile', 'user-edit' ], [ 'jquery' ], 0, 0 ],
+		];
 
 		foreach ( $scripts as $script => $v ) {
 			if ( in_array( $screen->base, $v[0] ) && ( $v[2] || $this->model->get_languages_list() ) ) {
@@ -127,7 +127,7 @@ class PLL_Admin_Base extends PLL_Base {
 			}
 		}
 
-		wp_enqueue_style( 'polylang_admin', plugins_url( '/css/admin' . $suffix . '.css', POLYLANG_FILE ), array(), POLYLANG_VERSION );
+		wp_enqueue_style( 'polylang_admin', plugins_url( '/css/admin' . $suffix . '.css', POLYLANG_FILE ), [], POLYLANG_VERSION );
 	}
 
 	/**
@@ -147,13 +147,13 @@ class PLL_Admin_Base extends PLL_Base {
 	public function admin_print_footer_scripts() {
 		global $post_ID, $tag_ID;
 
-		$params = array( 'pll_ajax_backend' => 1 );
+		$params = [ 'pll_ajax_backend' => 1 ];
 		if ( ! empty( $post_ID ) ) {
-			$params = array_merge( $params, array( 'pll_post_id' => (int) $post_ID ) );
+			$params = array_merge( $params, [ 'pll_post_id' => (int) $post_ID ] );
 		}
 
 		if ( ! empty( $tag_ID ) ) {
-			$params = array_merge( $params, array( 'pll_term_id' => (int) $tag_ID ) );
+			$params = array_merge( $params, [ 'pll_term_id' => (int) $tag_ID ] );
 		}
 
 		$str = http_build_query( $params );
@@ -216,11 +216,9 @@ class PLL_Admin_Base extends PLL_Base {
 			$this->curlang = $lang;
 		} elseif ( 'post-new.php' === $GLOBALS['pagenow'] && ( empty( $_GET['post_type'] ) || $this->model->is_translated_post_type( $_GET['post_type'] ) ) ) {
 			$this->curlang = empty( $_GET['new_lang'] ) ? $this->pref_lang : $this->model->get_language( $_GET['new_lang'] );
-		}
-
-		// Edit Term
+		} // Edit Term
 		// FIXME 'edit-tags.php' for backward compatibility with WP < 4.5
-		elseif ( in_array( $GLOBALS['pagenow'], array( 'edit-tags.php', 'term.php' ) ) && isset( $_GET['tag_ID'] ) && $lang = $this->model->term->get_language( (int) $_GET['tag_ID'] ) ) {
+		elseif ( in_array( $GLOBALS['pagenow'], [ 'edit-tags.php', 'term.php' ] ) && isset( $_GET['tag_ID'] ) && $lang = $this->model->term->get_language( (int) $_GET['tag_ID'] ) ) {
 			$this->curlang = $lang;
 		} elseif ( isset( $_REQUEST['pll_term_id'] ) && $lang = $this->model->term->get_language( (int) $_REQUEST['pll_term_id'] ) ) {
 			$this->curlang = $lang;
@@ -247,7 +245,7 @@ class PLL_Admin_Base extends PLL_Base {
 		// Backend locale
 		// FIXME: Backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			add_filter( 'locale', array( $this, 'get_locale' ) );
+			add_filter( 'locale', [ $this, 'get_locale' ] );
 		}
 
 		// Language for admin language filter: may be empty
@@ -329,11 +327,11 @@ class PLL_Admin_Base extends PLL_Base {
 	 * @param object $wp_admin_bar
 	 */
 	public function admin_bar_menu( $wp_admin_bar ) {
-		$all_item = (object) array(
+		$all_item = (object) [
 			'slug' => 'all',
 			'name' => __( 'Show all languages', 'polylang' ),
 			'flag' => '<span class="ab-icon"></span>',
-		);
+		];
 
 		$selected = empty( $this->filter_lang ) ? $all_item : $this->filter_lang;
 
@@ -344,25 +342,29 @@ class PLL_Admin_Base extends PLL_Base {
 			esc_html( $selected->name )
 		);
 
-		$wp_admin_bar->add_menu( array(
-			'id'     => 'languages',
-			'title'  => $selected->flag . $title,
-			'href'   => esc_url( add_query_arg( 'lang', $selected->slug, remove_query_arg( 'paged' ) ) ),
-			'meta'   => array( 'title' => __( 'Filters content by language', 'polylang' ) ),
-		) );
+		$wp_admin_bar->add_menu(
+			[
+				'id'     => 'languages',
+				'title'  => $selected->flag . $title,
+				'href'   => esc_url( add_query_arg( 'lang', $selected->slug, remove_query_arg( 'paged' ) ) ),
+				'meta'   => [ 'title' => __( 'Filters content by language', 'polylang' ) ],
+			]
+		);
 
-		foreach ( array_merge( array( $all_item ), $this->model->get_languages_list() ) as $lang ) {
+		foreach ( array_merge( [ $all_item ], $this->model->get_languages_list() ) as $lang ) {
 			if ( $selected->slug === $lang->slug ) {
 				continue;
 			}
 
-			$wp_admin_bar->add_menu( array(
-				'parent' => 'languages',
-				'id'     => $lang->slug,
-				'title'  => $lang->flag . esc_html( $lang->name ),
-				'href'   => esc_url( add_query_arg( 'lang', $lang->slug, remove_query_arg( 'paged' ) ) ),
-				'meta'   => 'all' === $lang->slug ? array() : array( 'lang' => esc_attr( $lang->get_locale( 'display' ) ) ),
-			) );
+			$wp_admin_bar->add_menu(
+				[
+					'parent' => 'languages',
+					'id'     => $lang->slug,
+					'title'  => $lang->flag . esc_html( $lang->name ),
+					'href'   => esc_url( add_query_arg( 'lang', $lang->slug, remove_query_arg( 'paged' ) ) ),
+					'meta'   => 'all' === $lang->slug ? [] : [ 'lang' => esc_attr( $lang->get_locale( 'display' ) ) ],
+				]
+			);
 		}
 	}
 }

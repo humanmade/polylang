@@ -9,7 +9,7 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 		self::create_language( 'en_US' );
 		self::create_language( 'fr_FR' );
 
-		self::$editor = self::factory()->user->create( array( 'role' => 'editor' ) );
+		self::$editor = self::factory()->user->create( [ 'role' => 'editor' ] );
 	}
 
 	function setUp() {
@@ -17,9 +17,9 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 		remove_all_actions( 'admin_init' ); // to save ( a lot of ) time as WP will attempt to update core and plugins
 
 		wp_set_current_user( self::$editor ); // set a user to pass current_user_can tests
-		self::$polylang = new PLL_Admin( self::$polylang->links_model );
+		self::$polylang               = new PLL_Admin( self::$polylang->links_model );
 		self::$polylang->filters_term = new PLL_Admin_Filters_Term( self::$polylang );
-		self::$polylang->links = new PLL_Admin_Links( self::$polylang );
+		self::$polylang->links        = new PLL_Admin_Links( self::$polylang );
 	}
 
 	function tearDown() {
@@ -30,23 +30,33 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 
 	function test_term_lang_choice_in_edit_category() {
 		// possible parents
-		$en = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'test cat' ) );
+		$en = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'test cat',
+			]
+		);
 		self::$polylang->model->term->set_language( $en, 'en' );
 
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'essai cat' ) );
+		$fr = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'essai cat',
+			]
+		);
 		self::$polylang->model->term->set_language( $fr, 'fr' );
 
 		// the category
-		$term_id = $this->factory->term->create( array( 'taxonomy' => 'category' ) );
+		$term_id = $this->factory->term->create( [ 'taxonomy' => 'category' ] );
 
-		$_POST = array(
+		$_POST = [
 			'action'     => 'term_lang_choice',
 			'_pll_nonce' => wp_create_nonce( 'pll_language' ),
 			'lang'       => 'fr',
 			'post_type'  => 'post',
 			'taxonomy'   => 'category',
 			'term_id'    => $term_id,
-		);
+		];
 
 		$_REQUEST['lang'] = $_POST['lang'];
 		self::$polylang->set_current_language();
@@ -60,7 +70,7 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 
 		// translations
 		$form = $xml->response[0]->translations->response_data;
-		$doc = new DomDocument();
+		$doc  = new DomDocument();
 		$doc->loadHTML( $form );
 		$xpath = new DOMXpath( $doc );
 
@@ -78,26 +88,36 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 
 	function test_term_lang_choice_in_new_tag() {
 		// possible parents
-		$en = $this->factory->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'test' ) );
+		$en = $this->factory->term->create(
+			[
+				'taxonomy' => 'post_tag',
+				'name' => 'test',
+			]
+		);
 		self::$polylang->model->term->set_language( $en, 'en' );
 
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'post_tag', 'name' => 'essai' ) );
+		$fr = $this->factory->term->create(
+			[
+				'taxonomy' => 'post_tag',
+				'name' => 'essai',
+			]
+		);
 		self::$polylang->model->term->set_language( $fr, 'fr' );
 
 		// we need posts for the tag cloud
-		$this->factory->post->create( array( 'tags_input' => 'test' ) );
-		$this->factory->post->create( array( 'tags_input' => 'essai' ) );
+		$this->factory->post->create( [ 'tags_input' => 'test' ] );
+		$this->factory->post->create( [ 'tags_input' => 'essai' ] );
 
 		// the post_tag
-		$term_id = $this->factory->term->create( array( 'taxonomy' => 'post_tag' ) );
+		$term_id = $this->factory->term->create( [ 'taxonomy' => 'post_tag' ] );
 
-		$_POST = array(
+		$_POST = [
 			'action'     => 'term_lang_choice',
 			'_pll_nonce' => wp_create_nonce( 'pll_language' ),
 			'lang'       => 'fr',
 			'post_type'  => 'post',
 			'taxonomy'   => 'post_tag',
-		);
+		];
 
 		$_REQUEST['lang'] = $_POST['lang'];
 		self::$polylang->set_current_language();
@@ -111,7 +131,7 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 
 		// translations
 		$form = $xml->response[0]->translations->response_data;
-		$doc = new DomDocument();
+		$doc  = new DomDocument();
 		$doc->loadHTML( $form );
 		$xpath = new DOMXpath( $doc );
 
@@ -130,21 +150,36 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 
 
 	function test_terms_not_translated() {
-		$en = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'test cat' ) );
+		$en = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'test cat',
+			]
+		);
 		self::$polylang->model->term->set_language( $en, 'en' );
 
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'essai cat' ) );
+		$fr = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'essai cat',
+			]
+		);
 		self::$polylang->model->term->set_language( $fr, 'fr' );
 
 		self::$polylang->model->term->save_translations( $en, compact( 'en', 'fr' ) );
 
-		$searched = $this->factory->term->create( array( 'taxonomy' => 'category', 'name' => 'test searched' ) );
+		$searched = $this->factory->term->create(
+			[
+				'taxonomy' => 'category',
+				'name' => 'test searched',
+			]
+		);
 		self::$polylang->model->term->set_language( $searched, 'en' );
 
-		$fr = $this->factory->term->create( array( 'taxonomy' => 'category' ) );
+		$fr = $this->factory->term->create( [ 'taxonomy' => 'category' ] );
 		self::$polylang->model->term->set_language( $fr, 'fr' );
 
-		$_GET = array(
+		$_GET = [
 			'action'               => 'pll_terms_not_translated',
 			'_pll_nonce'           => wp_create_nonce( 'pll_language' ),
 			'term'                 => 'tes',
@@ -153,7 +188,7 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 			'post_type'            => 'post',
 			'taxonomy'             => 'category',
 			'term_id'              => $fr,
-		);
+		];
 
 		self::$polylang->set_current_language();
 
@@ -168,7 +203,7 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 		$this->assertEquals( $searched, $response[0]['id'] );
 
 		// translate the current term
-		$en = $this->factory->term->create( array( 'taxonomy' => 'category' ) );
+		$en = $this->factory->term->create( [ 'taxonomy' => 'category' ] );
 		self::$polylang->model->term->set_language( $en, 'en' );
 
 		self::$polylang->model->term->save_translations( $en, compact( 'en', 'fr' ) );
@@ -182,6 +217,6 @@ class Ajax_Filters_Term_Test extends PLL_Ajax_UnitTestCase {
 		}
 
 		$this->assertCount( 2, $response );
-		$this->assertEqualSets( array( $searched, $en ), wp_list_pluck( $response, 'id' ) );
+		$this->assertEqualSets( [ $searched, $en ], wp_list_pluck( $response, 'id' ) );
 	}
 }

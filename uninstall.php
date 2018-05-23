@@ -27,8 +27,7 @@ class PLL_Uninstall {
 				$this->uninstall();
 			}
 			restore_current_blog();
-		}
-		else {
+		} else {
 			$this->uninstall();
 		}
 	}
@@ -60,15 +59,22 @@ class PLL_Uninstall {
 		}
 
 		// Need to register the taxonomies
-		$pll_taxonomies = array( 'language', 'term_language', 'post_translations', 'term_translations' );
+		$pll_taxonomies = [ 'language', 'term_language', 'post_translations', 'term_translations' ];
 		foreach ( $pll_taxonomies as $taxonomy ) {
-			register_taxonomy( $taxonomy, null, array( 'label' => false, 'public' => false, 'query_var' => false, 'rewrite' => false ) );
+			register_taxonomy(
+				$taxonomy, null, [
+					'label' => false,
+					'public' => false,
+					'query_var' => false,
+					'rewrite' => false,
+				]
+			);
 		}
 
-		$languages = get_terms( 'language', array( 'hide_empty' => false ) );
+		$languages = get_terms( 'language', [ 'hide_empty' => false ] );
 
 		// Delete users options
-		foreach ( get_users( array( 'fields' => 'ID' ) ) as $user_id ) {
+		foreach ( get_users( [ 'fields' => 'ID' ] ) as $user_id ) {
 			delete_user_meta( $user_id, 'pll_filter_content' );
 			delete_user_meta( $user_id, 'pll_duplicate_content' );
 			foreach ( $languages as $lang ) {
@@ -77,13 +83,15 @@ class PLL_Uninstall {
 		}
 
 		// Delete menu language switchers
-		$ids = get_posts( array(
-			'post_type'   => 'nav_menu_item',
-			'numberposts' => -1,
-			'nopaging'    => true,
-			'fields'      => 'ids',
-			'meta_key'    => '_pll_menu_item',
-		) );
+		$ids = get_posts(
+			[
+				'post_type'   => 'nav_menu_item',
+				'numberposts' => -1,
+				'nopaging'    => true,
+				'fields'      => 'ids',
+				'meta_key'    => '_pll_menu_item',
+			]
+		);
 
 		foreach ( $ids as $id ) {
 			wp_delete_post( $id, true );
@@ -96,22 +104,29 @@ class PLL_Uninstall {
 		}
 
 		// Delete the strings translations 1.2+
-		register_post_type( 'polylang_mo', array( 'rewrite' => false, 'query_var' => false ) );
-		$ids = get_posts( array(
-			'post_type'   => 'polylang_mo',
-			'post_status' => 'any',
-			'numberposts' => -1,
-			'nopaging'    => true,
-			'fields'      => 'ids',
-		) );
+		register_post_type(
+			'polylang_mo', [
+				'rewrite' => false,
+				'query_var' => false,
+			]
+		);
+		$ids = get_posts(
+			[
+				'post_type'   => 'polylang_mo',
+				'post_status' => 'any',
+				'numberposts' => -1,
+				'nopaging'    => true,
+				'fields'      => 'ids',
+			]
+		);
 		foreach ( $ids as $id ) {
 			wp_delete_post( $id, true );
 		}
 
 		// Delete all what is related to languages and translations
-		foreach ( get_terms( $pll_taxonomies, array( 'hide_empty' => false ) ) as $term ) {
+		foreach ( get_terms( $pll_taxonomies, [ 'hide_empty' => false ] ) as $term ) {
 			$term_ids[] = (int) $term->term_id;
-			$tt_ids[] = (int) $term->term_taxonomy_id;
+			$tt_ids[]   = (int) $term->term_taxonomy_id;
 		}
 
 		if ( ! empty( $term_ids ) ) {

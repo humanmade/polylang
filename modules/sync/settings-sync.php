@@ -15,11 +15,13 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 	 * @param object $polylang polylang object
 	 */
 	public function __construct( &$polylang ) {
-		parent::__construct( $polylang, array(
-			'module'      => 'sync',
-			'title'       => __( 'Synchronization', 'polylang' ),
-			'description' => __( 'The synchronization options allow to maintain exact same values (or translations in the case of taxonomies and page parent) of meta content between the translations of a post or page.', 'polylang' ),
-		) );
+		parent::__construct(
+			$polylang, [
+				'module'      => 'sync',
+				'title'       => __( 'Synchronization', 'polylang' ),
+				'description' => __( 'The synchronization options allow to maintain exact same values (or translations in the case of taxonomies and page parent) of meta content between the translations of a post or page.', 'polylang' ),
+			]
+		);
 	}
 
 	/**
@@ -28,7 +30,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 	 * @since 1.8
 	 */
 	public function deactivate() {
-		$this->options['sync'] = array();
+		$this->options['sync'] = [];
 		update_option( 'polylang', $this->options );
 	}
 
@@ -62,7 +64,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 	 * @param array $options
 	 */
 	protected function update( $options ) {
-		$newoptions['sync'] = empty( $options['sync'] ) ? array() : array_keys( $options['sync'], 1 );
+		$newoptions['sync'] = empty( $options['sync'] ) ? [] : array_keys( $options['sync'], 1 );
 		return $newoptions; // take care to return only validated options
 	}
 
@@ -74,7 +76,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 	 * @return array
 	 */
 	protected function get_actions() {
-		return empty( $this->options['sync'] ) ? array( 'configure' ) : array( 'configure', 'deactivate' );
+		return empty( $this->options['sync'] ) ? [ 'configure' ] : [ 'configure', 'deactivate' ];
 	}
 
 	/**
@@ -85,7 +87,7 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 	 * @return array
 	 */
 	static public function list_metas_to_sync() {
-		return array(
+		return [
 			'taxonomies'        => __( 'Taxonomies', 'polylang' ),
 			'post_meta'         => __( 'Custom fields', 'polylang' ),
 			'comment_status'    => __( 'Comment status', 'polylang' ),
@@ -97,6 +99,6 @@ class PLL_Settings_Sync extends PLL_Settings_Module {
 			'_wp_page_template' => __( 'Page template', 'polylang' ),
 			'menu_order'        => __( 'Page order', 'polylang' ),
 			'_thumbnail_id'     => __( 'Featured image', 'polylang' ),
-		);
+		];
 	}
 }

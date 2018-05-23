@@ -22,7 +22,7 @@ class PLL_Sync_Post_Metas extends PLL_Sync_Metas {
 
 		$this->options = &$polylang->options;
 
-		add_filter( 'pll_translate_post_meta', array( $this, 'translate_thumbnail_id' ), 10, 3 );
+		add_filter( 'pll_translate_post_meta', [ $this, 'translate_thumbnail_id' ], 10, 3 );
 	}
 
 	/**
@@ -39,7 +39,7 @@ class PLL_Sync_Post_Metas extends PLL_Sync_Metas {
 	protected function get_metas_to_copy( $from, $to, $lang, $sync = false ) {
 		// Copy or synchronize post metas and allow plugins to do the same
 		$metas = get_post_custom( $from );
-		$keys = array();
+		$keys  = [];
 
 		// Get public meta keys ( including from translated post in case we just deleted a custom field )
 		if ( ! $sync || in_array( 'post_meta', $this->options['sync'] ) ) {
@@ -51,7 +51,7 @@ class PLL_Sync_Post_Metas extends PLL_Sync_Metas {
 		}
 
 		// Add page template and featured image
-		foreach ( array( '_wp_page_template', '_thumbnail_id' ) as $meta ) {
+		foreach ( [ '_wp_page_template', '_thumbnail_id' ] as $meta ) {
 			if ( ! $sync || in_array( $meta, $this->options['sync'] ) ) {
 				$keys[] = $meta;
 			}

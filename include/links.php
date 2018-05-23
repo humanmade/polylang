@@ -17,8 +17,8 @@ class PLL_Links {
 	 */
 	public function __construct( &$polylang ) {
 		$this->links_model = &$polylang->links_model;
-		$this->model = &$polylang->model;
-		$this->options = &$polylang->options;
+		$this->model       = &$polylang->model;
+		$this->options     = &$polylang->options;
 	}
 
 	/**
@@ -49,14 +49,14 @@ class PLL_Links {
 			$post = get_post( $post->post_parent );
 		}
 
-		if ( 'inherit' === $post->post_status || in_array( $post->post_status, get_post_stati( array( 'public' => true ) ) ) ) {
+		if ( 'inherit' === $post->post_status || in_array( $post->post_status, get_post_stati( [ 'public' => true ] ) ) ) {
 			return true;
 		}
 
 		// Follow WP practices, which shows links to private posts ( when readable ), but not for draft posts ( ex: get_adjacent_post_link() )
-		if ( in_array( $post->post_status, get_post_stati( array( 'private' => true ) ) ) ) {
+		if ( in_array( $post->post_status, get_post_stati( [ 'private' => true ] ) ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
-			$user = wp_get_current_user();
+			$user             = wp_get_current_user();
 			return is_user_logged_in() && ( current_user_can( $post_type_object->cap->read_private_posts ) || $user->ID == $post->post_author ); // Comparison must not be strict!
 		}
 

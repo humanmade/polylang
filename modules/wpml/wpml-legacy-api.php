@@ -48,14 +48,20 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 	 * @return array array of arrays per language
 	 */
 	function icl_get_languages( $args = '' ) {
-		$args = wp_parse_args( $args, array( 'skip_missing' => 0, 'orderby' => 'id', 'order' => 'ASC' ) );
+		$args    = wp_parse_args(
+			$args, [
+				'skip_missing' => 0,
+				'orderby' => 'id',
+				'order' => 'ASC',
+			]
+		);
 		$orderby = ( isset( $args['orderby'] ) && 'code' == $args['orderby'] ) ? 'slug' : ( isset( $args['orderby'] ) && 'name' == $args['orderby'] ? 'name' : 'id' );
-		$order = ( ! empty( $args['order'] ) && 'desc' == $args['order'] ) ? 'DESC' : 'ASC';
+		$order   = ( ! empty( $args['order'] ) && 'desc' == $args['order'] ) ? 'DESC' : 'ASC';
 
-		$arr = array();
+		$arr = [];
 
 		// NB: When 'skip_missing' is false, WPML returns all languages even if there is no content
-		$languages = PLL()->model->get_languages_list( array( 'hide_empty' => $args['skip_missing'] ) );
+		$languages = PLL()->model->get_languages_list( [ 'hide_empty' => $args['skip_missing'] ] );
 
 		// FIXME: Backward compatibility with WP < 4.7
 		if ( function_exists( 'wp_list_sort' ) ) {
@@ -73,7 +79,7 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 				continue;
 			}
 
-			$arr[ $lang->slug ] = array(
+			$arr[ $lang->slug ] = [
 				'id'               => $lang->term_id,
 				'active'           => isset( PLL()->curlang->slug ) && PLL()->curlang->slug == $lang->slug ? 1 : 0,
 				'native_name'      => $lang->name,
@@ -84,7 +90,7 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 				'url'              => ! empty( $url ) ? $url :
 					( empty( $args['link_empty_to'] ) ? PLL()->links->get_home_url( $lang ) :
 					str_replace( '{$lang}', $lang->slug, $args['link_empty_to'] ) ),
-			);
+			];
 		}
 
 		// Apply undocumented WPML filter
@@ -110,7 +116,7 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 	 * @param bool   $return_original_if_missing optional, whether to return a value if the translation is missing
 	 * @return string a language dependent link
 	 */
-	function icl_link_to_element( $id, $type = 'post', $text = '', $args = array(), $anchor = '', $echo = true, $return_original_if_missing = true ) {
+	function icl_link_to_element( $id, $type = 'post', $text = '', $args = [], $anchor = '', $echo = true, $return_original_if_missing = true ) {
 		if ( 'tag' == $type ) {
 			$type = 'post_tag';
 		}
@@ -224,14 +230,14 @@ if ( ! function_exists( 'wpml_get_language_information' ) ) {
 		}
 
 		// FIXME WPML may return a WP_Error object
-		return false === ( $lang = PLL()->model->post->get_language( $post_id ) ) ? array() : array(
+		return false === ( $lang = PLL()->model->post->get_language( $post_id ) ) ? [] : [
 			'language_code'      => $lang->slug,
 			'locale'             => $lang->locale,
 			'text_direction'     => (bool) $lang->is_rtl,
 			'display_name'       => $lang->name, // Seems to be the post language name displayed in the current language, not a feature in Polylang
 			'native_name'        => $lang->name,
 			'different_language' => pll_current_language() !== $lang->slug,
-		);
+		];
 	}
 }
 
@@ -325,7 +331,7 @@ if ( ! function_exists( 'wpml_get_copied_fields_for_post_edit' ) ) {
 	 */
 	function wpml_get_copied_fields_for_post_edit() {
 		if ( empty( $_GET['from_post'] ) ) {
-			return array();
+			return [];
 		}
 
 		// Don't know what WPML does but Polylang does copy all public meta keys by default
@@ -337,7 +343,7 @@ if ( ! function_exists( 'wpml_get_copied_fields_for_post_edit' ) ) {
 
 		// Apply our filter and fill the expected output ( see /types/embedded/includes/fields-post.php )
 		/** This filter is documented in modules/sync/admin-sync.php */
-		$arr['fields'] = array_unique( apply_filters( 'pll_copy_post_metas', empty( $keys ) ? array() : $keys, false ) );
+		$arr['fields']           = array_unique( apply_filters( 'pll_copy_post_metas', empty( $keys ) ? [] : $keys, false ) );
 		$arr['original_post_id'] = (int) $_GET['from_post'];
 		return $arr;
 	}

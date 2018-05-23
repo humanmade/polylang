@@ -21,7 +21,7 @@ abstract class PLL_Sync_Metas {
 
 		$this->add_all_meta_actions();
 
-		add_action( "pll_save_{$this->meta_type}", array( $this, 'save_object' ), 10, 3 );
+		add_action( "pll_save_{$this->meta_type}", [ $this, 'save_object' ], 10, 3 );
 	}
 
 	/**
@@ -30,7 +30,7 @@ abstract class PLL_Sync_Metas {
 	 * @since 2.3
 	 */
 	protected function remove_add_meta_action() {
-		remove_action( "added_{$this->meta_type}_meta", array( $this, 'add_meta' ), 10, 4 );
+		remove_action( "added_{$this->meta_type}_meta", [ $this, 'add_meta' ], 10, 4 );
 	}
 
 	/**
@@ -41,11 +41,11 @@ abstract class PLL_Sync_Metas {
 	protected function remove_all_meta_actions() {
 		$this->remove_add_meta_action();
 
-		remove_filter( "update_{$this->meta_type}_metadata", array( $this, 'update_metadata' ), 999, 5 );
-		remove_action( "update_{$this->meta_type}_meta", array( $this, 'update_meta' ), 10, 4 );
+		remove_filter( "update_{$this->meta_type}_metadata", [ $this, 'update_metadata' ], 999, 5 );
+		remove_action( "update_{$this->meta_type}_meta", [ $this, 'update_meta' ], 10, 4 );
 
-		remove_action( "delete_{$this->meta_type}_meta", array( $this, 'store_metas_to_sync' ), 10, 2 );
-		remove_action( "deleted_{$this->meta_type}_meta", array( $this, 'delete_meta' ), 10, 4 );
+		remove_action( "delete_{$this->meta_type}_meta", [ $this, 'store_metas_to_sync' ], 10, 2 );
+		remove_action( "deleted_{$this->meta_type}_meta", [ $this, 'delete_meta' ], 10, 4 );
 	}
 
 	/**
@@ -54,7 +54,7 @@ abstract class PLL_Sync_Metas {
 	 * @since 2.3
 	 */
 	protected function restore_add_meta_action() {
-		add_action( "added_{$this->meta_type}_meta", array( $this, 'add_meta' ), 10, 4 );
+		add_action( "added_{$this->meta_type}_meta", [ $this, 'add_meta' ], 10, 4 );
 	}
 
 	/**
@@ -65,11 +65,11 @@ abstract class PLL_Sync_Metas {
 	protected function add_all_meta_actions() {
 		$this->restore_add_meta_action();
 
-		add_filter( "update_{$this->meta_type}_metadata", array( $this, 'update_metadata' ), 999, 5 ); // Very late in case a filter prevents the meta to be updated
-		add_action( "update_{$this->meta_type}_meta", array( $this, 'update_meta' ), 10, 4 );
+		add_filter( "update_{$this->meta_type}_metadata", [ $this, 'update_metadata' ], 999, 5 ); // Very late in case a filter prevents the meta to be updated
+		add_action( "update_{$this->meta_type}_meta", [ $this, 'update_meta' ], 10, 4 );
 
-		add_action( "delete_{$this->meta_type}_meta", array( $this, 'store_metas_to_sync' ), 10, 2 );
-		add_action( "deleted_{$this->meta_type}_meta", array( $this, 'delete_meta' ), 10, 4 );
+		add_action( "delete_{$this->meta_type}_meta", [ $this, 'store_metas_to_sync' ], 10, 2 );
+		add_action( "deleted_{$this->meta_type}_meta", [ $this, 'delete_meta' ], 10, 4 );
 	}
 
 	/**
@@ -123,7 +123,7 @@ abstract class PLL_Sync_Metas {
 		 * @param int    $to   Id of the post to which we paste informations
 		 * @param string $lang Language slug
 		 */
-		return array_unique( apply_filters( "pll_copy_{$this->meta_type}_metas", array(), $sync, $from, $to, $lang ) );
+		return array_unique( apply_filters( "pll_copy_{$this->meta_type}_metas", [], $sync, $from, $to, $lang ) );
 	}
 
 	/**
@@ -141,7 +141,7 @@ abstract class PLL_Sync_Metas {
 
 		if ( ! $avoid_recursion ) {
 			$avoid_recursion = true;
-			$tr_ids = $this->model->{$this->meta_type}->get_translations( $id );
+			$tr_ids          = $this->model->{$this->meta_type}->get_translations( $id );
 
 			foreach ( $tr_ids as $lang => $tr_id ) {
 				if ( $tr_id !== $id ) {
@@ -171,7 +171,7 @@ abstract class PLL_Sync_Metas {
 	 */
 	public function update_metadata( $r, $id, $meta_key, $meta_value, $prev_value ) {
 		if ( null === $r ) {
-			$hash = md5( "$id|$meta_key|" . maybe_serialize( $meta_value ) );
+			$hash                      = md5( "$id|$meta_key|" . maybe_serialize( $meta_value ) );
 			$this->prev_value[ $hash ] = $prev_value;
 		}
 		return $r;
@@ -192,7 +192,7 @@ abstract class PLL_Sync_Metas {
 
 		if ( ! $avoid_recursion ) {
 			$avoid_recursion = true;
-			$hash = md5( "$id|$meta_key|" . maybe_serialize( $meta_value ) );
+			$hash            = md5( "$id|$meta_key|" . maybe_serialize( $meta_value ) );
 
 			$tr_ids = $this->model->{$this->meta_type}->get_translations( $id );
 
@@ -201,7 +201,7 @@ abstract class PLL_Sync_Metas {
 					$to_copy = $this->get_metas_to_copy( $id, $tr_id, $lang, true );
 					if ( in_array( $meta_key, $to_copy ) ) {
 						$meta_value = $this->maybe_translate_value( $meta_value, $meta_key, $id, $tr_id, $lang );
-						$prev_meta = get_metadata_by_mid( $this->meta_type, $mid );
+						$prev_meta  = get_metadata_by_mid( $this->meta_type, $mid );
 						if ( empty( $this->prev_value[ $hash ] ) || $this->prev_value[ $hash ] === $prev_meta->meta_value ) {
 							$prev_value = $this->maybe_translate_value( $prev_meta->meta_value, $meta_key, $id, $tr_id, $lang );
 							$this->remove_add_meta_action(); // We don't want to sync back the new metas
@@ -279,11 +279,11 @@ abstract class PLL_Sync_Metas {
 	public function copy( $from, $to, $lang, $sync = false ) {
 		$this->remove_all_meta_actions();
 
-		remove_action( "delete_{$this->meta_type}_meta", array( $this, 'store_metas_to_sync' ), 10, 2 );
-		remove_action( "deleted_{$this->meta_type}_meta", array( $this, 'delete_meta' ), 10, 4 );
+		remove_action( "delete_{$this->meta_type}_meta", [ $this, 'store_metas_to_sync' ], 10, 2 );
+		remove_action( "deleted_{$this->meta_type}_meta", [ $this, 'delete_meta' ], 10, 4 );
 
-		$to_copy = $this->get_metas_to_copy( $from, $to, $lang, $sync );
-		$metas = get_metadata( $this->meta_type, $from );
+		$to_copy  = $this->get_metas_to_copy( $from, $to, $lang, $sync );
+		$metas    = get_metadata( $this->meta_type, $from );
 		$tr_metas = get_metadata( $this->meta_type, $to );
 
 		foreach ( $to_copy as $key ) {
@@ -295,8 +295,8 @@ abstract class PLL_Sync_Metas {
 			} else {
 				if ( ! empty( $tr_metas[ $key ] ) && 1 === count( $metas[ $key ] ) && 1 === count( $tr_metas[ $key ] ) ) {
 					// One custom field to update
-					$value = reset( $metas[ $key ] );
-					$value = maybe_unserialize( $value );
+					$value    = reset( $metas[ $key ] );
+					$value    = maybe_unserialize( $value );
 					$to_value = $this->maybe_translate_value( $value, $key, $from, $to, $lang );
 					update_metadata( $this->meta_type, $to, $key, $to_value );
 				} else {
@@ -307,7 +307,7 @@ abstract class PLL_Sync_Metas {
 					}
 
 					foreach ( $metas[ $key ] as $value ) {
-						$value = maybe_unserialize( $value );
+						$value    = maybe_unserialize( $value );
 						$to_value = $this->maybe_translate_value( $value, $key, $from, $to, $lang );
 						add_metadata( $this->meta_type, $to, $key, $to_value );
 					}

@@ -12,8 +12,8 @@
 class PLL_OLT_Manager {
 	static protected $instance; // For singleton
 	protected $default_locale;
-	protected $list_textdomains = array(); // All text domains
-	public $labels = array(); // Post types and taxonomies labels to translate
+	protected $list_textdomains = []; // All text domains
+	public $labels              = []; // Post types and taxonomies labels to translate
 
 	/**
 	 * Constructor: setups relevant filters
@@ -22,8 +22,8 @@ class PLL_OLT_Manager {
 	 */
 	public function __construct() {
 		// Allows Polylang to be the first plugin loaded ;-)
-		add_filter( 'pre_update_option_active_plugins', array( $this, 'make_polylang_first' ) );
-		add_filter( 'pre_update_option_active_sitewide_plugins', array( $this, 'make_polylang_first' ) );
+		add_filter( 'pre_update_option_active_plugins', [ $this, 'make_polylang_first' ] );
+		add_filter( 'pre_update_option_active_sitewide_plugins', [ $this, 'make_polylang_first' ] );
 
 		// Overriding load text domain only on front since WP 4.7
 		// FIXME test get_user_locale for backward compatibility with WP < 4.7
@@ -35,14 +35,14 @@ class PLL_OLT_Manager {
 		$this->default_locale = get_locale();
 
 		// Filters for text domain management
-		add_filter( 'load_textdomain_mofile', array( $this, 'load_textdomain_mofile' ), 10, 2 );
-		add_filter( 'gettext', array( $this, 'gettext' ), 10, 3 );
-		add_filter( 'gettext_with_context', array( $this, 'gettext_with_context' ), 10, 4 );
+		add_filter( 'load_textdomain_mofile', [ $this, 'load_textdomain_mofile' ], 10, 2 );
+		add_filter( 'gettext', [ $this, 'gettext' ], 10, 3 );
+		add_filter( 'gettext_with_context', [ $this, 'gettext_with_context' ], 10, 4 );
 
 		if ( ! Polylang::is_ajax_on_front() ) {
 			// Loads text domains
-			add_action( 'pll_language_defined', array( $this, 'load_textdomains' ), 2 ); // After PLL_Frontend::pll_language_defined
-			add_action( 'pll_no_language_defined', array( $this, 'load_textdomains' ) );
+			add_action( 'pll_language_defined', [ $this, 'load_textdomains' ], 2 ); // After PLL_Frontend::pll_language_defined
+			add_action( 'pll_no_language_defined', [ $this, 'load_textdomains' ] );
 		}
 	}
 
@@ -68,9 +68,9 @@ class PLL_OLT_Manager {
 	 */
 	public function load_textdomains() {
 		// Our load_textdomain_mofile filter has done its job. let's remove it before calling load_textdomain
-		remove_filter( 'load_textdomain_mofile', array( $this, 'load_textdomain_mofile' ), 10, 2 );
-		remove_filter( 'gettext', array( $this, 'gettext' ), 10, 3 );
-		remove_filter( 'gettext_with_context', array( $this, 'gettext_with_context' ), 10, 4 );
+		remove_filter( 'load_textdomain_mofile', [ $this, 'load_textdomain_mofile' ], 10, 2 );
+		remove_filter( 'gettext', [ $this, 'gettext' ], 10, 3 );
+		remove_filter( 'gettext_with_context', [ $this, 'gettext_with_context' ], 10, 4 );
 		$new_locale = get_locale();
 
 		// Don't try to save time for en_US as some users have theme written in another language
@@ -97,14 +97,14 @@ class PLL_OLT_Manager {
 		}
 
 		// First remove taxonomies and post_types labels that we don't need to translate
-		$taxonomies = get_taxonomies( array( '_pll' => true ) );
-		$post_types = get_post_types( array( '_pll' => true ) );
+		$taxonomies = get_taxonomies( [ '_pll' => true ] );
+		$post_types = get_post_types( [ '_pll' => true ] );
 
 		// We don't need to translate core taxonomies and post types labels when setting the language from the url
 		// As they will be translated when registered the second time
 		if ( ! did_action( 'setup_theme' ) ) {
-			$taxonomies = array_merge( get_taxonomies( array( '_builtin' => true ) ), $taxonomies );
-			$post_types = array_merge( get_post_types( array( '_builtin' => true ) ), $post_types );
+			$taxonomies = array_merge( get_taxonomies( [ '_builtin' => true ] ), $taxonomies );
+			$post_types = array_merge( get_post_types( [ '_builtin' => true ] ), $post_types );
 		}
 
 		// Translate labels of post types and taxonomies
@@ -130,7 +130,7 @@ class PLL_OLT_Manager {
 		 *
 		 * @param array $labels list of strings to trnaslate
 		 */
-		do_action_ref_array( 'pll_translate_labels', array( &$this->labels ) );
+		do_action_ref_array( 'pll_translate_labels', [ &$this->labels ] );
 
 		// Free memory
 		unset( $this->default_locale, $this->list_textdomains, $this->labels );
@@ -164,9 +164,15 @@ class PLL_OLT_Manager {
 	public function load_textdomain_mofile( $mofile, $domain ) {
 		// On multisite, 2 files are sharing the same domain so we need to distinguish them
 		if ( 'default' === $domain && false !== strpos( $mofile, '/ms-' ) ) {
-			$this->list_textdomains['ms-default'] = array( 'mo' => $mofile, 'domain' => $domain );
+			$this->list_textdomains['ms-default'] = [
+				'mo' => $mofile,
+				'domain' => $domain,
+			];
 		} else {
-			$this->list_textdomains[ $domain ] = array( 'mo' => $mofile, 'domain' => $domain );
+			$this->list_textdomains[ $domain ] = [
+				'mo' => $mofile,
+				'domain' => $domain,
+			];
 		}
 		return ''; // Hack to prevent WP loading text domains as we will load them all later
 	}
@@ -183,7 +189,7 @@ class PLL_OLT_Manager {
 	 */
 	public function gettext( $translation, $text, $domain ) {
 		if ( is_string( $text ) ) { // Avoid a warning with some buggy plugins which pass an array
-			$this->labels[ $text ] = array( 'domain' => $domain );
+			$this->labels[ $text ] = [ 'domain' => $domain ];
 		}
 		return $translation;
 	}
@@ -200,7 +206,10 @@ class PLL_OLT_Manager {
 	 * @return string unmodified $translation
 	 */
 	public function gettext_with_context( $translation, $text, $context, $domain ) {
-		$this->labels[ $text ] = array( 'domain' => $domain, 'context' => $context );
+		$this->labels[ $text ] = [
+			'domain' => $domain,
+			'context' => $context,
+		];
 		return $translation;
 	}
 
@@ -213,7 +222,7 @@ class PLL_OLT_Manager {
 	 */
 	public function translate_labels( $type ) {
 		// Use static array to avoid translating several times the same ( default ) labels
-		static $translated = array();
+		static $translated = [];
 
 		foreach ( $type->labels as $key => $label ) {
 			if ( is_string( $label ) && isset( $this->labels[ $label ] ) ) {
@@ -221,8 +230,7 @@ class PLL_OLT_Manager {
 					$type->labels->$key = $translated[ $label ] = isset( $this->labels[ $label ]['context'] ) ?
 						_x( $label, $this->labels[ $label ]['context'], $this->labels[ $label ]['domain'] ) :
 						__( $label, $this->labels[ $label ]['domain'] );
-				}
-				else {
+				} else {
 					$type->labels->$key = $translated[ $label ];
 				}
 			}

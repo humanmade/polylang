@@ -20,22 +20,24 @@ class PLL_Settings_Module {
 	 * @param array  $args
 	 */
 	public function __construct( &$polylang, $args ) {
-		$this->options = &$polylang->options;
-		$this->model = &$polylang->model;
+		$this->options     = &$polylang->options;
+		$this->model       = &$polylang->model;
 		$this->links_model = &$polylang->links_model;
 
-		$args = wp_parse_args( $args, array(
-			'title' => '',
-			'description' => '',
-			'active_option' => false,
-		) );
+		$args = wp_parse_args(
+			$args, [
+				'title' => '',
+				'description' => '',
+				'active_option' => false,
+			]
+		);
 
 		foreach ( $args as $prop => $value ) {
 			$this->$prop = $value;
 		}
 
 		// All possible action links, even if not always a link ;-)
-		$this->action_links = array(
+		$this->action_links = [
 			'configure' => sprintf(
 				'<a title="%s" href="%s">%s</a>',
 				esc_attr__( 'Configure this module', 'polylang' ),
@@ -60,15 +62,15 @@ class PLL_Settings_Module {
 			'activated' => esc_html__( 'Activated', 'polylang' ),
 
 			'deactivated' => esc_html__( 'Deactivated', 'polylang' ),
-		);
+		];
 
-		$this->buttons = array(
+		$this->buttons = [
 			'cancel' => sprintf( '<button type="button" class="button button-secondary cancel">%s</button>', esc_html__( 'Cancel' ) ),
 			'save'   => sprintf( '<button type="button" class="button button-primary save">%s</button>', esc_html__( 'Save Changes' ) ),
-		);
+		];
 
 		// Ajax action to save options
-		add_action( 'wp_ajax_pll_save_options', array( $this, 'save_options' ) );
+		add_action( 'wp_ajax_pll_save_options', [ $this, 'save_options' ] );
 	}
 
 	/**
@@ -142,7 +144,7 @@ class PLL_Settings_Module {
 	 * @return array Options
 	 */
 	protected function update( $options ) {
-		return array(); // It's responsibility of the child class to decide what is saved
+		return []; // It's responsibility of the child class to decide what is saved
 	}
 
 	/**
@@ -158,8 +160,8 @@ class PLL_Settings_Module {
 
 		if ( $this->module == $_POST['module'] ) {
 			// It's up to the child class to decide which options are saved, whether there are errors or not
-			$post = array_diff_key( $_POST, array_flip( array( 'action', 'module', 'pll_ajax_backend', '_pll_nonce' ) ) );
-			$options = $this->update( $post );
+			$post          = array_diff_key( $_POST, array_flip( [ 'action', 'module', 'pll_ajax_backend', '_pll_nonce' ] ) );
+			$options       = $this->update( $post );
 			$this->options = array_merge( $this->options, $options );
 			update_option( 'polylang', $this->options );
 
@@ -176,12 +178,22 @@ class PLL_Settings_Module {
 				// Send update message
 				add_settings_error( 'general', 'settings_updated', __( 'Settings saved.' ), 'updated' );
 				settings_errors();
-				$x = new WP_Ajax_Response( array( 'what' => 'success', 'data' => ob_get_clean() ) );
+				$x = new WP_Ajax_Response(
+					[
+						'what' => 'success',
+						'data' => ob_get_clean(),
+					]
+				);
 				$x->send();
 			} else {
 				// Send error messages
 				settings_errors();
-				$x = new WP_Ajax_Response( array( 'what' => 'error', 'data' => ob_get_clean() ) );
+				$x = new WP_Ajax_Response(
+					[
+						'what' => 'error',
+						'data' => ob_get_clean(),
+					]
+				);
 				$x->send();
 			}
 		}

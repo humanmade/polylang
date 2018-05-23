@@ -12,11 +12,11 @@ class PLL_Jetpack {
 	 * @since 2.3
 	 */
 	public function __construct() {
-		add_action( 'init', array( $this, 'jetpack_init' ) );
-		add_action( 'jetpack_widget_get_top_posts', array( $this, 'jetpack_widget_get_top_posts' ), 10, 3 );
-		add_filter( 'grunion_contact_form_field_html', array( $this, 'grunion_contact_form_field_html_filter' ), 10, 3 );
-		add_filter( 'jetpack_open_graph_tags', array( $this, 'jetpack_ogp' ) );
-		add_filter( 'jetpack_relatedposts_filter_filters', array( $this, 'jetpack_relatedposts_filter_filters' ), 10, 2 );
+		add_action( 'init', [ $this, 'jetpack_init' ] );
+		add_action( 'jetpack_widget_get_top_posts', [ $this, 'jetpack_widget_get_top_posts' ], 10, 3 );
+		add_filter( 'grunion_contact_form_field_html', [ $this, 'grunion_contact_form_field_html_filter' ], 10, 3 );
+		add_filter( 'jetpack_open_graph_tags', [ $this, 'jetpack_ogp' ] );
+		add_filter( 'jetpack_relatedposts_filter_filters', [ $this, 'jetpack_relatedposts_filter_filters' ], 10, 2 );
 
 		// Jetpack infinite scroll
 		if ( isset( $_GET['infinity'], $_POST['action'] ) && 'infinite_scroll' == $_POST['action'] ) {
@@ -36,8 +36,8 @@ class PLL_Jetpack {
 
 		// Infinite scroll ajax url must be on the right domain
 		if ( did_action( 'pll_init' ) && PLL()->options['force_lang'] > 1 ) {
-			add_filter( 'infinite_scroll_ajax_url', array( PLL()->links_model, 'site_url' ) );
-			add_filter( 'infinite_scroll_js_settings', array( $this, 'jetpack_infinite_scroll_js_settings' ) );
+			add_filter( 'infinite_scroll_ajax_url', [ PLL()->links_model, 'site_url' ] );
+			add_filter( 'infinite_scroll_js_settings', [ $this, 'jetpack_infinite_scroll_js_settings' ] );
 		}
 	}
 
@@ -78,7 +78,7 @@ class PLL_Jetpack {
 		if ( function_exists( 'icl_translate' ) ) {
 			if ( pll_current_language() !== pll_default_language() ) {
 				$label_translation = icl_translate( 'jetpack ', $field_label . '_label', $field_label );
-				$r = str_replace( $field_label, $label_translation, $r );
+				$r                 = str_replace( $field_label, $label_translation, $r );
 			}
 		}
 
@@ -117,8 +117,8 @@ class PLL_Jetpack {
 	 * @return array
 	 */
 	function jetpack_relatedposts_filter_filters( $filters, $post_id ) {
-		$slug = sanitize_title( pll_get_post_language( $post_id, 'slug' ) );
-		$filters[] = array( 'term' => array( 'taxonomy.language.slug' => $slug ) );
+		$slug      = sanitize_title( pll_get_post_language( $post_id, 'slug' ) );
+		$filters[] = [ 'term' => [ 'taxonomy.language.slug' => $slug ] ];
 		return $filters;
 	}
 

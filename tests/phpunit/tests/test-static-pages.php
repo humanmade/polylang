@@ -7,7 +7,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 	static function wpSetUpBeforeClass() {
 		parent::wpSetUpBeforeClass();
 
-		add_filter( 'pll_languages_list', array( 'PLL_Static_Pages', 'pll_languages_list' ), 2, 2 );
+		add_filter( 'pll_languages_list', [ 'PLL_Static_Pages', 'pll_languages_list' ], 2, 2 );
 
 		self::create_language( 'en_US' );
 		self::create_language( 'fr_FR' );
@@ -17,35 +17,51 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$GLOBALS['polylang'] = &self::$polylang;
 
 		// page on front
-		self::$home_en = $en = self::factory()->post->create( array(
-			'post_title' => 'home',
-			'post_type' => 'page',
-			'post_content' => 'en1<!--nextpage-->en2',
-		) );
+		self::$home_en = $en = self::factory()->post->create(
+			[
+				'post_title' => 'home',
+				'post_type' => 'page',
+				'post_content' => 'en1<!--nextpage-->en2',
+			]
+		);
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		self::$home_fr = $fr = self::factory()->post->create( array(
-			'post_title' => 'accueil',
-			'post_type' => 'page',
-			'post_content' => 'fr1<!--nextpage-->fr2',
-		) );
+		self::$home_fr = $fr = self::factory()->post->create(
+			[
+				'post_title' => 'accueil',
+				'post_type' => 'page',
+				'post_content' => 'fr1<!--nextpage-->fr2',
+			]
+		);
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
-		self::$home_de = $de = self::factory()->post->create( array(
-			'post_title' => 'startseite',
-			'post_type' => 'page',
-			'post_content' => 'de1<!--nextpage-->de2',
-		) );
+		self::$home_de = $de = self::factory()->post->create(
+			[
+				'post_title' => 'startseite',
+				'post_type' => 'page',
+				'post_content' => 'de1<!--nextpage-->de2',
+			]
+		);
 		self::$polylang->model->post->set_language( $de, 'de' );
 
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr', 'de' ) );
 
 		// page for posts
 		// intentionally do not create one in German
-		self::$posts_en = $en = self::factory()->post->create( array( 'post_title' => 'posts', 'post_type' => 'page' ) );
+		self::$posts_en = $en = self::factory()->post->create(
+			[
+				'post_title' => 'posts',
+				'post_type' => 'page',
+			]
+		);
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		self::$posts_fr = $fr = self::factory()->post->create( array( 'post_title' => 'articles', 'post_type' => 'page' ) );
+		self::$posts_fr = $fr = self::factory()->post->create(
+			[
+				'post_title' => 'articles',
+				'post_type' => 'page',
+			]
+		);
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		self::$polylang->model->post->save_translations( $en, compact( 'en', 'fr' ) );
@@ -54,14 +70,14 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 	function setUp() {
 		parent::setUp();
 
-		self::$polylang->options['hide_default'] = 0;
+		self::$polylang->options['hide_default']  = 0;
 		self::$polylang->options['redirect_lang'] = 0;
 
 		global $wp_rewrite;
 
 		// switch to pretty permalinks
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->set_permalink_structure( $this->structure );
 
 		self::$polylang->model->post->register_taxonomy(); // needs this for 'lang' query var
@@ -91,7 +107,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		wp_delete_post( self::$posts_fr );
 
 		parent::wpTearDownAfterClass();
-		remove_filter( 'pll_languages_list', array( 'PLL_Static_Pages', 'pll_languages_list' ), 2, 2 ); // Avoid breaking next tests
+		remove_filter( 'pll_languages_list', [ 'PLL_Static_Pages', 'pll_languages_list' ], 2, 2 ); // Avoid breaking next tests
 	}
 
 	function test_front_page_with_default_options() {
@@ -100,7 +116,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		$this->assertEquals( home_url( '/en/home/' ), get_permalink( self::$home_en ) );
@@ -112,7 +128,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '/en/home/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
-		$this->assertEquals( array( get_post( self::$home_fr ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_fr ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/fr/accueil/' ), false ) );
 	}
 
@@ -122,7 +138,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' ); // brute force
@@ -131,7 +147,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '/en/home/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
-		$this->assertEquals( array( get_post( self::$home_fr ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_fr ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/fr/accueil/?query=1' ), false ) );
 	}
 
@@ -141,7 +157,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' ); // brute force
@@ -171,7 +187,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		$this->assertEquals( home_url( '/' ), get_permalink( self::$home_en ) );
@@ -183,7 +199,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
-		$this->assertEquals( array( get_post( self::$home_fr ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_fr ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/fr/accueil/' ), false ) );
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'en' ); // brute force
@@ -192,7 +208,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '/fr/accueil/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'fr' ) ) );
-		$this->assertEquals( array( get_post( self::$home_en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_en ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/' ), false ) );
 		$this->assertEquals( home_url( '/' ), redirect_canonical( home_url( '/en/home/' ), false ) );
 	}
@@ -205,7 +221,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->options['hide_default'] = 1;
-		self::$polylang->links_model = self::$polylang->model->get_links_model();
+		self::$polylang->links_model             = self::$polylang->model->get_links_model();
 		self::$polylang->model->clean_languages_cache();
 
 		$this->assertEquals( home_url( '/' ), get_permalink( self::$home_en ) ); // trailing slash kept for home page
@@ -217,7 +233,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
-		$this->assertEquals( array( get_post( self::$home_fr ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_fr ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/fr/accueil/' ), false ) );
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'en' ); // brute force
@@ -226,7 +242,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '?page_id=' . self::$home_fr . '&lang=fr' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'fr' ) ) );
-		$this->assertEquals( array( get_post( self::$home_en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_en ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/' ), false ) );
 	}
 
@@ -237,7 +253,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->options['hide_default'] = 1;
-		self::$polylang->links_model = self::$polylang->model->get_links_model();
+		self::$polylang->links_model             = self::$polylang->model->get_links_model();
 		self::$polylang->model->clean_languages_cache();
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' ); // brute force
@@ -267,7 +283,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		$this->assertEquals( home_url( '/en/' ), get_permalink( self::$home_en ) );
@@ -279,7 +295,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '/en/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
-		$this->assertEquals( array( get_post( self::$home_fr ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_fr ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/fr/' ), false ) );
 	}
 
@@ -295,14 +311,14 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 
 		$this->assertQueryTrue( 'is_home', 'is_posts_page' );
 		$this->assertEquals( home_url( '/en/posts/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
-		$this->assertEquals( array( get_post( $fr ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $fr ) ], $GLOBALS['wp_query']->posts );
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'en' ); // brute force
 		$this->go_to( home_url( '/en/posts/' ) );
 
 		$this->assertQueryTrue( 'is_home', 'is_posts_page' );
 		$this->assertEquals( home_url( '/fr/articles/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'fr' ) ) );
-		$this->assertEquals( array( get_post( $en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $en ) ], $GLOBALS['wp_query']->posts );
 	}
 
 	function test_paged_page_for_posts() {
@@ -355,7 +371,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'en' ); // brute force
@@ -377,7 +393,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' ); // brute force
@@ -406,10 +422,10 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertNotFalse( strpos( ob_get_clean(), "<span class='post-state'>Posts Page</span>" ) );
 
 		// test for standard pages too
-		$en = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$en = $this->factory->post->create( [ 'post_type' => 'page' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
-		$fr = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$fr = $this->factory->post->create( [ 'post_type' => 'page' ] );
 		self::$polylang->model->post->set_language( $fr, 'fr' );
 
 		ob_start();
@@ -430,7 +446,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		unset( $wp_settings_errors ); // just in case
 
 		// attempt to assign an untranslated message
-		$en = $this->factory->post->create( array( 'post_type' => 'page' ) );
+		$en = $this->factory->post->create( [ 'post_type' => 'page' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 		update_option( 'page_on_front', $en );
 
@@ -459,27 +475,33 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 	function test_archives_with_front_page_with_redirect_lang() {
 		global $wp_rewrite;
 
-		$en = $this->factory->post->create( array( 'post_title' => 'test', 'post_date' => '2007-09-04 00:00:00', 'post_author' => 1 ) );
+		$en = $this->factory->post->create(
+			[
+				'post_title' => 'test',
+				'post_date' => '2007-09-04 00:00:00',
+				'post_author' => 1,
+			]
+		);
 		self::$polylang->model->post->set_language( $en, 'en' );
 
 		self::$polylang->options['redirect_lang'] = 1;
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		$this->go_to( home_url( '/en/author/admin/' ) );
-		$this->assertEquals( array( get_post( $en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $en ) ], $GLOBALS['wp_query']->posts );
 
 		$this->go_to( home_url( '/en/2007/' ) );
-		$this->assertEquals( array( get_post( $en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $en ) ], $GLOBALS['wp_query']->posts );
 
 		$this->go_to( home_url( '/en/feed/' ) );
-		$this->assertEquals( array( get_post( $en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $en ) ], $GLOBALS['wp_query']->posts );
 
 		$this->go_to( home_url( '/en/?s=test' ) );
-		$this->assertEquals( array( get_post( $en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $en ) ], $GLOBALS['wp_query']->posts );
 	}
 
 	// Bug introduced and fixed in 2.3
@@ -487,15 +509,20 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		global $wp_rewrite;
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 
-		self::$polylang->options['post_types'] = array(
+		self::$polylang->options['post_types'] = [
 			'trcpt' => 'trcpt',
-		);
+		];
 
-		register_post_type( 'trcpt', array( 'public' => true, 'has_archive' => true ) ); // translated custom post type with archives
+		register_post_type(
+			'trcpt', [
+				'public' => true,
+				'has_archive' => true,
+			]
+		); // translated custom post type with archives
 
-		$en = $this->factory->post->create( array( 'post_type' => 'trcpt' ) );
+		$en = $this->factory->post->create( [ 'post_type' => 'trcpt' ] );
 		self::$polylang->model->post->set_language( $en, 'en' );
 
 		self::$polylang->options['redirect_lang'] = 1;
@@ -504,7 +531,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$wp_rewrite->flush_rules();
 
 		$this->go_to( home_url( '/en/trcpt/' ) );
-		$this->assertEquals( array( get_post( $en ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( $en ) ], $GLOBALS['wp_query']->posts );
 
 		_unregister_post_type( 'trcpt' );
 	}
@@ -525,15 +552,15 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 	function test_extra_query_var_with_front_page_with_query_with_redirect_lang() {
 		global $wp_rewrite;
 
-		add_filter( 'query_vars', array( $this, 'extra_query_vars' ) );
-		add_filter( 'root_rewrite_rules', array( $this, 'extra_root_rewrite_rules' ), 1 );
+		add_filter( 'query_vars', [ $this, 'extra_query_vars' ] );
+		add_filter( 'root_rewrite_rules', [ $this, 'extra_root_rewrite_rules' ], 1 );
 
-		self::$polylang->options['hide_default'] = 1;
+		self::$polylang->options['hide_default']  = 1;
 		self::$polylang->options['redirect_lang'] = 1;
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'en' ); // brute force
@@ -549,7 +576,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		self::$polylang->model->clean_languages_cache();
 
 		$wp_rewrite->init();
-		$wp_rewrite->extra_rules_top = array(); // brute force since WP does not do it :(
+		$wp_rewrite->extra_rules_top = []; // brute force since WP does not do it :(
 		$wp_rewrite->flush_rules();
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' ); // brute force
@@ -558,7 +585,7 @@ class Static_Pages_Test extends PLL_UnitTestCase {
 		$this->assertTrue( is_front_page() );
 		$this->assertQueryTrue( 'is_page', 'is_singular', 'is_front_page' );
 		$this->assertEquals( home_url( '/en/' ), self::$polylang->links->get_translation_url( self::$polylang->model->get_language( 'en' ) ) );
-		$this->assertEquals( array( get_post( self::$home_fr ) ), $GLOBALS['wp_query']->posts );
+		$this->assertEquals( [ get_post( self::$home_fr ) ], $GLOBALS['wp_query']->posts );
 		$this->assertEmpty( redirect_canonical( home_url( '/fr/?orderby=price' ), false ) );
 	}
 }

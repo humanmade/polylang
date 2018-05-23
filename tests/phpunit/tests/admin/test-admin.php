@@ -19,7 +19,7 @@ class Admin_Test extends PLL_UnitTestCase {
 		self::$polylang->init();
 
 		_wp_admin_bar_init();
-		do_action_ref_array( 'admin_bar_menu', array( &$wp_admin_bar ) );
+		do_action_ref_array( 'admin_bar_menu', [ &$wp_admin_bar ] );
 
 		$languages = $wp_admin_bar->get_node( 'languages' );
 		$this->assertEmpty( $languages->parent );
@@ -35,10 +35,10 @@ class Admin_Test extends PLL_UnitTestCase {
 	}
 
 	function _test_scripts( $scripts ) {
-		self::$polylang = new PLL_Admin( self::$polylang->links_model );
+		self::$polylang        = new PLL_Admin( self::$polylang->links_model );
 		self::$polylang->links = new PLL_Admin_Links( self::$polylang );
 
-		$GLOBALS['wp_styles'] = new WP_Styles();
+		$GLOBALS['wp_styles']  = new WP_Styles();
 		$GLOBALS['wp_scripts'] = new WP_Scripts();
 		wp_default_scripts( $GLOBALS['wp_scripts'] );
 
@@ -55,12 +55,12 @@ class Admin_Test extends PLL_UnitTestCase {
 		$test = strpos( $footer, 'pll_ajax_backend' );
 		in_array( 'pll_ajax_backend', $scripts ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
 
-		foreach ( array( 'media', 'term' ) as $key ) {
+		foreach ( [ 'media', 'term' ] as $key ) {
 			$test = strpos( $footer, plugins_url( "/js/$key.min.js", POLYLANG_FILE ) );
 			in_array( $key, $scripts ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
 		}
 
-		foreach ( array( 'post', 'user' ) as $key ) {
+		foreach ( [ 'post', 'user' ] as $key ) {
 			$test = strpos( $head, plugins_url( "/js/$key.min.js", POLYLANG_FILE ) );
 			in_array( $key, $scripts ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
 		}
@@ -75,7 +75,7 @@ class Admin_Test extends PLL_UnitTestCase {
 		$GLOBALS['hook_suffix'] = 'edit.php';
 		set_current_screen( 'edit' );
 
-		$scripts = array( 'pll_ajax_backend', 'post', 'css' );
+		$scripts = [ 'pll_ajax_backend', 'post', 'css' ];
 		$this->_test_scripts( $scripts );
 	}
 
@@ -83,7 +83,7 @@ class Admin_Test extends PLL_UnitTestCase {
 		$GLOBALS['hook_suffix'] = 'post.php';
 		set_current_screen( 'post' );
 
-		$scripts = array( 'pll_ajax_backend', 'post', 'css' );
+		$scripts = [ 'pll_ajax_backend', 'post', 'css' ];
 		$this->_test_scripts( $scripts );
 	}
 
@@ -91,7 +91,7 @@ class Admin_Test extends PLL_UnitTestCase {
 		$GLOBALS['hook_suffix'] = 'upload.php';
 		set_current_screen( 'upload' );
 
-		$scripts = array( 'pll_ajax_backend', 'media', 'css' );
+		$scripts = [ 'pll_ajax_backend', 'media', 'css' ];
 		$this->_test_scripts( $scripts );
 	}
 
@@ -99,7 +99,7 @@ class Admin_Test extends PLL_UnitTestCase {
 		$GLOBALS['hook_suffix'] = 'edit-tags.php';
 		set_current_screen( 'edit-tags' );
 
-		$scripts = array( 'pll_ajax_backend', 'term', 'css' );
+		$scripts = [ 'pll_ajax_backend', 'term', 'css' ];
 		$this->_test_scripts( $scripts );
 	}
 
@@ -107,7 +107,7 @@ class Admin_Test extends PLL_UnitTestCase {
 		$GLOBALS['hook_suffix'] = 'term.php';
 		set_current_screen( 'term' );
 
-		$scripts = array( 'pll_ajax_backend', 'term', 'css' );
+		$scripts = [ 'pll_ajax_backend', 'term', 'css' ];
 		$this->_test_scripts( $scripts );
 	}
 
@@ -115,7 +115,7 @@ class Admin_Test extends PLL_UnitTestCase {
 		$GLOBALS['hook_suffix'] = 'profile.php';
 		set_current_screen( 'profile' );
 
-		$scripts = array( 'pll_ajax_backend', 'user', 'css' );
+		$scripts = [ 'pll_ajax_backend', 'user', 'css' ];
 		$this->_test_scripts( $scripts );
 	}
 }

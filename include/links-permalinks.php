@@ -7,9 +7,9 @@
  */
 abstract class PLL_Links_Permalinks extends PLL_Links_Model {
 	public $using_permalinks = true;
-	protected $index = 'index.php'; // Need this before $wp_rewrite is created, also hardcoded in wp-includes/rewrite.php
+	protected $index         = 'index.php'; // Need this before $wp_rewrite is created, also hardcoded in wp-includes/rewrite.php
 	protected $root, $use_trailing_slashes;
-	protected $always_rewrite = array( 'date', 'root', 'comments', 'search', 'author' );
+	protected $always_rewrite = [ 'date', 'root', 'comments', 'search', 'author' ];
 
 	/**
 	 * Constructor
@@ -22,8 +22,8 @@ abstract class PLL_Links_Permalinks extends PLL_Links_Model {
 		parent::__construct( $model );
 
 		// Inspired by wp-includes/rewrite.php
-		$permalink_structure = get_option( 'permalink_structure' );
-		$this->root = preg_match( '#^/*' . $this->index . '#', $permalink_structure ) ? $this->index . '/' : '';
+		$permalink_structure        = get_option( 'permalink_structure' );
+		$this->root                 = preg_match( '#^/*' . $this->index . '#', $permalink_structure ) ? $this->index . '/' : '';
 		$this->use_trailing_slashes = ( '/' == substr( $permalink_structure, -1, 1 ) );
 	}
 
