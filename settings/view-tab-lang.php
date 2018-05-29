@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<h3><?php echo ! empty( $edit_lang ) ? esc_html__( 'Edit language', 'polylang' ) : esc_html__( 'Add new language', 'polylang' ); ?></h3>
 				<?php
 				// Displays the add ( or edit ) language form
-				// Adds noheader=true in the action url to allow using wp_redirect when processing the form
+				// Adds noheader=true in the action url to allow using wp_safe_redirect when processing the form
 				?>
 				<form id="add-lang" method="post" action="admin.php?page=mlang&amp;noheader=true" class="validate">
 					<?php
