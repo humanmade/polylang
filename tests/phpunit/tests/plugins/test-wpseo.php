@@ -11,19 +11,19 @@ if ( file_exists( $_tests_dir . '/../wordpress-seo/wp-seo.php' ) ) {
 	require_once $_tests_dir . '/../wordpress-seo/inc/sitemaps/class-sitemaps.php';
 
 	/**
-     * copied from WPSEO unit tests
-     */
+	 * copied from WPSEO unit tests
+	 */
 	class WPSEO_Sitemaps_Double extends WPSEO_Sitemaps {
 		/**
-	     * Overwrite sitemap_close() so we don't die on outputting the sitemap
-	     */
+		 * Overwrite sitemap_close() so we don't die on outputting the sitemap
+		 */
 		function sitemap_close() {
 			remove_all_actions( 'wp_footer' );
 		}
 
 		/**
-	     * Cleans out the sitemap variable
-	     */
+		 * Cleans out the sitemap variable
+		 */
 		public function reset() {
 			$this->sitemap     = false;
 			$this->bad_sitemap = false;
