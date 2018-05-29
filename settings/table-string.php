@@ -334,7 +334,7 @@ class PLL_Table_String extends WP_List_Table {
 		// Unregisters strings registered through WPML API
 		if ( $this->current_action() === 'delete' && ! empty( $_POST['strings'] ) && function_exists( 'icl_unregister_string' ) ) {
 			foreach ( $_POST['strings'] as $key ) {
-				icl_unregister_string( $this->strings[ $key ]['context'], $this->strings[ $key ]['name'] );
+				icl_unregister_string( $this->strings[ sanitize_text_field( $key ) ]['context'], $this->strings[ sanitize_text_field( $key ) ]['name'] );
 			}
 		}
 
@@ -344,7 +344,7 @@ class PLL_Table_String extends WP_List_Table {
 			$args['paged'] = (int) $_GET['paged']; // Don't rely on $_REQUEST['paged'] or $_POST['paged']. See #14
 		}
 		if ( ! empty( $args['s'] ) ) {
-			$args['s'] = urlencode( $args['s'] ); // Searched string needs to be encoded as it comes from $_POST
+			$args['s'] = urlencode( sanitize_text_field( $args['s'] ) ); // Searched string needs to be encoded as it comes from $_POST
 		}
 		PLL_Settings::redirect( $args );
 	}

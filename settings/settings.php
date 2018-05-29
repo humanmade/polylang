@@ -222,13 +222,13 @@ class PLL_Settings extends PLL_Admin_Base {
 
 			case 'activate':
 				check_admin_referer( 'pll_activate' );
-				$this->modules[ $_GET['module'] ]->activate();
+				$this->modules[ sanitize_text_field( $_GET['module'] ) ]->activate();
 				self::redirect();
 				break;
 
 			case 'deactivate':
 				check_admin_referer( 'pll_deactivate' );
-				$this->modules[ $_GET['module'] ]->deactivate();
+				$this->modules[ sanitize_text_field( $_GET['module'] ) ]->deactivate();
 				self::redirect();
 				break;
 
@@ -264,7 +264,7 @@ class PLL_Settings extends PLL_Admin_Base {
 		}
 
 		// Handle user input
-		$action = isset( $_REQUEST['pll_action'] ) ? $_REQUEST['pll_action'] : '';
+		$action = isset( $_REQUEST['pll_action'] ) ? sanitize_text_field( $_REQUEST['pll_action'] ) : '';
 		if ( 'edit' === $action && ! empty( $_GET['lang'] ) ) {
 			$edit_lang = $this->model->get_language( (int) $_GET['lang'] );
 		} else {
