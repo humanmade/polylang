@@ -25,8 +25,8 @@ class PLL_Install extends PLL_Install_Base {
 			die(
 				sprintf(
 					'<p style = "font-family: sans-serif; font-size: 12px; color: #333; margin: -5px">%s</p>',
-					/* translators: %1$s and %2$s are WordPress version numbers */
 					sprintf(
+						/* translators: %1$s and %2$s are WordPress version numbers */
 						esc_html__( 'You are using WordPress %1$s. Polylang requires at least WordPress %2$s.', 'polylang' ),
 						esc_html( $wp_version ),
 						PLL_MIN_WP_VERSION
