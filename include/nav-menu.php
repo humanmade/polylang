@@ -71,7 +71,7 @@ class PLL_Nav_Menu {
 	 */
 	public function explode_location( $loc ) {
 		$infos = explode( '___', $loc );
-		if ( 1 == count( $infos ) ) {
+		if ( 1 === count( $infos ) ) {
 			$infos[] = $this->options['default_lang'];
 		}
 		return array_combine( [ 'location', 'lang' ], $infos );

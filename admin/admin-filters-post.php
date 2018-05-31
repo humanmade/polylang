@@ -63,7 +63,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		$screen = get_current_screen();
 
 		// Hierarchical taxonomies
-		if ( 'edit' == $screen->base && $taxonomies = get_object_taxonomies( $screen->post_type, 'object' ) ) {
+		if ( 'edit' === $screen->base && $taxonomies = get_object_taxonomies( $screen->post_type, 'object' ) ) {
 			// Get translated hierarchical taxonomies
 			foreach ( $taxonomies as $taxonomy ) {
 				if ( $taxonomy->hierarchical && $taxonomy->show_in_quick_edit && $this->model->is_translated_taxonomy( $taxonomy->name ) ) {
@@ -88,7 +88,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 
 		// Hierarchical post types
-		if ( 'edit' == $screen->base && is_post_type_hierarchical( $screen->post_type ) ) {
+		if ( 'edit' === $screen->base && is_post_type_hierarchical( $screen->post_type ) ) {
 			$pages = get_pages();
 
 			foreach ( $pages as $page ) {
@@ -176,7 +176,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 
 		echo '<div id="post-translations" class="translations">';
 		if ( $lang ) {
-			include PLL_ADMIN_INC . '/view-translations-' . ( 'attachment' == $post_type ? 'media' : 'post' ) . '.php';
+			include PLL_ADMIN_INC . '/view-translations-' . ( 'attachment' === $post_type ? 'media' : 'post' ) . '.php';
 		}
 		echo '</div>' . "\n";
 	}
@@ -203,7 +203,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 
 		ob_start();
 		if ( $lang ) {
-			include PLL_ADMIN_INC . '/view-translations-' . ( 'attachment' == $post_type ? 'media' : 'post' ) . '.php';
+			include PLL_ADMIN_INC . '/view-translations-' . ( 'attachment' === $post_type ? 'media' : 'post' ) . '.php';
 		}
 		$x = new WP_Ajax_Response(
 			[
@@ -258,7 +258,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 
 		// Parent dropdown list ( only for hierarchical post types )
-		if ( in_array( $post_type, get_post_types( [ 'hierarchical' => true ] ) ) ) {
+		if ( in_array( $post_type, get_post_types( [ 'hierarchical' => true ] ), true ) ) {
 			$post = get_post( $post_ID );
 
 			// Args and filter from 'page_attributes_meta_box' in wp-admin/includes/meta-boxes.php of WP 4.2.1
@@ -414,7 +414,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 			$this->model->post->set_language( $post_id, $lang ); // set new language
 
 			// Checks if the new language already exists in the translation group
-			if ( $old_lang && $old_lang->slug != $lang->slug ) {
+			if ( $old_lang && $old_lang->slug !== $lang->slug ) {
 				$translations = $this->model->post->get_translations( $post_id );
 
 				// If yes, separate this post from the translation group
@@ -544,7 +544,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 						$newterms = [];
 
 						foreach ( $terms as $term ) {
-							if ( in_array( $term->term_id, $wrong_term_ids ) ) {
+							if ( in_array( $term->term_id, $wrong_term_ids, true ) ) {
 								// Check if the term is in the correct language or if a translation exist ( mainly for default category )
 								if ( $newterm = $this->model->term->get( $term->term_id, $lang ) ) {
 									$newterms[] = (int) $newterm;
@@ -581,7 +581,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	public function wp_insert_post_parent( $post_parent, $post_id, $new_postarr, $postarr ) {
 		if ( isset( $postarr['bulk_edit'] ) ) {
 			check_admin_referer( 'bulk-posts' );
-			$lang        = -1 == $postarr['inline_lang_choice'] ?
+			$lang        = -1 === $postarr['inline_lang_choice'] ?
 				$this->model->post->get_language( $post_id ) :
 				$this->model->get_language( $postarr['inline_lang_choice'] );
 			$post_parent = $this->model->post->get_translation( $post_parent, $lang );

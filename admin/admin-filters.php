@@ -97,7 +97,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @return array Widget options
 	 */
 	public function widget_update_callback( $instance, $new_instance, $old_instance, $widget ) {
-		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( [ 'fields' => 'slug' ] ) ) ) {
+		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( [ 'fields' => 'slug' ] ), true ) ) {
 			$instance['pll_lang'] = $_POST[ $key ];
 		} else {
 			unset( $instance['pll_lang'] );
@@ -117,13 +117,13 @@ class PLL_Admin_Filters extends PLL_Filters {
 		// Admin language
 		// FIXME Backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$user_lang = in_array( $_POST['user_lang'], $this->model->get_languages_list( [ 'fields' => 'locale' ] ) ) ? $_POST['user_lang'] : 0;
+			$user_lang = in_array( $_POST['user_lang'], $this->model->get_languages_list( [ 'fields' => 'locale' ] ), true ) ? $_POST['user_lang'] : 0;
 			update_user_meta( $user_id, 'locale', $user_lang );
 		}
 
 		// Biography translations
 		foreach ( $this->model->get_languages_list() as $lang ) {
-			$meta        = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
+			$meta        = $lang->slug === $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
 			$description = empty( $_POST[ 'description_' . $lang->slug ] ) ? '' : trim( $_POST[ 'description_' . $lang->slug ] );
 
 			/** This filter is documented in wp-includes/user.php */
@@ -171,7 +171,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 
 		// Hidden information to modify the biography form with js
 		foreach ( $this->model->get_languages_list() as $lang ) {
-			$meta = $lang->slug == $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
+			$meta = $lang->slug === $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
 
 			/** This filter is documented in wp-includes/user.php */
 			$description = apply_filters( 'user_description', get_user_meta( $profileuser->ID, $meta, true ) ); // Applies WP default filter wp_kses_data
@@ -244,7 +244,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 	public function sanitize_title( $title, $raw_title, $context ) {
 		static $once = false;
 
-		if ( ! $once && 'save' == $context && ! empty( $this->curlang ) && ! empty( $title ) ) {
+		if ( ! $once && 'save' === $context && ! empty( $this->curlang ) && ! empty( $title ) ) {
 			$once = true;
 			add_filter( 'locale', [ $this, 'get_locale' ], 20 ); // After the filter for the admin interface
 			$title = sanitize_title( $raw_title, '', $context );

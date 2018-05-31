@@ -23,14 +23,14 @@ if ( isset( $term_id ) ) {
 <table class="widefat term-translations"  id="<?php echo isset( $term_id ) ? 'edit' : 'add'; ?>-term-translations">
 	<?php
 	foreach ( $this->model->get_languages_list() as $language ) {
-		if ( $language->term_id == $lang->term_id ) {
+		if ( $language->term_id === $lang->term_id ) {
 			continue;
 		}
 
 		// Look for any existing translation in this language
 		// Take care not to propose a self link
 		$translation = 0;
-		if ( isset( $term_id ) && ( $translation_id = $this->model->term->get_translation( $term_id, $language ) ) && $translation_id != $term_id ) {
+		if ( isset( $term_id ) && ( $translation_id = $this->model->term->get_translation( $term_id, $language ) ) && $translation_id !== $term_id ) {
 			$translation = get_term( $translation_id, $taxonomy );
 		}
 		if ( isset( $_GET['from_tag'] ) && ( $translation_id = $this->model->term->get( (int) $_GET['from_tag'], $language ) ) && ! $this->model->term->get_translation( $translation_id, $lang ) ) {

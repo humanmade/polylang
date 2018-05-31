@@ -192,7 +192,7 @@ class PLL_Frontend_Auto_Translate {
 				// post__in used by the 2 functions below
 				// Useless to filter them as output is already in the right language and would result in performance loss
 				foreach ( debug_backtrace() as $trace ) {
-					if ( in_array( $trace['function'], [ 'wp_nav_menu', 'gallery_shortcode' ] ) ) {
+					if ( in_array( $trace['function'], [ 'wp_nav_menu', 'gallery_shortcode' ], true ) ) {
 						return;
 					}
 				}
@@ -239,7 +239,7 @@ class PLL_Frontend_Auto_Translate {
 		foreach ( $tax_queries as $key => $q ) {
 			if ( isset( $q['taxonomy'], $q['terms'] ) && $this->model->is_translated_taxonomy( $q['taxonomy'] ) ) {
 				$arr   = [];
-				$field = isset( $q['field'] ) && in_array( $q['field'], [ 'slug', 'name' ] ) ? $q['field'] : 'term_id';
+				$field = isset( $q['field'] ) && in_array( $q['field'], [ 'slug', 'name' ], true ) ? $q['field'] : 'term_id';
 				foreach ( (array) $q['terms'] as $t ) {
 					$arr[] = $this->get_translated_term_by( $field, $t, $q['taxonomy'] );
 				}

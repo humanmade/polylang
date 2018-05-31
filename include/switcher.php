@@ -77,7 +77,7 @@ class PLL_Switcher {
 				$first     = false;
 			}
 
-			if ( $current_lang = $links->curlang->slug == $slug ) {
+			if ( $current_lang = $links->curlang->slug === $slug ) {
 				if ( $args['hide_current'] && ! ( $args['dropdown'] && ! $args['raw'] ) ) {
 					continue; // Hide current language except for dropdown
 				} else {
@@ -113,7 +113,7 @@ class PLL_Switcher {
 
 			$url = empty( $url ) || $args['force_home'] ? $links->get_home_url( $language ) : $url; // If the page is not translated, link to the home page
 
-			$name = $args['show_names'] || ! $args['show_flags'] || $args['raw'] ? ( 'slug' == $args['display_names_as'] ? $slug : $language->name ) : '';
+			$name = $args['show_names'] || ! $args['show_flags'] || $args['raw'] ? ( 'slug' === $args['display_names_as'] ? $slug : $language->name ) : '';
 			$flag = $args['raw'] && ! $args['show_flags'] ? $language->flag_url : ( $args['show_flags'] ? $language->flag : '' );
 
 			$out[ $slug ] = compact( 'id', 'order', 'slug', 'locale', 'name', 'url', 'flag', 'current_lang', 'no_translation', 'classes' );

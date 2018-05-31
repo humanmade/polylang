@@ -58,7 +58,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 								'<option value="%1$s:%2$s:%3$s:%4$s">%5$s - %2$s</option>' . "\n",
 								esc_attr( $lg['code'] ),
 								esc_attr( $lg['locale'] ),
-								'rtl' == $lg['dir'] ? '1' : '0',
+								'rtl' === $lg['dir'] ? '1' : '0',
 								esc_attr( $lg['flag'] ),
 								esc_html( $lg['name'] )
 							);
@@ -128,7 +128,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							printf(
 								'<option value="%1$s"%2$s>%3$s</option>' . "\n",
 								esc_attr( $code ),
-								isset( $edit_lang->flag_code ) && $edit_lang->flag_code == $code ? ' selected="selected"' : '',
+								isset( $edit_lang->flag_code ) && $edit_lang->flag_code === $code ? ' selected="selected"' : '',
 								esc_html( $label )
 							);
 						}

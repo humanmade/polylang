@@ -110,15 +110,15 @@ class PLL_Frontend_Filters_Search {
 		$js   = "//<![CDATA[
 		e = document.getElementsByName( 's' );
 		for ( i = 0; i < e.length; i++ ) {
-			if ( e[i].tagName.toUpperCase() == 'INPUT' ) {
+			if ( e[i].tagName.toUpperCase() === 'INPUT' ) {
 				s = e[i].parentNode.parentNode.children;
 				l = 0;
 				for ( j = 0; j < s.length; j++ ) {
-					if ( s[j].name == 'lang' ) {
+					if ( s[j].name === 'lang' ) {
 						l = 1;
 					}
 				}
-				if ( l == 0 ) {
+				if ( l === 0 ) {
 					var ih = document.createElement( 'input' );
 					ih.type = 'hidden';
 					ih.name = 'lang';

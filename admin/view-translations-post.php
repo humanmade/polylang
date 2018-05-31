@@ -12,12 +12,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 <table>
 	<?php
 	foreach ( $this->model->get_languages_list() as $language ) {
-		if ( $language->term_id == $lang->term_id ) {
+		if ( $language->term_id === $lang->term_id ) {
 			continue;
 		}
 
 		$value = $this->model->post->get_translation( $post_ID, $language );
-		if ( ! $value || $value == $post_ID ) { // $value == $post_ID happens if the post has been ( auto )saved before changing the language
+		if ( ! $value || (int) $value === (int) $post_ID ) { // $value === $post_ID happens if the post has been ( auto )saved before changing the language
 			$value = '';
 		}
 

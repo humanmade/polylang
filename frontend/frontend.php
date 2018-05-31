@@ -105,7 +105,7 @@ class PLL_Frontend extends PLL_Base {
 		$pll_query          = new PLL_Query( $query, $this->model );
 		$queried_taxonomies = $pll_query->get_queried_taxonomies();
 
-		if ( ! empty( $queried_taxonomies ) && 'language' == reset( $queried_taxonomies ) ) {
+		if ( ! empty( $queried_taxonomies ) && 'language' === reset( $queried_taxonomies ) ) {
 			$query->tax_query->queried_terms['language'] = array_shift( $query->tax_query->queried_terms );
 		}
 	}
@@ -128,7 +128,7 @@ class PLL_Frontend extends PLL_Base {
 		}
 
 		// Modifies query vars when the language is queried
-		if ( ! empty( $qv['lang'] ) || ( ! empty( $taxonomies ) && [ 'language' ] == array_values( $taxonomies ) ) ) {
+		if ( ! empty( $qv['lang'] ) || ( ! empty( $taxonomies ) && [ 'language' ] === array_values( $taxonomies ) ) ) {
 			// Do we query a custom taxonomy?
 			$taxonomies = array_diff( $taxonomies, [ 'language', 'category', 'post_tag' ] );
 

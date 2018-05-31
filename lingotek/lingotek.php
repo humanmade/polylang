@@ -24,7 +24,7 @@ class PLL_Lingotek {
 		add_filter( 'pll_settings_tabs', [ $this, 'add_tab' ] );
 		add_action( 'pll_settings_active_tab_lingotek', [ $this, 'display_tab' ] );
 
-		if ( PLL_SETTINGS && isset( $_GET['page'] ) && 'mlang_lingotek' == $_GET['page'] ) {
+		if ( PLL_SETTINGS && isset( $_GET['page'] ) && 'mlang_lingotek' === $_GET['page'] ) {
 			add_action( 'admin_print_styles', [ $this, 'print_css' ] );
 		}
 

@@ -103,7 +103,7 @@ class PLL_WPML_Config {
 		foreach ( $this->xmls as $xml ) {
 			foreach ( $xml->xpath( 'custom-fields/custom-field' ) as $cf ) {
 				$attributes = $cf->attributes();
-				if ( 'copy' == $attributes['action'] || ( ! $sync && in_array( $attributes['action'], [ 'translate', 'copy-once' ] ) ) ) {
+				if ( 'copy' === $attributes['action'] || ( ! $sync && in_array( $attributes['action'], [ 'translate', 'copy-once' ], true ) ) ) {
 					$metas[] = (string) $cf;
 				} else {
 					$metas = array_diff( $metas, [ (string) $cf ] );
@@ -126,7 +126,7 @@ class PLL_WPML_Config {
 		foreach ( $this->xmls as $xml ) {
 			foreach ( $xml->xpath( 'custom-types/custom-type' ) as $pt ) {
 				$attributes = $pt->attributes();
-				if ( 1 == $attributes['translate'] && ! $hide ) {
+				if ( 1 === $attributes['translate'] && ! $hide ) {
 					$types[ (string) $pt ] = (string) $pt;
 				} else {
 					unset( $types[ (string) $pt ] ); // The theme/plugin author decided what to do with the post type so don't allow the user to change this
@@ -149,7 +149,7 @@ class PLL_WPML_Config {
 		foreach ( $this->xmls as $xml ) {
 			foreach ( $xml->xpath( 'taxonomies/taxonomy' ) as $tax ) {
 				$attributes = $tax->attributes();
-				if ( 1 == $attributes['translate'] && ! $hide ) {
+				if ( 1 === $attributes['translate'] && ! $hide ) {
 					$taxonomies[ (string) $tax ] = (string) $tax;
 				} else {
 					unset( $taxonomies[ (string) $tax ] ); // the theme/plugin author decided what to do with the taxonomy so don't allow the user to change this

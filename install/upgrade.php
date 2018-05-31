@@ -334,7 +334,7 @@ class PLL_Upgrade {
 		if ( version_compare( $this->options['version'], '1.1', '<' ) ) {
 			if ( $menu_lang = get_option( 'polylang_nav_menus' ) ) {
 				foreach ( $menu_lang as $location => $arr ) {
-					if ( ! in_array( $location, array_keys( get_registered_nav_menus() ) ) ) {
+					if ( ! in_array( $location, array_keys( get_registered_nav_menus() ), true ) ) {
 						continue;
 					}
 
@@ -470,7 +470,7 @@ class PLL_Upgrade {
 	 * @since 1.4.1
 	 */
 	protected function upgrade_1_4_1() {
-		if ( 3 == $this->options['force_lang'] ) {
+		if ( 3 === $this->options['force_lang'] ) {
 			$this->options['browser'] = $this->options['hide_default'] = 0;
 		}
 	}
@@ -546,7 +546,7 @@ class PLL_Upgrade {
 		}
 
 		foreach ( $translations as $translation ) {
-			if ( in_array( $translation['language'], $languages ) ) {
+			if ( in_array( $translation['language'], $languages, true ) ) {
 				$translation['type']    = 'core';
 				$translations_to_load[] = (object) $translation;
 			}

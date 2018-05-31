@@ -18,10 +18,10 @@ class PLL_WP_Import extends WP_Import {
 
 		// store this for future usage as parent function unsets $this->terms
 		foreach ( $this->terms as $term ) {
-			if ( 'post_translations' == $term['term_taxonomy'] ) {
+			if ( 'post_translations' === $term['term_taxonomy'] ) {
 				$this->post_translations[] = $term;
 			}
-			if ( 'term_translations' == $term['term_taxonomy'] ) {
+			if ( 'term_translations' === $term['term_taxonomy'] ) {
 				$term_translations[] = $term;
 			}
 		}
@@ -55,7 +55,7 @@ class PLL_WP_Import extends WP_Import {
 
 		// store this for future usage as parent function unset $this->posts
 		foreach ( $this->posts as $post ) {
-			if ( 'nav_menu_item' == $post['post_type'] ) {
+			if ( 'nav_menu_item' === $post['post_type'] ) {
 				$menu_items[] = $post;
 			}
 
@@ -78,7 +78,7 @@ class PLL_WP_Import extends WP_Import {
 		// language switcher menu items
 		foreach ( $menu_items as $item ) {
 			foreach ( $item['postmeta'] as $meta ) {
-				if ( '_pll_menu_item' == $meta['key'] ) {
+				if ( '_pll_menu_item' === $meta['key'] ) {
 					update_post_meta( $this->processed_menu_items[ $item['post_id'] ], '_pll_menu_item', maybe_unserialize( $meta['value'] ) );
 				}
 			}

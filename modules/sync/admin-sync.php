@@ -63,7 +63,7 @@ class PLL_Admin_Sync {
 	 * @param object $post      current post object
 	 */
 	public function add_meta_boxes( $post_type, $post ) {
-		if ( 'post-new.php' == $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) && $this->model->is_translated_post_type( $post->post_type ) ) {
+		if ( 'post-new.php' === $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) && $this->model->is_translated_post_type( $post->post_type ) ) {
 			// Capability check already done in post-new.php
 			$from_post_id = (int) $_GET['from_post'];
 			$from_post    = get_post( $from_post_id );
@@ -81,7 +81,7 @@ class PLL_Admin_Sync {
 			}
 
 			// Copy the date only if the synchronization is activated
-			if ( in_array( 'post_date', $this->options['sync'] ) ) {
+			if ( in_array( 'post_date', $this->options['sync'], true ) ) {
 				$post->post_date     = $from_post->post_date;
 				$post->post_date_gmt = $from_post->post_date_gmt;
 			}
@@ -106,12 +106,12 @@ class PLL_Admin_Sync {
 
 		// Prepare properties to synchronize
 		foreach ( [ 'comment_status', 'ping_status', 'menu_order' ] as $property ) {
-			if ( in_array( $property, $this->options['sync'] ) ) {
+			if ( in_array( $property, $this->options['sync'], true ) ) {
 				$postarr[ $property ] = $post->$property;
 			}
 		}
 
-		if ( in_array( 'post_date', $this->options['sync'] ) ) {
+		if ( in_array( 'post_date', $this->options['sync'], true ) ) {
 			// For new drafts, save the date now otherwise it is overriden by WP. Thanks to JoryHogeveen. See #32.
 			if ( 'post-new.php' === $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) ) {
 				$original = get_post( (int) $_GET['from_post'] );
@@ -145,7 +145,7 @@ class PLL_Admin_Sync {
 			// Add post parent to synchronization
 			// Make sure not to impact media translations when creating them at the same time as post
 			// Do not udpate the translation parent if the user set a parent with no translation
-			if ( in_array( 'post_parent', $this->options['sync'] ) && isset( $post_type ) && $post_type === $post->post_type ) {
+			if ( in_array( 'post_parent', $this->options['sync'], true ) && isset( $post_type ) && $post_type === $post->post_type ) {
 				$post_parent = ( $parent_id = wp_get_post_parent_id( $post_id ) ) ? $this->model->post->get_translation( $parent_id, $lang ) : 0;
 				if ( ! ( $parent_id && ! $post_parent ) ) {
 					$tr_arr['post_parent'] = $post_parent;
@@ -161,7 +161,7 @@ class PLL_Admin_Sync {
 		}
 
 		// Sticky posts
-		if ( in_array( 'sticky_posts', $this->options['sync'] ) ) {
+		if ( in_array( 'sticky_posts', $this->options['sync'], true ) ) {
 			$stickies = get_option( 'sticky_posts' );
 			if ( isset( $_REQUEST['sticky'] ) && 'sticky' === $_REQUEST['sticky'] ) {
 				$stickies = array_merge( $stickies, array_values( $translations ) );
@@ -227,7 +227,7 @@ class PLL_Admin_Sync {
 	 * @return array
 	 */
 	public function sync_sticky_posts( $value, $old_value ) {
-		if ( in_array( 'sticky_posts', $this->options['sync'] ) ) {
+		if ( in_array( 'sticky_posts', $this->options['sync'], true ) ) {
 			// Stick post
 			if ( $sticked = array_diff( $value, $old_value ) ) {
 				$translations = $this->model->post->get_translations( reset( $sticked ) );

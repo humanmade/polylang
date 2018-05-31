@@ -226,7 +226,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 	 * @return bool|array false if we hide the widget, unmodified $instance otherwise
 	 */
 	public function widget_display_callback( $instance, $widget ) {
-		return ! empty( $instance['pll_lang'] ) && $instance['pll_lang'] != $this->curlang->slug ? false : $instance;
+		return ! empty( $instance['pll_lang'] ) && $instance['pll_lang'] !== $this->curlang->slug ? false : $instance;
 	}
 
 	/**
@@ -242,7 +242,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 		global $wp_registered_widgets;
 
 		foreach ( $sidebars_widgets as $sidebar => $widgets ) {
-			if ( 'wp_inactive_widgets' == $sidebar || empty( $widgets ) ) {
+			if ( 'wp_inactive_widgets' === $sidebar || empty( $widgets ) ) {
 				continue;
 			}
 
