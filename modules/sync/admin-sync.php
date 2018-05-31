@@ -260,7 +260,7 @@ class PLL_Admin_Sync {
 
 		if ( is_object( $this->$obj ) && method_exists( $this->$obj, 'copy' ) ) {
 			if ( WP_DEBUG ) {
-				$debug = debug_backtrace();
+				$debug = debug_backtrace( 1, 3 );
 				$i     = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
 
 				trigger_error(
@@ -273,7 +273,7 @@ class PLL_Admin_Sync {
 			return call_user_func_array( [ $this->$obj, 'copy' ], $args );
 		}
 
-		$debug = debug_backtrace();
+		$debug = debug_backtrace( 1, 1 );
 		trigger_error( sprintf( 'Call to undefined function PLL()->sync->%1$s() in %2$s on line %3$s' . "\nError handler", $func, $debug[0]['file'], $debug[0]['line'] ), E_USER_ERROR );
 	}
 }
