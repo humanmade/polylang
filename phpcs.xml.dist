@@ -11,10 +11,12 @@
 		<exclude name="WordPress.VIP.DirectDatabaseQuery" />
 		<exclude name="WordPress.XSS.EscapeOutput" />
 		<exclude name="WordPress.VIP.AdminBarRemoval" />
+	    <exclude name="WordPress.VIP.SlowDBQuery"/>
 		<exclude name="Squiz.PHP.EmbeddedPhp.NoSemicolon" />
 		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
 		<exclude name="WordPress.PHP.YodaConditions" />
 	    <exclude name="WordPress.PHP.StrictInArray"/>
+	    <exclude name="WordPress.PHP.DevelopmentFunctions"/>
 		<exclude-pattern>*/tests/*</exclude-pattern>
 	</rule>
 
@@ -97,6 +99,10 @@
 
 	<rule ref="Generic.Commenting.Fixme.CommentFound" >
 		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.InlineComment.WrongStyle">
+	    <exclude-pattern>include/widget-calendar.php</exclude-pattern>
 	</rule>
 
 	<exclude-pattern>coverage/*</exclude-pattern>
