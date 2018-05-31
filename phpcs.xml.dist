@@ -2,9 +2,22 @@
 <ruleset name="Polylang">
 	<description>Coding standards for Polylang</description>
 
+	<rule ref="WordPress-VIP">
+		<exclude name="WordPress.VIP.FileSystemWritesDisallow" />
+		<exclude name="WordPress.VIP.RestrictedFunctions" />
+		<exclude name="WordPress.VIP.RestrictedVariables" />
+		<exclude name="WordPress.VIP.SuperGlobalInputUsage" />
+		<exclude name="WordPress.VIP.ValidatedSanitizedInput" />
+		<exclude name="WordPress.VIP.DirectDatabaseQuery" />
+		<exclude name="WordPress.XSS.EscapeOutput" />
+		<exclude name="WordPress.VIP.AdminBarRemoval" />
+		<exclude name="Squiz.PHP.EmbeddedPhp.NoSemicolon" />
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
+		<exclude name="WordPress.PHP.YodaConditions" />
+		<exclude-pattern>*/tests/*</exclude-pattern>
+	</rule>
+
 	<rule ref="WordPress-Core">
-		<exclude name="WordPress.WP.PreparedSQL.NotPrepared" /><!-- TEMPORARY -->
-		<exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
 		<exclude name="WordPress.Files.FileName"/>
 		<exclude name="WordPress.NamingConventions.ValidVariableName.NotSnakeCase"/>
 		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores"/>
@@ -88,6 +101,7 @@
 	<exclude-pattern>coverage/*</exclude-pattern>
 	<exclude-pattern>tests/phpunit/includes/speed-trap-listener.php</exclude-pattern>
 	<exclude-pattern>js/*.min.js</exclude-pattern>
+	<exclude-pattern>css/*.min.css</exclude-pattern>
 
 	<!-- Specific to Polylang -->
 	<exclude-pattern>install/plugin-updater.php</exclude-pattern>
