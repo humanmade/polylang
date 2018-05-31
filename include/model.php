@@ -615,7 +615,7 @@ class PLL_Model {
 
 		if ( ! empty( $o ) && is_object( $this->$o ) && method_exists( $this->$o, $f ) ) {
 			if ( WP_DEBUG ) {
-				$debug = debug_backtrace();
+				$debug = debug_backtrace( 1, 3 );
 				$i     = 1 + empty( $debug[1]['line'] ); // the file and line are in $debug[2] if the function was called using call_user_func
 
 				trigger_error(
@@ -628,7 +628,7 @@ class PLL_Model {
 			return call_user_func_array( [ $this->$o, $f ], $args );
 		}
 
-		$debug = debug_backtrace();
+		$debug = debug_backtrace( 1, 1 );
 		trigger_error( sprintf( 'Call to undefined function PLL()->model->%1$s() in %2$s on line %3$s' . "\nError handler", $func, $debug[0]['file'], $debug[0]['line'] ), E_USER_ERROR );
 	}
 }

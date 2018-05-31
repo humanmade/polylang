@@ -109,7 +109,7 @@ abstract class PLL_Base {
 		foreach ( $this as $prop => &$obj ) {
 			if ( is_object( $obj ) && method_exists( $obj, $func ) ) {
 				if ( WP_DEBUG ) {
-					$debug = debug_backtrace();
+					$debug = debug_backtrace( 1, 3 );
 					$i     = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
 					trigger_error(
 						sprintf(
@@ -122,7 +122,7 @@ abstract class PLL_Base {
 			}
 		}
 
-		$debug = debug_backtrace();
+		$debug = debug_backtrace( 1, 1 );
 		trigger_error( sprintf( 'Call to undefined function PLL()->%1$s() in %2$s on line %3$s' . "\nError handler", $func, $debug[0]['file'], $debug[0]['line'] ), E_USER_ERROR );
 	}
 }
