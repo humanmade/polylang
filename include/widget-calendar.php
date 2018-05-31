@@ -81,6 +81,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 			}
 		}
 
+		// phpcs:ignore WordPress.CSRF
 		if ( isset( $_GET['w'] ) ) {
 			$w = (int) $_GET['w'];
 		}
@@ -95,9 +96,9 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 		} elseif ( ! empty( $w ) ) {
 			// We need to get the month from MySQL
 			$thisyear = (int) substr( $m, 0, 4 );
-			//it seems MySQL's weeks disagree with PHP's
+			// it seems MySQL's weeks disagree with PHP's
 			$d         = ( ( $w - 1 ) * 7 ) + 6;
-			$thismonth = $wpdb->get_var( "SELECT DATE_FORMAT((DATE_ADD('{$thisyear}0101', INTERVAL $d DAY) ), '%m')" );
+			$thismonth = $wpdb->get_var( $wpdb->prepare( "SELECT DATE_FORMAT((DATE_ADD(%s, INTERVAL %d DAY) ), '%%m')", "{$thisyear}0101", $d ) );
 		} elseif ( ! empty( $m ) ) {
 			$thisyear = (int) substr( $m, 0, 4 );
 			if ( strlen( $m ) < 6 ) {
@@ -114,22 +115,26 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 		$last_day  = date( 't', $unixmonth );
 
 		// Get the next and previous month and year with at least one post
-		$previous = $wpdb->get_row(
+		// phpcs:disable WordPress.WP.PreparedSQL.NotPrepared
+		$previous = $wpdb->get_row( $wpdb->prepare(
 			"SELECT MONTH( post_date ) AS month, YEAR( post_date ) AS year
 			FROM $wpdb->posts $join_clause
-			WHERE post_date < '$thisyear-$thismonth-01'
+			WHERE post_date < %s
 			AND post_type = 'post' AND post_status = 'publish' $where_clause
 				ORDER BY post_date DESC
-				LIMIT 1"
-		); #modified#
-		$next     = $wpdb->get_row(
+				LIMIT 1",
+			"$thisyear-$thismonth-01"
+		) ); #modified#
+		$next     = $wpdb->get_row( $wpdb->prepare(
 			"SELECT MONTH( post_date ) AS month, YEAR( post_date ) AS year
 			FROM $wpdb->posts $join_clause
-			WHERE post_date > '$thisyear-$thismonth-{$last_day} 23:59:59'
+			WHERE post_date > %s
 			AND post_type = 'post' AND post_status = 'publish' $where_clause
 				ORDER BY post_date ASC
-				LIMIT 1"
-		); #modified#
+				LIMIT 1",
+			"$thisyear-$thismonth-{$last_day} 23:59:59"
+		) ); #modified#
+		// phpcs:enable
 
 		/* translators: Calendar caption: 1: month name, 2: 4-digit year */
 		$calendar_caption = _x( '%1$s %2$s', 'calendar caption' );
@@ -189,13 +194,17 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 		$daywithpost = [];
 
 		// Get days with posts
-		$dayswithposts = $wpdb->get_results(
+		// phpcs:disable WordPress.WP.PreparedSQL.NotPrepared
+		$dayswithposts = $wpdb->get_results( $wpdb->prepare(
 			"SELECT DISTINCT DAYOFMONTH( post_date )
 			FROM $wpdb->posts $join_clause
-			WHERE post_date >= '{$thisyear}-{$thismonth}-01 00:00:00'
+			WHERE post_date >= %s
 			AND post_type = 'post' AND post_status = 'publish' $where_clause
-			AND post_date <= '{$thisyear}-{$thismonth}-{$last_day} 23:59:59'", ARRAY_N
-		); #modified#
+			AND post_date <= %s",
+			"{$thisyear}-{$thismonth}-01 00:00:00",
+			"{$thisyear}-{$thismonth}-{$last_day} 23:59:59"
+		), ARRAY_N ); #modified#
+		// phpcs:enable
 		if ( $dayswithposts ) {
 			foreach ( (array) $dayswithposts as $daywith ) {
 				$daywithpost[] = $daywith[0];
@@ -227,7 +236,8 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 
 			if ( in_array( $day, $daywithpost, true ) ) {
 				// any posts today?
-				$date_format      = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
+				$date_format = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
+				// translators: %s replaced by the date
 				$label            = sprintf( __( 'Posts published on %s' ), $date_format );
 				$calendar_output .= sprintf(
 					'<a href="%s" aria-label="%s">%s</a>',
