@@ -93,7 +93,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 	 */
 	public function admin_enqueue_scripts() {
 		$screen = get_current_screen();
-		if ( 'nav-menus' != $screen->base ) {
+		if ( 'nav-menus' !== $screen->base ) {
 			return;
 		}
 
@@ -133,7 +133,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 	 * @param int $menu_item_db_id
 	 */
 	public function wp_update_nav_menu_item( $menu_id = 0, $menu_item_db_id = 0 ) {
-		if ( empty( $_POST['menu-item-url'][ $menu_item_db_id ] ) || '#pll_switcher' != $_POST['menu-item-url'][ $menu_item_db_id ] ) {
+		if ( empty( $_POST['menu-item-url'][ $menu_item_db_id ] ) || '#pll_switcher' !== $_POST['menu-item-url'][ $menu_item_db_id ] ) {
 			return;
 		}
 
@@ -173,7 +173,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 	 */
 	public function translate_switcher_title( $items ) {
 		foreach ( $items as $item ) {
-			if ( '#pll_switcher' == $item->url ) {
+			if ( '#pll_switcher' === $item->url ) {
 				$item->post_title = __( 'Language switcher', 'polylang' );
 			}
 		}
@@ -195,7 +195,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		foreach ( $locations as $loc => $menu ) {
 			$infos = $this->explode_location( $loc );
 			$this->options['nav_menus'][ $this->theme ][ $infos['location'] ][ $infos['lang'] ] = $menu;
-			if ( $this->options['default_lang'] != $infos['lang'] ) {
+			if ( $this->options['default_lang'] !== $infos['lang'] ) {
 				unset( $locations[ $loc ] ); // Remove temporary locations before database update
 			}
 		}
@@ -216,18 +216,18 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		if ( current_user_can( 'edit_theme_options' ) && isset( $mods['nav_menu_locations'] ) ) {
 
 			// Manage Locations tab in Appearance -> Menus
-			if ( isset( $_GET['action'] ) && 'locations' == $_GET['action'] ) {
+			if ( isset( $_GET['action'] ) && 'locations' === $_GET['action'] ) {
 				check_admin_referer( 'save-menu-locations' );
 				$this->options['nav_menus'][ $this->theme ] = [];
 			} // Edit Menus tab in Appearance -> Menus
 			// Add the test of $_POST['update-nav-menu-nonce'] to avoid conflict with Vantage theme
-			elseif ( isset( $_POST['action'], $_POST['update-nav-menu-nonce'] ) && 'update' == $_POST['action'] ) {
+			elseif ( isset( $_POST['action'], $_POST['update-nav-menu-nonce'] ) && 'update' === $_POST['action'] ) {
 				check_admin_referer( 'update-nav_menu', 'update-nav-menu-nonce' );
 				$this->options['nav_menus'][ $this->theme ] = [];
 			} // Customizer
 			// Don't reset locations in this case.
 			// see http://wordpress.org/support/topic/menus-doesnt-show-and-not-saved-in-theme-settings-multilingual-site
-			elseif ( isset( $_POST['action'] ) && 'customize_save' == $_POST['action'] ) {
+			elseif ( isset( $_POST['action'] ) && 'customize_save' === $_POST['action'] ) {
 				check_ajax_referer( 'save-customize_' . $GLOBALS['wp_customize']->get_stylesheet(), 'nonce' );
 			} else {
 				return $mods; // No modification for nav menu locations
@@ -313,7 +313,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 	 * @param object $post Post data.
 	 */
 	public function auto_add_pages_to_menu( $new_status, $old_status, $post ) {
-		if ( 'publish' != $new_status || 'publish' == $old_status || 'page' != $post->post_type || ! empty( $post->post_parent ) ) {
+		if ( 'publish' !== $new_status || 'publish' === $old_status || 'page' !== $post->post_type || ! empty( $post->post_parent ) ) {
 			return;
 		}
 

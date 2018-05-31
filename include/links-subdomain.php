@@ -34,7 +34,7 @@ class PLL_Links_Subdomain extends PLL_Links_Abstract_Domain {
 	 */
 	public function add_language_to_link( $url, $lang ) {
 		if ( ! empty( $lang ) && false === strpos( $url, '://' . $lang->slug . '.' ) ) {
-			$url = $this->options['default_lang'] == $lang->slug && $this->options['hide_default'] ? $url : str_replace( $this->www, '://' . $lang->slug . '.', $url );
+			$url = $this->options['default_lang'] === $lang->slug && $this->options['hide_default'] ? $url : str_replace( $this->www, '://' . $lang->slug . '.', $url );
 		}
 		return $url;
 	}
@@ -50,7 +50,7 @@ class PLL_Links_Subdomain extends PLL_Links_Abstract_Domain {
 	 */
 	public function remove_language_from_link( $url ) {
 		foreach ( $this->model->get_languages_list() as $language ) {
-			if ( ! $this->options['hide_default'] || $this->options['default_lang'] != $language->slug ) {
+			if ( ! $this->options['hide_default'] || $this->options['default_lang'] !== $language->slug ) {
 				$languages[] = $language->slug;
 			}
 		}

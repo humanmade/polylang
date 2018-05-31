@@ -58,7 +58,7 @@ abstract class PLL_Translated_Object {
 			// query terms
 			foreach ( wp_get_object_terms( $object_id, $taxonomies, [ 'update_term_meta_cache' => false ] ) as $t ) {
 				$terms[ $t->taxonomy ] = $t;
-				if ( $t->taxonomy == $taxonomy ) {
+				if ( $t->taxonomy === $taxonomy ) {
 					$term = $t;
 				}
 			}
@@ -229,7 +229,7 @@ abstract class PLL_Translated_Object {
 		}
 
 		$lang = $this->model->get_language( $lang );
-		return $obj_lang->term_id == $lang->term_id ? $id : $this->get_translation( $id, $lang );
+		return $obj_lang->term_id === $lang->term_id ? $id : $this->get_translation( $id, $lang );
 	}
 
 	/**

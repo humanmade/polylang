@@ -90,7 +90,7 @@ class PLL_Plugin_Updater {
 			$_transient_data = new stdClass;
 		}
 
-		if ( 'plugins.php' == $pagenow && is_multisite() ) {
+		if ( 'plugins.php' === $pagenow && is_multisite() ) {
 			return $_transient_data;
 		}
 
@@ -148,7 +148,7 @@ class PLL_Plugin_Updater {
 			return;
 		}
 
-		if ( $this->name != $file ) {
+		if ( $this->name !== $file ) {
 			return;
 		}
 
@@ -249,13 +249,13 @@ class PLL_Plugin_Updater {
 	 */
 	public function plugins_api_filter( $_data, $_action = '', $_args = null ) {
 
-		if ( $_action != 'plugin_information' ) {
+		if ( $_action !== 'plugin_information' ) {
 
 			return $_data;
 
 		}
 
-		if ( ! isset( $_args->slug ) || ( $_args->slug != $this->slug ) ) {
+		if ( ! isset( $_args->slug ) || ( $_args->slug !== $this->slug ) ) {
 
 			return $_data;
 
@@ -347,11 +347,11 @@ class PLL_Plugin_Updater {
 
 		$data = array_merge( $this->api_data, $_data );
 
-		if ( $data['slug'] != $this->slug ) {
+		if ( $data['slug'] !== $this->slug ) {
 			return;
 		}
 
-		if ( $this->api_url == trailingslashit( home_url() ) ) {
+		if ( $this->api_url === trailingslashit( home_url() ) ) {
 			return false; // Don't allow a plugin to ping itself
 		}
 
@@ -403,7 +403,7 @@ class PLL_Plugin_Updater {
 
 		global $edd_plugin_data;
 
-		if ( empty( $_REQUEST['edd_sl_action'] ) || 'view_plugin_changelog' != $_REQUEST['edd_sl_action'] ) {
+		if ( empty( $_REQUEST['edd_sl_action'] ) || 'view_plugin_changelog' !== $_REQUEST['edd_sl_action'] ) {
 			return;
 		}
 

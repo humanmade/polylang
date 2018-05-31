@@ -144,7 +144,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 	public function get_ancestors( $item ) {
 		$ids     = [];
 		$_anc_id = (int) $item->db_id;
-		while ( ( $_anc_id = get_post_meta( $_anc_id, '_menu_item_menu_item_parent', true ) ) && ! in_array( $_anc_id, $ids ) ) {
+		while ( ( $_anc_id = get_post_meta( $_anc_id, '_menu_item_menu_item_parent', true ) ) && ! in_array( $_anc_id, $ids, true ) ) {
 			$ids[] = $_anc_id;
 		}
 		return $ids;
@@ -163,11 +163,11 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 
 		foreach ( $items as $item ) {
 			if ( ! empty( $item->classes ) && is_array( $item->classes ) ) {
-				if ( in_array( 'current-lang', $item->classes ) ) {
+				if ( in_array( 'current-lang', $item->classes, true ) ) {
 					$item->current = false;
 					$item->classes = array_diff( $item->classes, [ 'current-menu-item' ] );
 					$r_ids         = array_merge( $r_ids, $this->get_ancestors( $item ) ); // Remove the classes for these ancestors
-				} elseif ( in_array( 'current-menu-item', $item->classes ) ) {
+				} elseif ( in_array( 'current-menu-item', $item->classes, true ) ) {
 					$k_ids = array_merge( $k_ids, $this->get_ancestors( $item ) ); // Keep the classes for these ancestors
 				}
 			}
@@ -176,7 +176,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		$r_ids = array_diff( $r_ids, $k_ids );
 
 		foreach ( $items as $item ) {
-			if ( ! empty( $item->db_id ) && in_array( $item->db_id, $r_ids ) ) {
+			if ( ! empty( $item->db_id ) && in_array( $item->db_id, $r_ids, true ) ) {
 				$item->classes = array_diff( $item->classes, [ 'current-menu-ancestor', 'current-menu-parent', 'current_page_parent', 'current_page_ancestor' ] );
 			}
 		}
@@ -229,9 +229,9 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 						if ( false !== strpos( $key, 'nav_menu_locations[' ) ) {
 							$loc   = substr( trim( $key, ']' ), 19 );
 							$infos = $this->explode_location( $loc );
-							if ( $infos['lang'] == $this->curlang->slug ) {
+							if ( $infos['lang'] === $this->curlang->slug ) {
 								$menus[ $infos['location'] ] = $c;
-							} elseif ( $this->curlang->slug == $this->options['default_lang'] ) {
+							} elseif ( $this->curlang->slug === $this->options['default_lang'] ) {
 								$menus[ $loc ] = $c;
 							}
 						}
@@ -264,7 +264,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		// This obviously does not work if the nav menu has no associated theme location
 		if ( $menu ) {
 			foreach ( $this->options['nav_menus'][ $theme ] as $menus ) {
-				if ( in_array( $menu->term_id, $menus ) && ! empty( $menus[ $this->curlang->slug ] ) ) {
+				if ( in_array( $menu->term_id, $menus, true ) && ! empty( $menus[ $this->curlang->slug ] ) ) {
 					$args['menu'] = $menus[ $this->curlang->slug ];
 					return $args;
 				}
@@ -277,7 +277,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 			foreach ( $menus as $menu_maybe ) {
 				if ( $menu_items = wp_get_nav_menu_items( $menu_maybe->term_id, [ 'update_post_term_cache' => false ] ) ) {
 					foreach ( $this->options['nav_menus'][ $theme ] as $menus ) {
-						if ( in_array( $menu_maybe->term_id, $menus ) && ! empty( $menus[ $this->curlang->slug ] ) ) {
+						if ( in_array( $menu_maybe->term_id, $menus, true ) && ! empty( $menus[ $this->curlang->slug ] ) ) {
 							$args['menu'] = $menus[ $this->curlang->slug ];
 							return $args;
 						}

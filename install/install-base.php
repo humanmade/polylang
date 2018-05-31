@@ -34,7 +34,7 @@ class PLL_Install_Base {
 	 * @return bool true if the plugin is currently beeing deactivated
 	 */
 	public function is_deactivation() {
-		return isset( $_GET['action'], $_GET['plugin'] ) && 'deactivate' == $_GET['action'] && $this->plugin_basename == $_GET['plugin'];
+		return isset( $_GET['action'], $_GET['plugin'] ) && 'deactivate' === $_GET['action'] && $this->plugin_basename === $_GET['plugin'];
 	}
 
 	/**
@@ -52,12 +52,12 @@ class PLL_Install_Base {
 
 			foreach ( $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" ) as $blog_id ) {
 				switch_to_blog( $blog_id );
-				'activate' == $what ? $this->_activate() : $this->_deactivate();
+				'activate' === $what ? $this->_activate() : $this->_deactivate();
 			}
 			restore_current_blog();
 		} // Single blog
 		else {
-			'activate' == $what ? $this->_activate() : $this->_deactivate();
+			'activate' === $what ? $this->_activate() : $this->_deactivate();
 		}
 	}
 

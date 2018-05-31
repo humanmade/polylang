@@ -48,7 +48,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			<?php
 			printf(
 				'<input name="force_lang" type="radio" value="1" %s/> %s',
-				1 == $this->options['force_lang'] ? 'checked="checked"' : '',
+				1 === $this->options['force_lang'] ? 'checked="checked"' : '',
 				$this->links_model->using_permalinks ? esc_html__( 'The language is set from the directory name in pretty permalinks', 'polylang' ) : esc_html__( 'The language is set from the code in the URL', 'polylang' )
 			);
 			?>
@@ -59,7 +59,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			printf(
 				'<input name="force_lang" type="radio" value="2" %s %s/> %s',
 				$this->links_model->using_permalinks ? '' : 'disabled="disabled"',
-				2 == $this->options['force_lang'] ? 'checked="checked"' : '',
+				2 === $this->options['force_lang'] ? 'checked="checked"' : '',
 				esc_html__( 'The language is set from the subdomain name in pretty permalinks', 'polylang' )
 			);
 			?>
@@ -70,12 +70,12 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			printf(
 				'<input name="force_lang" type="radio" value="3" %s %s/> %s',
 				$this->links_model->using_permalinks ? '' : 'disabled="disabled"',
-				3 == $this->options['force_lang'] ? 'checked="checked"' : '',
+				3 === $this->options['force_lang'] ? 'checked="checked"' : '',
 				esc_html__( 'The language is set from different domains', 'polylang' )
 			);
 			?>
 		</label>
-		<table id="pll-domains-table" class="form-table" <?php echo 3 == $this->options['force_lang'] ? '' : 'style="display: none;"'; ?>>
+		<table id="pll-domains-table" class="form-table" <?php echo 3 === $this->options['force_lang'] ? '' : 'style="display: none;"'; ?>>
 			<?php
 			foreach ( $this->model->get_languages_list() as  $lg ) {
 				printf(
@@ -83,7 +83,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 					'<td><input name="domains[%1$s]" id="pll-domain[%1$s]" type="text" value="%3$s" class="regular-text code" aria-required="true" /></td></tr>',
 					esc_attr( $lg->slug ),
 					esc_attr( $lg->name ),
-					esc_url( isset( $this->options['domains'][ $lg->slug ] ) ? $this->options['domains'][ $lg->slug ] : ( $lg->slug == $this->options['default_lang'] ? $this->links_model->home : '' ) )
+					esc_url( isset( $this->options['domains'][ $lg->slug ] ) ? $this->options['domains'][ $lg->slug ] : ( $lg->slug === $this->options['default_lang'] ? $this->links_model->home : '' ) )
 				);
 			}
 			?>
@@ -224,7 +224,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			$newoptions[ $key ] = isset( $options[ $key ] ) ? (int) $options[ $key ] : 0;
 		}
 
-		if ( 3 == $options['force_lang'] && isset( $options['domains'] ) && is_array( $options['domains'] ) ) {
+		if ( 3 === $options['force_lang'] && isset( $options['domains'] ) && is_array( $options['domains'] ) ) {
 			foreach ( $options['domains'] as $key => $domain ) {
 				if ( empty( $domain ) ) {
 					$lang = $this->model->get_language( $key );
@@ -246,7 +246,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			$newoptions[ $key ] = isset( $options[ $key ] ) ? 1 : 0;
 		}
 
-		if ( 3 == $options['force_lang'] ) {
+		if ( 3 === $options['force_lang'] ) {
 			if ( ! class_exists( 'PLL_Xdata_Domain', true ) ) {
 				$newoptions['browser'] = 0;
 			}
@@ -278,7 +278,7 @@ class PLL_Settings_Url extends PLL_Settings_Module {
 			$response      = function_exists( 'vip_safe_wp_remote_get' ) ? vip_safe_wp_remote_get( esc_url_raw( $url ) ) : wp_remote_get( esc_url_raw( $url ) );
 			$response_code = wp_remote_retrieve_response_code( $response );
 
-			if ( 200 != $response_code ) {
+			if ( 200 !== $response_code ) {
 				add_settings_error(
 					'general', 'pll_invalid_domain', esc_html(
 						sprintf(

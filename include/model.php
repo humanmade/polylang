@@ -144,7 +144,7 @@ class PLL_Model {
 	 * @param string $taxonomy taxonomy name
 	 */
 	public function clean_languages_cache( $term = 0, $taxonomy = null ) {
-		if ( empty( $taxonomy ) || 'language' == $taxonomy ) {
+		if ( empty( $taxonomy ) || 'language' === $taxonomy ) {
 			delete_transient( 'pll_languages_list' );
 			$this->cache->clean();
 		}
@@ -264,7 +264,7 @@ class PLL_Model {
 	 */
 	public function is_translated_post_type( $post_type ) {
 		$post_types = $this->get_translated_post_types( false );
-		return ( is_array( $post_type ) && array_intersect( $post_type, $post_types ) || in_array( $post_type, $post_types ) || 'any' === $post_type && ! empty( $post_types ) );
+		return ( is_array( $post_type ) && array_intersect( $post_type, $post_types ) || in_array( $post_type, $post_types, true ) || 'any' === $post_type && ! empty( $post_types ) );
 	}
 
 	/**
@@ -316,7 +316,7 @@ class PLL_Model {
 	 */
 	public function is_translated_taxonomy( $tax ) {
 		$taxonomies = $this->get_translated_taxonomies( false );
-		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies ) );
+		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies, true ) );
 	}
 
 	/**
@@ -362,7 +362,7 @@ class PLL_Model {
 	 */
 	public function is_filtered_taxonomy( $tax ) {
 		$taxonomies = $this->get_filtered_taxonomies( false );
-		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies ) );
+		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies, true ) );
 	}
 
 	/**
@@ -590,7 +590,7 @@ class PLL_Model {
 			case 'get_translations':
 			case 'get_translation':
 			case 'join_clause':
-				$o = ( 'post' == $args[0] || $this->is_translated_post_type( $args[0] ) ) ? 'post' : ( 'term' == $args[0] || $this->is_translated_taxonomy( $args[0] ) ? 'term' : false );
+				$o = ( 'post' === $args[0] || $this->is_translated_post_type( $args[0] ) ) ? 'post' : ( 'term' === $args[0] || $this->is_translated_taxonomy( $args[0] ) ? 'term' : false );
 				unset( $args[0] );
 				break;
 

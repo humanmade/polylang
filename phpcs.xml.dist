@@ -14,6 +14,7 @@
 		<exclude name="Squiz.PHP.EmbeddedPhp.NoSemicolon" />
 		<exclude name="WordPress.Arrays.MultipleStatementAlignment.DoubleArrowNotAligned" />
 		<exclude name="WordPress.PHP.YodaConditions" />
+	    <exclude name="WordPress.PHP.StrictInArray"/>
 		<exclude-pattern>*/tests/*</exclude-pattern>
 	</rule>
 
@@ -105,5 +106,4 @@
 
 	<!-- Specific to Polylang -->
 	<exclude-pattern>install/plugin-updater.php</exclude-pattern>
-	<exclude-pattern>include/widget-calendar.php</exclude-pattern>
 </ruleset>

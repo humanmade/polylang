@@ -76,11 +76,11 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 				foreach ( $this->post_types as $post_type ) {
 					$pt = get_post_type_object( $post_type );
 					if ( ! empty( $pt ) ) {
-						$disabled = in_array( $post_type, $this->disabled_post_types );
+						$disabled = in_array( $post_type, $this->disabled_post_types, true );
 						printf(
 							'<li><label><input name="post_types[%s]" type="checkbox" value="1" %s %s/> %s</label></li>',
 							esc_attr( $post_type ),
-							in_array( $post_type, $this->options['post_types'] ) || $disabled ? 'checked="checked"' : '',
+							in_array( $post_type, $this->options['post_types'], true ) || $disabled ? 'checked="checked"' : '',
 							$disabled ? 'disabled="disabled"' : '',
 							esc_html( $pt->labels->name )
 						);
@@ -100,11 +100,11 @@ class PLL_Settings_CPT extends PLL_Settings_Module {
 				foreach ( $this->taxonomies as $taxonomy ) {
 					$tax = get_taxonomy( $taxonomy );
 					if ( ! empty( $tax ) ) {
-						$disabled = in_array( $taxonomy, $this->disabled_taxonomies );
+						$disabled = in_array( $taxonomy, $this->disabled_taxonomies, true );
 						printf(
 							'<li><label><input name="taxonomies[%s]" type="checkbox" value="1" %s %s/> %s</label></li>',
 							esc_attr( $taxonomy ),
-							in_array( $taxonomy, $this->options['taxonomies'] ) || $disabled ? 'checked="checked"' : '',
+							in_array( $taxonomy, $this->options['taxonomies'], true ) || $disabled ? 'checked="checked"' : '',
 							$disabled ? 'disabled="disabled"' : '',
 							esc_html( $tax->labels->name )
 						);

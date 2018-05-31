@@ -106,7 +106,7 @@ class PLL_Admin_Model extends PLL_Model {
 
 		// Oops ! we are deleting the default language...
 		// Need to do this before loosing the information for default category translations
-		if ( $this->options['default_lang'] == $lang->slug ) {
+		if ( $this->options['default_lang'] === $lang->slug ) {
 			$slugs = $this->get_languages_list( [ 'fields' => 'slug' ] );
 			$slugs = array_diff( $slugs, [ $lang->slug ] );
 
@@ -127,7 +127,7 @@ class PLL_Admin_Model extends PLL_Model {
 				$number = $widget['params'][0]['number'];
 				if ( is_object( $obj ) && method_exists( $obj, 'get_settings' ) && method_exists( $obj, 'save_settings' ) ) {
 					$settings = $obj->get_settings();
-					if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] == $lang->slug ) {
+					if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] === $lang->slug ) {
 						unset( $settings[ $number ]['pll_lang'] );
 						$obj->save_settings( $settings );
 					}
@@ -200,7 +200,7 @@ class PLL_Admin_Model extends PLL_Model {
 		$slug     = $args['slug'];
 		$old_slug = $lang->slug;
 
-		if ( $old_slug != $slug ) {
+		if ( $old_slug !== $slug ) {
 			// Update the language slug in translations
 			$this->update_translations( $old_slug, $slug );
 
@@ -211,7 +211,7 @@ class PLL_Admin_Model extends PLL_Model {
 					$number = $widget['params'][0]['number'];
 					if ( is_object( $obj ) && method_exists( $obj, 'get_settings' ) && method_exists( $obj, 'save_settings' ) ) {
 						$settings = $obj->get_settings();
-						if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] == $old_slug ) {
+						if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] === $old_slug ) {
 							$settings[ $number ]['pll_lang'] = $slug;
 							$obj->save_settings( $settings );
 						}
@@ -238,7 +238,7 @@ class PLL_Admin_Model extends PLL_Model {
 			}
 
 			// Update the default language option if necessary
-			if ( $this->options['default_lang'] == $old_slug ) {
+			if ( $this->options['default_lang'] === $old_slug ) {
 				$this->options['default_lang'] = $slug;
 			}
 		}
@@ -306,7 +306,7 @@ class PLL_Admin_Model extends PLL_Model {
 
 		// Validate slug is unique
 		foreach ( $this->get_languages_list() as $language ) {
-			if ( $language->slug === $args['slug'] && ( null === $lang || ( isset( $lang ) && $lang->term_id != $language->term_id ) ) ) {
+			if ( $language->slug === $args['slug'] && ( null === $lang || ( isset( $lang ) && $lang->term_id !== $language->term_id ) ) ) {
 				add_settings_error( 'general', 'pll_non_unique_slug', __( 'The language code must be unique', 'polylang' ) );
 			}
 		}
@@ -414,7 +414,7 @@ class PLL_Admin_Model extends PLL_Model {
 		// Prepare objects relationships
 		foreach ( $terms as $term ) {
 			$t = unserialize( $term->description );
-			if ( in_array( $t, $translations ) ) {
+			if ( in_array( $t, $translations, true ) ) {
 				foreach ( $t as $object_id ) {
 					if ( ! empty( $object_id ) ) {
 						$trs[] = $wpdb->prepare( '( %d, %d )', $object_id, $term->term_taxonomy_id );
@@ -527,7 +527,7 @@ class PLL_Admin_Model extends PLL_Model {
 				}
 				unset( $tr[ $old_slug ] );
 
-				if ( empty( $tr ) || 1 == count( $tr ) ) {
+				if ( empty( $tr ) || 1 === count( $tr ) ) {
 					$dt['t'][]  = (int) $term->term_id;
 					$dt['tt'][] = (int) $term->term_taxonomy_id;
 				} else {

@@ -69,7 +69,7 @@ class PLL_Admin_Strings {
 		global $wp_registered_widgets;
 		$sidebars = wp_get_sidebars_widgets();
 		foreach ( $sidebars as $sidebar => $widgets ) {
-			if ( 'wp_inactive_widgets' == $sidebar || empty( $widgets ) ) {
+			if ( 'wp_inactive_widgets' === $sidebar || empty( $widgets ) ) {
 				continue;
 			}
 
@@ -124,11 +124,11 @@ class PLL_Admin_Strings {
 			$translation = sanitize_option( $option, $translation );
 		}
 
-		if ( $name == self::$default_strings['widget_title'] ) {
+		if ( $name === self::$default_strings['widget_title'] ) {
 			$translation = strip_tags( $translation );
 		}
 
-		if ( $name == self::$default_strings['widget_text'] && ! current_user_can( 'unfiltered_html' ) ) {
+		if ( $name === self::$default_strings['widget_text'] && ! current_user_can( 'unfiltered_html' ) ) {
 			$translation = wp_unslash( wp_filter_post_kses( addslashes( $translation ) ) ); // wp_filter_post_kses() expects slashed
 		}
 

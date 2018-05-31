@@ -53,20 +53,20 @@ class Admin_Test extends PLL_UnitTestCase {
 		$footer = ob_get_clean();
 
 		$test = strpos( $footer, 'pll_ajax_backend' );
-		in_array( 'pll_ajax_backend', $scripts ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
+		in_array( 'pll_ajax_backend', $scripts, true ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
 
 		foreach ( [ 'media', 'term' ] as $key ) {
 			$test = strpos( $footer, plugins_url( "/js/$key.min.js", POLYLANG_FILE ) );
-			in_array( $key, $scripts ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
+			in_array( $key, $scripts, true ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
 		}
 
 		foreach ( [ 'post', 'user' ] as $key ) {
 			$test = strpos( $head, plugins_url( "/js/$key.min.js", POLYLANG_FILE ) );
-			in_array( $key, $scripts ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
+			in_array( $key, $scripts, true ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
 		}
 
 		$test = strpos( $footer, 'polylang_admin-css' );
-		in_array( 'css', $scripts ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
+		in_array( 'css', $scripts, true ) ? $this->assertNotFalse( $test ) : $this->assertFalse( $test );
 
 		unset( $GLOBALS['hook_suffix'], $GLOBALS['current_screen'], $GLOBALS['wp_scripts'], $GLOBALS['wp_styles'] );
 	}
