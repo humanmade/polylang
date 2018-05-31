@@ -47,7 +47,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 		if ( 'page' === $post_type ) {
 			add_filter( 'option_page_for_posts', [ $this, 'translate_page_for_posts' ] );
 
-			if ( ( get_option( 'page_for_posts' ) == $post->ID ) && empty( $post->post_content ) ) {
+			if ( ( get_option( 'page_for_posts' ) === $post->ID ) && empty( $post->post_content ) ) {
 				add_action( 'edit_form_after_title', '_wp_posts_page_notice' );
 				remove_post_type_support( $post_type, 'editor' );
 			}
@@ -103,7 +103,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 			$translations = count( $this->model->post->get_translations( $page_id ) );
 			$languages    = count( $this->model->get_languages_list() );
 
-			if ( $languages > 1 && $translations != $languages ) {
+			if ( $languages > 1 && $translations !== $languages ) {
 				return false;
 			}
 		}

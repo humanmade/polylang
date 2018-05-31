@@ -33,7 +33,7 @@ abstract class PLL_Choose_Lang {
 	 */
 	public function init() {
 		if ( Polylang::is_ajax_on_front() || false === stripos( $_SERVER['SCRIPT_FILENAME'], 'index.php' ) ) {
-			$this->set_language( empty( $_REQUEST['lang'] ) ? $this->get_preferred_language() : $this->model->get_language( $_REQUEST['lang'] ) );
+			$this->set_language( empty( $_REQUEST['lang'] ) ? $this->get_preferred_language() : $this->model->get_language( sanitize_text_field( $_REQUEST['lang'] ) ) ); // WPCS: CSRF ok.
 		}
 
 		add_action( 'pre_comment_on_post', [ $this, 'pre_comment_on_post' ] ); // sets the language of comment
@@ -82,7 +82,7 @@ abstract class PLL_Choose_Lang {
 	public function maybe_setcookie() {
 		// check headers have not been sent to avoid ugly error
 		// cookie domain must be set to false for localhost ( default value for COOKIE_DOMAIN ) thanks to Stephen Harris.
-		if ( ! headers_sent() && PLL_COOKIE !== false && ! empty( $this->curlang ) && ( ! isset( $_COOKIE[ PLL_COOKIE ] ) || $_COOKIE[ PLL_COOKIE ] != $this->curlang->slug ) && ! is_404() ) {
+		if ( ! headers_sent() && PLL_COOKIE !== false && ! empty( $this->curlang ) && ( ! isset( $_COOKIE[ PLL_COOKIE ] ) || $_COOKIE[ PLL_COOKIE ] !== $this->curlang->slug ) && ! is_404() ) {
 
 			/**
 			 * Filter the Polylang cookie duration
@@ -98,7 +98,7 @@ abstract class PLL_Choose_Lang {
 				$this->curlang->slug,
 				time() + $expiration,
 				COOKIEPATH,
-				2 == $this->options['force_lang'] ? parse_url( $this->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN,
+				2 === $this->options['force_lang'] ? wp_parse_url( $this->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN,
 				is_ssl()
 			);
 		}
@@ -218,7 +218,7 @@ abstract class PLL_Choose_Lang {
 	protected function home_language() {
 		// test referer in case PLL_COOKIE is set to false
 		// thanks to Ov3rfly http://wordpress.org/support/topic/enhance-feature-when-front-page-is-visited-set-language-according-to-browser
-		$language = $this->options['hide_default'] && ( ( isset( $_SERVER['HTTP_REFERER'] ) && in_array( parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ), $this->links_model->get_hosts() ) ) || ! $this->options['browser'] ) ?
+		$language = $this->options['hide_default'] && ( ( isset( $_SERVER['HTTP_REFERER'] ) && in_array( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ), $this->links_model->get_hosts() ) ) || ! $this->options['browser'] ) ?
 			$this->model->get_language( $this->options['default_lang'] ) :
 			$this->get_preferred_language(); // sets the language according to browser preference or default language
 		$this->set_language( $language );
@@ -233,7 +233,7 @@ abstract class PLL_Choose_Lang {
 	 */
 	public function home_requested() {
 		// we are already on the right page
-		if ( $this->options['default_lang'] == $this->curlang->slug && $this->options['hide_default'] ) {
+		if ( $this->options['default_lang'] === $this->curlang->slug && $this->options['hide_default'] ) {
 			$this->set_curlang_in_query( $GLOBALS['wp_query'] );
 
 			/**
@@ -247,7 +247,7 @@ abstract class PLL_Choose_Lang {
 		// FIXME why this happens? http://wordpress.org/support/topic/polylang-crashes-1
 		// don't redirect if $_POST is not empty as it could break other plugins
 		// don't forget the query string which may be added by plugins
-		elseif ( is_string( $redirect = $this->curlang->home_url ) && empty( $_POST ) ) {
+		elseif ( is_string( $redirect = $this->curlang->home_url ) && empty( $_POST ) ) { // WPCS: CSRF ok.
 			$redirect = empty( $_SERVER['QUERY_STRING'] ) ? $redirect : $redirect . ( $this->links_model->using_permalinks ? '?' : '&' ) . $_SERVER['QUERY_STRING'];
 
 			/**
@@ -303,7 +303,7 @@ abstract class PLL_Choose_Lang {
 		} // sets is_home on translated home page when it displays posts
 		// is_home must be true on page 2, 3... too
 		// as well as when searching an empty string: http://wordpress.org/support/topic/plugin-polylang-polylang-breaks-search-in-spun-theme
-		elseif ( ( count( $query->query ) == 1 || ( is_paged() && count( $query->query ) == 2 ) || ( isset( $query->query['s'] ) && ! $query->query['s'] ) ) && $lang = get_query_var( 'lang' ) ) {
+		elseif ( ( count( $query->query ) === 1 || ( is_paged() && count( $query->query ) === 2 ) || ( isset( $query->query['s'] ) && ! $query->query['s'] ) ) && $lang = get_query_var( 'lang' ) ) {
 			$lang = $this->model->get_language( $lang );
 			$this->set_language( $lang ); // sets the language now otherwise it will be too late to filter sticky posts !
 			$query->is_home    = true;

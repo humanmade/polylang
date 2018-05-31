@@ -211,7 +211,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	 * @return string
 	 */
 	public function home_url( $url, $path ) {
-		if ( ! ( did_action( 'template_redirect' ) || did_action( 'login_init' ) ) || rtrim( $url, '/' ) != $this->links_model->home ) {
+		if ( ! ( did_action( 'template_redirect' ) || did_action( 'login_init' ) ) || rtrim( $url, '/' ) !== $this->links_model->home ) {
 			return $url;
 		}
 
@@ -271,13 +271,13 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		foreach ( $traces as $trace ) {
 			// Black list first
 			foreach ( $black_list as $v ) {
-				if ( ( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) ) || ( isset( $trace['function'], $v['function'] ) && $trace['function'] == $v['function'] ) ) {
+				if ( ( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) ) || ( isset( $trace['function'], $v['function'] ) && $trace['function'] === $v['function'] ) ) {
 					return $url;
 				}
 			}
 
 			foreach ( $white_list as $v ) {
-				if ( ( isset( $trace['function'], $v['function'] ) && $trace['function'] == $v['function'] ) ||
+				if ( ( isset( $trace['function'], $v['function'] ) && $trace['function'] === $v['function'] ) ||
 					( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) && in_array( $trace['function'], [ 'home_url', 'get_home_url', 'bloginfo', 'get_bloginfo' ] ) ) ) {
 					$ok = true;
 				}
@@ -319,7 +319,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		}
 
 		// Don't redirect mysite.com/?attachment_id= to mysite.com/en/?attachment_id=
-		if ( 1 == $this->options['force_lang'] && is_attachment() && isset( $_GET['attachment_id'] ) ) {
+		if ( 1 === $this->options['force_lang'] && is_attachment() && isset( $_GET['attachment_id'] ) ) { // WPCS: CSRF ok.
 			return;
 		}
 
@@ -353,7 +353,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 		if ( 3 === $this->options['force_lang'] ) {
 			foreach ( $this->options['domains'] as $lang => $domain ) {
-				$host = parse_url( $domain, PHP_URL_HOST );
+				$host = wp_parse_url( $domain, PHP_URL_HOST );
 				if ( 'www.' . $_SERVER['HTTP_HOST'] === $host || 'www.' . $host === $_SERVER['HTTP_HOST'] ) {
 					$language     = $this->model->get_language( $lang );
 					$redirect_url = str_replace( '://' . $_SERVER['HTTP_HOST'], '://' . $host, $requested_url );
@@ -387,7 +387,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		$redirect_url = apply_filters( 'pll_check_canonical_url', $redirect_url, $language );
 
 		// The language is not correctly set so let's redirect to the correct url for this object
-		if ( $do_redirect && $redirect_url && $requested_url != $redirect_url ) {
+		if ( $do_redirect && $redirect_url && $requested_url !== $redirect_url ) {
 			wp_redirect( $redirect_url, 301 );
 			exit;
 		}

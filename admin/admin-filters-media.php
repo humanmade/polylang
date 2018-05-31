@@ -26,7 +26,7 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 		add_filter( 'wp_delete_file', [ $this, 'wp_delete_file' ] );
 
 		// Creates a media translation
-		if ( isset( $_GET['action'], $_GET['new_lang'], $_GET['from_media'] ) && 'translate_media' === $_GET['action'] ) {
+		if ( isset( $_GET['action'], $_GET['new_lang'], $_GET['from_media'] ) && 'translate_media' === sanitize_text_field( $_GET['action'] ) ) { // WPCS: CSRF ok.
 			add_action( 'admin_init', [ $this, 'translate_media' ] );
 		}
 	}
@@ -42,7 +42,7 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 	 * @return array modified list of form fields
 	 */
 	public function attachment_fields_to_edit( $fields, $post ) {
-		if ( 'post.php' == $GLOBALS['pagenow'] ) {
+		if ( 'post.php' === $GLOBALS['pagenow'] ) {
 			return $fields; // Don't add anything on edit media panel for WP 3.5+ since we have the metabox
 		}
 
@@ -159,8 +159,8 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 			$this->model->post->set_language( $post['ID'], $attachment['language'] );
 		}
 
-		if ( isset( $_POST['media_tr_lang'] ) ) {
-			$this->save_translations( $post['ID'], $_POST['media_tr_lang'] );
+		if ( isset( $_POST['media_tr_lang'] ) ) {  // WPCS: CSRF ok.
+			$this->save_translations( $post['ID'], sanitize_text_field( $_POST['media_tr_lang'] ) ); // WPCS: CSRF ok.
 		}
 
 		return $post;

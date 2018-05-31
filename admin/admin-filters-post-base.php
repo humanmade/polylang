@@ -30,7 +30,7 @@ abstract class PLL_Admin_Filters_Post_Base {
 	 */
 	public function set_default_language( $post_id ) {
 		if ( ! $this->model->post->get_language( $post_id ) ) {
-			if ( isset( $_GET['new_lang'] ) && $lang = $this->model->get_language( $_GET['new_lang'] ) ) {
+			if ( isset( $_GET['new_lang'] ) && $lang = $this->model->get_language( sanitize_text_field( $_GET['new_lang'] ) ) ) { // WPCS: CSRF ok.
 				$this->model->post->set_language( $post_id, $lang );
 			} elseif ( ( $parent_id = wp_get_post_parent_id( $post_id ) ) && $parent_lang = $this->model->post->get_language( $parent_id ) ) {
 				$this->model->post->set_language( $post_id, $parent_lang );
@@ -56,7 +56,7 @@ abstract class PLL_Admin_Filters_Post_Base {
 
 		// save translations after checking the translated post is in the right language
 		foreach ( $arr as $lang => $tr_id ) {
-			$translations[ $lang ] = ( $tr_id && $this->model->post->get_language( (int) $tr_id )->slug == $lang ) ? (int) $tr_id : 0;
+			$translations[ $lang ] = ( $tr_id && $this->model->post->get_language( (int) $tr_id )->slug === $lang ) ? (int) $tr_id : 0;
 		}
 
 		$this->model->post->save_translations( $post_id, $translations );

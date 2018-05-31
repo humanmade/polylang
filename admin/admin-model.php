@@ -106,7 +106,7 @@ class PLL_Admin_Model extends PLL_Model {
 
 		// Oops ! we are deleting the default language...
 		// Need to do this before loosing the information for default category translations
-		if ( $this->options['default_lang'] == $lang->slug ) {
+		if ( $this->options['default_lang'] === $lang->slug ) {
 			$slugs = $this->get_languages_list( [ 'fields' => 'slug' ] );
 			$slugs = array_diff( $slugs, [ $lang->slug ] );
 
@@ -127,7 +127,7 @@ class PLL_Admin_Model extends PLL_Model {
 				$number = $widget['params'][0]['number'];
 				if ( is_object( $obj ) && method_exists( $obj, 'get_settings' ) && method_exists( $obj, 'save_settings' ) ) {
 					$settings = $obj->get_settings();
-					if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] == $lang->slug ) {
+					if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] === $lang->slug ) {
 						unset( $settings[ $number ]['pll_lang'] );
 						$obj->save_settings( $settings );
 					}
@@ -200,7 +200,7 @@ class PLL_Admin_Model extends PLL_Model {
 		$slug     = $args['slug'];
 		$old_slug = $lang->slug;
 
-		if ( $old_slug != $slug ) {
+		if ( $old_slug !== $slug ) {
 			// Update the language slug in translations
 			$this->update_translations( $old_slug, $slug );
 
@@ -211,7 +211,7 @@ class PLL_Admin_Model extends PLL_Model {
 					$number = $widget['params'][0]['number'];
 					if ( is_object( $obj ) && method_exists( $obj, 'get_settings' ) && method_exists( $obj, 'save_settings' ) ) {
 						$settings = $obj->get_settings();
-						if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] == $old_slug ) {
+						if ( isset( $settings[ $number ]['pll_lang'] ) && $settings[ $number ]['pll_lang'] === $old_slug ) {
 							$settings[ $number ]['pll_lang'] = $slug;
 							$obj->save_settings( $settings );
 						}
@@ -238,7 +238,7 @@ class PLL_Admin_Model extends PLL_Model {
 			}
 
 			// Update the default language option if necessary
-			if ( $this->options['default_lang'] == $old_slug ) {
+			if ( $this->options['default_lang'] === $old_slug ) {
 				$this->options['default_lang'] = $slug;
 			}
 		}

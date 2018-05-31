@@ -12,17 +12,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 <table>
 	<?php
 	foreach ( $this->model->get_languages_list() as $language ) {
-		if ( $language->term_id == $lang->term_id ) {
+		if ( $language->term_id === $lang->term_id ) {
 			continue;
 		}
 
 		$value = $this->model->post->get_translation( $post_ID, $language );
-		if ( ! $value || $value == $post_ID ) { // $value == $post_ID happens if the post has been ( auto )saved before changing the language
+		if ( ! $value || $value === $post_ID ) { // $value == $post_ID happens if the post has been ( auto )saved before changing the language
 			$value = '';
 		}
 
-		if ( isset( $_GET['from_post'] ) ) {
-			$value = $this->model->post->get( (int) $_GET['from_post'], $language );
+		if ( isset( $_GET['from_post'] ) ) { // WPCS: CSRF ok.
+			$value = $this->model->post->get( (int) $_GET['from_post'], $language ); // WPCS: CSRF ok.
 		}
 
 		$link = $add_link = $this->links->new_post_translation_link( $post_ID, $language );

@@ -23,7 +23,7 @@ class PLL_Admin_Links extends PLL_Links {
 			return '';
 		}
 
-		if ( 'attachment' == $post_type ) {
+		if ( 'attachment' === $post_type ) {
 			$args = [
 				'action'     => 'translate_media',
 				'from_media' => $post_id,

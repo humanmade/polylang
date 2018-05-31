@@ -30,7 +30,7 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 		add_filter( 'wp_nav_menu_args', [ $this, 'wp_nav_menu_args' ] );
 
 		// The customizer
-		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
+		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) { // WPCS: CSRF ok.
 			add_filter( 'wp_nav_menu_args', [ $this, 'filter_args_before_customizer' ] );
 			add_filter( 'wp_nav_menu_args', [ $this, 'filter_args_after_customizer' ], 2000 );
 		}
@@ -221,17 +221,17 @@ class PLL_Frontend_Nav_Menu extends PLL_Nav_Menu {
 
 			// Support for theme customizer
 			// Let's look for multilingual menu locations directly in $_POST as there are not in customizer object
-			if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
-				$customized = json_decode( wp_unslash( $_POST['customized'] ) );
+			if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) { // WPCS: CSRF ok.
+				$customized = json_decode( wp_unslash( $_POST['customized'] ) ); // WPCS: CSRF ok.
 
 				if ( is_object( $customized ) ) {
 					foreach ( $customized as $key => $c ) {
 						if ( false !== strpos( $key, 'nav_menu_locations[' ) ) {
 							$loc   = substr( trim( $key, ']' ), 19 );
 							$infos = $this->explode_location( $loc );
-							if ( $infos['lang'] == $this->curlang->slug ) {
+							if ( $infos['lang'] === $this->curlang->slug ) {
 								$menus[ $infos['location'] ] = $c;
-							} elseif ( $this->curlang->slug == $this->options['default_lang'] ) {
+							} elseif ( $this->curlang->slug === $this->options['default_lang'] ) {
 								$menus[ $loc ] = $c;
 							}
 						}

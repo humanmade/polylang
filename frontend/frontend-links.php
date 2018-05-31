@@ -55,7 +55,7 @@ class PLL_Frontend_Links extends PLL_Links {
 		 */
 		if ( ! $url = apply_filters( 'pll_pre_translation_url', '', $language, $queried_object_id ) ) {
 			$qv   = $wp_query->query_vars;
-			$hide = $this->options['default_lang'] == $language->slug && $this->options['hide_default'];
+			$hide = $this->options['default_lang'] === $language->slug && $this->options['hide_default'];
 
 			// Post and attachment
 			if ( is_single() && ( $this->options['media_support'] || ! is_attachment() ) && ( $id = $this->model->post->get( $queried_object_id, $language ) ) && $this->current_user_can_read( $id ) ) {
@@ -89,7 +89,7 @@ class PLL_Frontend_Links extends PLL_Links {
 			elseif ( ( is_category() || is_tag() || is_tax() ) && ( $term = get_queried_object() ) && $this->model->is_translated_taxonomy( $term->taxonomy ) ) {
 				$lang = $this->model->term->get_language( $term->term_id );
 
-				if ( ! $lang || $language->slug == $lang->slug ) {
+				if ( ! $lang || $language->slug === $lang->slug ) {
 					$url = wpcom_vip_get_term_link( $term, $term->taxonomy ); // Self link
 				} elseif ( $tr_id = $this->model->term->get_translation( $term->term_id, $language ) ) {
 					if ( $tr_term = get_term( $tr_id, $term->taxonomy ) ) {

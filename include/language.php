@@ -72,7 +72,7 @@ class PLL_Language {
 			// Backward compatibility for is_rtl
 			$description = maybe_unserialize( $language->description );
 			foreach ( $description as $prop => $value ) {
-				'rtl' == $prop ? $this->is_rtl = $value : $this->$prop = $value;
+				'rtl' === $prop ? $this->is_rtl = $value : $this->$prop = $value;
 			}
 
 			$this->description = &$this->locale; // Backward compatibility with Polylang < 1.2

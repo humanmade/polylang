@@ -25,8 +25,8 @@ class PLL_Admin_Filters_Columns {
 		foreach ( $this->model->get_translated_post_types() as $type ) {
 			// use the latest filter late as some plugins purely overwrite what's done by others :(
 			// specific case for media
-			add_filter( 'manage_' . ( 'attachment' == $type ? 'upload' : 'edit-' . $type ) . '_columns', [ $this, 'add_post_column' ], 100 );
-			add_action( 'manage_' . ( 'attachment' == $type ? 'media' : $type . '_posts' ) . '_custom_column', [ $this, 'post_column' ], 10, 2 );
+			add_filter( 'manage_' . ( 'attachment' === $type ? 'upload' : 'edit-' . $type ) . '_columns', [ $this, 'add_post_column' ], 100 );
+			add_action( 'manage_' . ( 'attachment' === $type ? 'media' : $type . '_posts' ) . '_custom_column', [ $this, 'post_column' ], 10, 2 );
 		}
 
 		// quick edit and bulk edit
@@ -61,7 +61,7 @@ class PLL_Admin_Filters_Columns {
 
 		foreach ( $this->model->get_languages_list() as $language ) {
 			// don't add the column for the filtered language
-			if ( empty( $this->filter_lang ) || $language->slug != $this->filter_lang->slug ) {
+			if ( empty( $this->filter_lang ) || $language->slug !== $this->filter_lang->slug ) {
 				$columns[ 'language_' . $language->slug ] = $language->flag ? $language->flag . '<span class="screen-reader-text">' . esc_html( $language->name ) . '</span>' : esc_html( $language->slug );
 			}
 		}
@@ -78,7 +78,7 @@ class PLL_Admin_Filters_Columns {
 	 */
 	protected function get_first_language_column() {
 		foreach ( $this->model->get_languages_list() as $language ) {
-			if ( empty( $this->filter_lang ) || $language->slug != $this->filter_lang->slug ) {
+			if ( empty( $this->filter_lang ) || $language->slug !== $this->filter_lang->slug ) {
 				$columns[] = 'language_' . $language->slug;
 			}
 		}
@@ -108,8 +108,8 @@ class PLL_Admin_Filters_Columns {
 	 * @param int    $post_id
 	 */
 	public function post_column( $column, $post_id ) {
-		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save' === $_REQUEST['action'];
-		$lang   = $inline ? $this->model->get_language( $_POST['inline_lang_choice'] ) : $this->model->post->get_language( $post_id );
+		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save' === sanitize_text_field( $_REQUEST['action'] ); // WPCS: CSRF ok.
+		$lang   = $inline ? $this->model->get_language( sanitize_text_field( $_POST['inline_lang_choice'] ) ) : $this->model->post->get_language( $post_id );  // WPCS: CSRF ok.
 
 		if ( false === strpos( $column, 'language_' ) || ! $lang ) {
 			return;
@@ -118,7 +118,7 @@ class PLL_Admin_Filters_Columns {
 		$language = $this->model->get_language( substr( $column, 9 ) );
 
 		// hidden field containing the post language for quick edit
-		if ( $column == $this->get_first_language_column() ) {
+		if ( $column === $this->get_first_language_column() ) {
 			printf( '<div class="hidden" id="lang_%d">%s</div>', intval( $post_id ), esc_html( $lang->slug ) );
 		}
 
@@ -165,10 +165,10 @@ class PLL_Admin_Filters_Columns {
 	 * @return string unmodified $column
 	 */
 	public function quick_edit_custom_box( $column, $type ) {
-		if ( $column == $this->get_first_language_column() ) {
+		if ( $column === $this->get_first_language_column() ) {
 
 			$elements = $this->model->get_languages_list();
-			if ( current_filter() == 'bulk_edit_custom_box' ) {
+			if ( current_filter() === 'bulk_edit_custom_box' ) {
 				array_unshift(
 					$elements, (object) [
 						'slug' => -1,
@@ -222,13 +222,13 @@ class PLL_Admin_Filters_Columns {
 	 * @param int    $term_id
 	 */
 	public function term_column( $out, $column, $term_id ) {
-		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save-tax' === $_REQUEST['action'];
-		if ( false === strpos( $column, 'language_' ) || ! ( $lang = $inline ? $this->model->get_language( $_POST['inline_lang_choice'] ) : $this->model->term->get_language( $term_id ) ) ) {
+		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save-tax' === sanitize_text_field( $_REQUEST['action'] ); // WPCS: CSRF ok.
+		if ( false === strpos( $column, 'language_' ) || ! ( $lang = $inline ? $this->model->get_language( sanitize_text_field( $_POST['inline_lang_choice'] ) ) : $this->model->term->get_language( $term_id ) ) ) { // WPCS: CSRF ok.
 			return $out;
 		}
 
-		$post_type = isset( $GLOBALS['post_type'] ) ? $GLOBALS['post_type'] : $_REQUEST['post_type']; // 2nd case for quick edit
-		$taxonomy  = isset( $GLOBALS['taxonomy'] ) ? $GLOBALS['taxonomy'] : $_REQUEST['taxonomy'];
+		$post_type = isset( $GLOBALS['post_type'] ) ? $GLOBALS['post_type'] : sanitize_text_field( $_REQUEST['post_type'] );  // WPCS: CSRF ok.
+		$taxonomy  = isset( $GLOBALS['taxonomy'] ) ? $GLOBALS['taxonomy'] : sanitize_text_field( $_REQUEST['taxonomy'] );  // WPCS: CSRF ok.
 
 		if ( ! post_type_exists( $post_type ) || ! taxonomy_exists( $taxonomy ) ) {
 			return $out;
@@ -237,7 +237,7 @@ class PLL_Admin_Filters_Columns {
 		$term_id  = (int) $term_id;
 		$language = $this->model->get_language( substr( $column, 9 ) );
 
-		if ( $column == $this->get_first_language_column() ) {
+		if ( $column === $this->get_first_language_column() ) {
 			$out = sprintf( '<div class="hidden" id="lang_%d">%s</div>', intval( $term_id ), esc_html( $lang->slug ) );
 
 			// identify the default categories to disable the language dropdown in js
@@ -285,7 +285,7 @@ class PLL_Admin_Filters_Columns {
 	public function ajax_update_post_rows() {
 		global $wp_list_table;
 
-		if ( ! post_type_exists( $post_type = $_POST['post_type'] ) || ! $this->model->is_translated_post_type( $post_type ) ) {
+		if ( ! post_type_exists( $post_type = sanitize_text_field( $_POST['post_type'] ) ) || ! $this->model->is_translated_post_type( $post_type ) ) {  // WPCS: CSRF ok.
 			die( 0 );
 		}
 
@@ -325,7 +325,7 @@ class PLL_Admin_Filters_Columns {
 	public function ajax_update_term_rows() {
 		global $wp_list_table;
 
-		if ( ! taxonomy_exists( $taxonomy = $_POST['taxonomy'] ) || ! $this->model->is_translated_taxonomy( $taxonomy ) ) {
+		if ( ! taxonomy_exists( $taxonomy = sanitize_text_field( $_POST['taxonomy'] ) ) || ! $this->model->is_translated_taxonomy( $taxonomy ) ) { // WPCS: CSRF ok.
 			die( 0 );
 		}
 
