@@ -55,8 +55,8 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 				'order' => 'ASC',
 			]
 		);
-		$orderby = ( isset( $args['orderby'] ) && 'code' == $args['orderby'] ) ? 'slug' : ( isset( $args['orderby'] ) && 'name' == $args['orderby'] ? 'name' : 'id' );
-		$order   = ( ! empty( $args['order'] ) && 'desc' == $args['order'] ) ? 'DESC' : 'ASC';
+		$orderby = ( isset( $args['orderby'] ) && 'code' === $args['orderby'] ) ? 'slug' : ( isset( $args['orderby'] ) && 'name' === $args['orderby'] ? 'name' : 'id' );
+		$order   = ( ! empty( $args['order'] ) && 'desc' === $args['order'] ) ? 'DESC' : 'ASC';
 
 		$arr = [];
 
@@ -81,7 +81,7 @@ if ( ! function_exists( 'icl_get_languages' ) ) {
 
 			$arr[ $lang->slug ] = [
 				'id'               => $lang->term_id,
-				'active'           => isset( PLL()->curlang->slug ) && PLL()->curlang->slug == $lang->slug ? 1 : 0,
+				'active'           => isset( PLL()->curlang->slug ) && PLL()->curlang->slug === $lang->slug ? 1 : 0,
 				'native_name'      => $lang->name,
 				'missing'          => empty( $url ) ? 1 : 0,
 				'translated_name'  => '', // Does not exist in Polylang
@@ -117,11 +117,11 @@ if ( ! function_exists( 'icl_link_to_element' ) ) {
 	 * @return string a language dependent link
 	 */
 	function icl_link_to_element( $id, $type = 'post', $text = '', $args = [], $anchor = '', $echo = true, $return_original_if_missing = true ) {
-		if ( 'tag' == $type ) {
+		if ( 'tag' === $type ) {
 			$type = 'post_tag';
 		}
 
-		$pll_type = ( 'post' == $type || pll_is_translated_post_type( $type ) ) ? 'post' : ( 'term' == $type || pll_is_translated_taxonomy( $type ) ? 'term' : false );
+		$pll_type = ( 'post' === $type || pll_is_translated_post_type( $type ) ) ? 'post' : ( 'term' === $type || pll_is_translated_taxonomy( $type ) ? 'term' : false );
 		if ( $pll_type && ( $lang = pll_current_language() ) && ( $tr_id = PLL()->model->$pll_type->get_translation( $id, $lang ) ) && PLL()->links->current_user_can_read( $tr_id ) ) {
 			$id = $tr_id;
 		} elseif ( ! $return_original_if_missing ) {
@@ -330,12 +330,12 @@ if ( ! function_exists( 'wpml_get_copied_fields_for_post_edit' ) ) {
 	 * @return array
 	 */
 	function wpml_get_copied_fields_for_post_edit() {
-		if ( empty( $_GET['from_post'] ) ) {
+		if ( empty( $_GET['from_post'] ) ) { // WPCS: CSRF ok.
 			return [];
 		}
 
 		// Don't know what WPML does but Polylang does copy all public meta keys by default
-		foreach ( $keys = array_unique( array_keys( get_post_custom( (int) $_GET['from_post'] ) ) ) as $k => $meta_key ) {
+		foreach ( $keys = array_unique( array_keys( get_post_custom( (int) $_GET['from_post'] ) ) ) as $k => $meta_key ) { // WPCS: CSRF ok.
 			if ( is_protected_meta( $meta_key ) ) {
 				unset( $keys[ $k ] );
 			}

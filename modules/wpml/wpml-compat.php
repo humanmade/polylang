@@ -106,7 +106,7 @@ class PLL_WPML_Compat {
 	 */
 	public function unregister_string( $context, $name ) {
 		foreach ( self::$strings as $key => $string ) {
-			if ( $string['context'] == $context && $string['name'] == $name ) {
+			if ( $string['context'] === $context && $string['name'] === $name ) {
 				unset( self::$strings[ $key ] );
 				update_option( 'polylang_wpml_strings', self::$strings );
 			}
@@ -136,7 +136,7 @@ class PLL_WPML_Compat {
 	 */
 	public function get_string_by_context_and_name( $context, $name ) {
 		foreach ( self::$strings as $string ) {
-			if ( $string['context'] == $context && $string['name'] == $name ) {
+			if ( $string['context'] === $context && $string['name'] === $name ) {
 				return $string['string'];
 			}
 		}

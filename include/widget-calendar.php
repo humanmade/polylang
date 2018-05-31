@@ -81,7 +81,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 			}
 		}
 
-		if ( isset( $_GET['w'] ) ) {
+		if ( isset( $_GET['w'] ) ) { // WPCS: CSRF ok.
 			$w = (int) $_GET['w'];
 		}
 		// week_begins = 0 stands for Sunday
@@ -95,7 +95,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 		} elseif ( ! empty( $w ) ) {
 			// We need to get the month from MySQL
 			$thisyear = (int) substr( $m, 0, 4 );
-			//it seems MySQL's weeks disagree with PHP's
+			// it seems MySQL's weeks disagree with PHP's
 			$d         = ( ( $w - 1 ) * 7 ) + 6;
 			$thismonth = $wpdb->get_var( "SELECT DATE_FORMAT((DATE_ADD('{$thisyear}0101', INTERVAL $d DAY) ), '%m')" );
 		} elseif ( ! empty( $m ) ) {
@@ -204,7 +204,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 
 		// See how much we should pad in the beginning
 		$pad = calendar_week_mod( date( 'w', $unixmonth ) - $week_begins );
-		if ( 0 != $pad ) {
+		if ( 0 !== $pad ) {
 			$calendar_output .= "\n\t\t" . '<td colspan="' . esc_attr( $pad ) . '" class="pad">&nbsp;</td>';
 		}
 
@@ -217,9 +217,9 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 			}
 			$newrow = false;
 
-			if ( $day == gmdate( 'j', $ts ) &&
-				$thismonth == gmdate( 'm', $ts ) &&
-				$thisyear == gmdate( 'Y', $ts ) ) {
+			if ( $day === gmdate( 'j', $ts ) &&
+				$thismonth === gmdate( 'm', $ts ) &&
+				$thisyear === gmdate( 'Y', $ts ) ) {
 				$calendar_output .= '<td id="today">';
 			} else {
 				$calendar_output .= '<td>';
@@ -227,7 +227,8 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 
 			if ( in_array( $day, $daywithpost ) ) {
 				// any posts today?
-				$date_format      = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
+				$date_format = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
+				/* translators: placeholder is a date. */
 				$label            = sprintf( __( 'Posts published on %s' ), $date_format );
 				$calendar_output .= sprintf(
 					'<a href="%s" aria-label="%s">%s</a>',
@@ -240,13 +241,13 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 			}
 			$calendar_output .= '</td>';
 
-			if ( 6 == calendar_week_mod( date( 'w', mktime( 0, 0, 0, $thismonth, $day, $thisyear ) ) - $week_begins ) ) {
+			if ( 6 === calendar_week_mod( date( 'w', mktime( 0, 0, 0, $thismonth, $day, $thisyear ) ) - $week_begins ) ) {
 				$newrow = true;
 			}
 		}
 
 		$pad = 7 - calendar_week_mod( date( 'w', mktime( 0, 0, 0, $thismonth, $day, $thisyear ) ) - $week_begins );
-		if ( $pad != 0 && $pad != 7 ) {
+		if ( $pad !== 0 && $pad !== 7 ) {
 			$calendar_output .= "\n\t\t" . '<td class="pad" colspan="' . esc_attr( $pad ) . '">&nbsp;</td>';
 		}
 		$calendar_output .= "\n\t</tr>\n\t</tbody>\n\t</table>";

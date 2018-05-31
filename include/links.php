@@ -57,7 +57,7 @@ class PLL_Links {
 		if ( in_array( $post->post_status, get_post_stati( [ 'private' => true ] ) ) ) {
 			$post_type_object = get_post_type_object( $post->post_type );
 			$user             = wp_get_current_user();
-			return is_user_logged_in() && ( current_user_can( $post_type_object->cap->read_private_posts ) || $user->ID == $post->post_author ); // Comparison must not be strict!
+			return is_user_logged_in() && ( current_user_can( $post_type_object->cap->read_private_posts ) || $user->ID === $post->post_author ); // Comparison must not be strict!
 		}
 
 		return false;

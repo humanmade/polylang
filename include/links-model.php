@@ -52,7 +52,7 @@ abstract class PLL_Links_Model {
 	 * @return array list of hosts
 	 */
 	public function get_hosts() {
-		return [ parse_url( $this->home, PHP_URL_HOST ) ];
+		return [ wp_parse_url( $this->home, PHP_URL_HOST ) ];
 	}
 
 	/**
@@ -65,7 +65,7 @@ abstract class PLL_Links_Model {
 	 */
 	public function home_url( $lang ) {
 		$url = trailingslashit( $this->home );
-		return $this->options['hide_default'] && $lang->slug == $this->options['default_lang'] ? $url : $this->add_language_to_link( $url, $lang );
+		return $this->options['hide_default'] && $lang->slug === $this->options['default_lang'] ? $url : $this->add_language_to_link( $url, $lang );
 	}
 
 	/**

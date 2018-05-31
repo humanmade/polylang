@@ -50,7 +50,7 @@ class PLL_Admin_Sync {
 	 */
 	public function wp_insert_post_parent( $post_parent, $post_id, $postarr ) {
 		// Make sure not to impact media translations created at the same time
-		return isset( $_GET['from_post'], $_GET['new_lang'], $_GET['post_type'] ) && $_GET['post_type'] === $postarr['post_type'] && ( $id = wp_get_post_parent_id( (int) $_GET['from_post'] ) ) && ( $parent = $this->model->post->get_translation( $id, sanitize_text_field( $_GET['new_lang'] ) ) ) ? $parent : $post_parent;
+		return isset( $_GET['from_post'], $_GET['new_lang'], $_GET['post_type'] ) && $_GET['post_type'] === $postarr['post_type'] && ( $id = wp_get_post_parent_id( (int) $_GET['from_post'] ) ) && ( $parent = $this->model->post->get_translation( $id, sanitize_text_field( $_GET['new_lang'] ) ) ) ? $parent : $post_parent; // WPCS: CSRF ok.
 	}
 
 	/**
@@ -63,11 +63,11 @@ class PLL_Admin_Sync {
 	 * @param object $post      current post object
 	 */
 	public function add_meta_boxes( $post_type, $post ) {
-		if ( 'post-new.php' == $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) && $this->model->is_translated_post_type( $post->post_type ) ) {
+		if ( 'post-new.php' === $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) && $this->model->is_translated_post_type( $post->post_type ) ) { // WPCS: CSRF ok.
 			// Capability check already done in post-new.php
 			$from_post_id = (int) $_GET['from_post'];
 			$from_post    = get_post( $from_post_id );
-			$lang         = $this->model->get_language( sanitize_text_field( $_GET['new_lang'] ) );
+			$lang         = $this->model->get_language( sanitize_text_field( $_GET['new_lang'] ) ); // WPCS: CSRF ok.
 
 			if ( ! $from_post || ! $lang ) {
 				return;
@@ -113,8 +113,8 @@ class PLL_Admin_Sync {
 
 		if ( in_array( 'post_date', $this->options['sync'] ) ) {
 			// For new drafts, save the date now otherwise it is overriden by WP. Thanks to JoryHogeveen. See #32.
-			if ( 'post-new.php' === $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) ) {
-				$original = get_post( (int) $_GET['from_post'] );
+			if ( 'post-new.php' === $GLOBALS['pagenow'] && isset( $_GET['from_post'], $_GET['new_lang'] ) ) { // WPCS: CSRF ok.
+				$original = get_post( (int) $_GET['from_post'] ); // WPCS: CSRF ok.
 				$wpdb->update(
 					$wpdb->posts, [
 						'post_date' => $original->post_date,
@@ -138,8 +138,8 @@ class PLL_Admin_Sync {
 
 			if ( isset( $GLOBALS['post_type'] ) ) {
 				$post_type = $GLOBALS['post_type'];
-			} elseif ( isset( $_REQUEST['post_type'] ) ) {
-				$post_type = $_REQUEST['post_type']; // 2nd case for quick edit
+			} elseif ( isset( $_REQUEST['post_type'] ) ) { // WPCS: CSRF ok.
+				$post_type = $_REQUEST['post_type'];  // WPCS: CSRF ok.
 			}
 
 			// Add post parent to synchronization
@@ -163,7 +163,7 @@ class PLL_Admin_Sync {
 		// Sticky posts
 		if ( in_array( 'sticky_posts', $this->options['sync'] ) ) {
 			$stickies = get_option( 'sticky_posts' );
-			if ( isset( $_REQUEST['sticky'] ) && 'sticky' === $_REQUEST['sticky'] ) {
+			if ( isset( $_REQUEST['sticky'] ) && 'sticky' === $_REQUEST['sticky'] ) { // WPCS: CSRF ok.
 				$stickies = array_merge( $stickies, array_values( $translations ) );
 			} else {
 				$stickies = array_diff( $stickies, array_values( $translations ) );

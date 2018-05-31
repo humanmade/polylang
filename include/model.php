@@ -144,7 +144,7 @@ class PLL_Model {
 	 * @param string $taxonomy taxonomy name
 	 */
 	public function clean_languages_cache( $term = 0, $taxonomy = null ) {
-		if ( empty( $taxonomy ) || 'language' == $taxonomy ) {
+		if ( empty( $taxonomy ) || 'language' === $taxonomy ) {
 			delete_transient( 'pll_languages_list' );
 			$this->cache->clean();
 		}
@@ -590,7 +590,7 @@ class PLL_Model {
 			case 'get_translations':
 			case 'get_translation':
 			case 'join_clause':
-				$o = ( 'post' == $args[0] || $this->is_translated_post_type( $args[0] ) ) ? 'post' : ( 'term' == $args[0] || $this->is_translated_taxonomy( $args[0] ) ? 'term' : false );
+				$o = ( 'post' === $args[0] || $this->is_translated_post_type( $args[0] ) ) ? 'post' : ( 'term' === $args[0] || $this->is_translated_taxonomy( $args[0] ) ? 'term' : false );
 				unset( $args[0] );
 				break;
 

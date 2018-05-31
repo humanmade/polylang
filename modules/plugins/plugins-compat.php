@@ -199,7 +199,7 @@ class PLL_Plugins_Compat {
 	 */
 	public function cft_copy( $post_type, $post ) {
 		global $custom_field_template;
-		if ( isset( $custom_field_template, $_REQUEST['from_post'], $_REQUEST['new_lang'] ) && ! empty( $post ) ) {
+		if ( isset( $custom_field_template, $_REQUEST['from_post'], $_REQUEST['new_lang'] ) && ! empty( $post ) ) { // WPCS: CSRF ok.
 			$_REQUEST['post'] = $post->ID;
 		}
 	}
@@ -214,7 +214,7 @@ class PLL_Plugins_Compat {
 	 * @return array modified featured posts ids ( include all languages )
 	 */
 	public function twenty_fourteen_featured_content_ids( $featured_ids ) {
-		if ( 'twentyfourteen' != get_template() || ! did_action( 'pll_init' ) || false !== $featured_ids ) {
+		if ( 'twentyfourteen' !== get_template() || ! did_action( 'pll_init' ) || false !== $featured_ids ) {
 			return $featured_ids;
 		}
 
@@ -266,7 +266,7 @@ class PLL_Plugins_Compat {
 	 * @return array modified $settings
 	 */
 	public function twenty_fourteen_option_featured_content( $settings ) {
-		if ( 'twentyfourteen' == get_template() && PLL() instanceof PLL_Frontend && $settings['tag-id'] && $tr = pll_get_term( $settings['tag-id'] ) ) {
+		if ( 'twentyfourteen' === get_template() && PLL() instanceof PLL_Frontend && $settings['tag-id'] && $tr = pll_get_term( $settings['tag-id'] ) ) {
 			$settings['tag-id'] = $tr;
 		}
 
@@ -352,12 +352,12 @@ class PLL_Plugins_Compat {
 			}
 
 			// Don't redirect post previews
-			if ( isset( $_GET['preview'] ) && 'true' === $_GET['preview'] ) {
+			if ( isset( $_GET['preview'] ) && 'true' === $_GET['preview'] ) { // WPCS: CSRF ok.
 				return;
 			}
 
 			// Don't redirect theme customizer
-			if ( isset( $_POST['customize'] ) && isset( $_POST['theme'] ) && 'on' === $_POST['customize'] ) {
+			if ( isset( $_POST['customize'] ) && isset( $_POST['theme'] ) && 'on' === $_POST['customize'] ) { // WPCS: CSRF ok.
 				return;
 			}
 

@@ -158,7 +158,7 @@ class PLL_Settings_Module {
 			wp_die( -1 );
 		}
 
-		if ( $this->module == $_POST['module'] ) {
+		if ( $this->module === $_POST['module'] ) {
 			// It's up to the child class to decide which options are saved, whether there are errors or not
 			$post          = array_diff_key( $_POST, array_flip( [ 'action', 'module', 'pll_ajax_backend', '_pll_nonce' ] ) );
 			$options       = $this->update( $post );

@@ -108,7 +108,7 @@ class PLL_Table_Settings extends WP_List_Table {
 				$classes .= ' hidden';
 			}
 
-			if ( 'cb' == $column_name ) {
+			if ( 'cb' === $column_name ) {
 				echo '<th scope="row" class="check-column">';
 				echo $this->column_cb( $item );
 				echo '</th>';
@@ -130,7 +130,7 @@ class PLL_Table_Settings extends WP_List_Table {
 	 * @return string
 	 */
 	protected function column_default( $item, $column_name ) {
-		if ( 'plugin-title' == $column_name ) {
+		if ( 'plugin-title' === $column_name ) {
 			return sprintf( '<strong>%s</strong>', esc_html( $item->title ) ) . $this->row_actions( $item->get_action_links(), true /*always visible*/ );
 		}
 		return $item->$column_name;
