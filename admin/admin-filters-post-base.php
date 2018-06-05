@@ -56,7 +56,7 @@ abstract class PLL_Admin_Filters_Post_Base {
 
 		// save translations after checking the translated post is in the right language
 		foreach ( $arr as $lang => $tr_id ) {
-			$translations[ $lang ] = ( $tr_id && $this->model->post->get_language( (int) $tr_id )->slug == $lang ) ? (int) $tr_id : 0;
+			$translations[ $lang ] = ( $tr_id && $this->model->post->get_language( (int) $tr_id )->slug === $lang ) ? (int) $tr_id : 0;
 		}
 
 		$this->model->post->save_translations( $post_id, $translations );

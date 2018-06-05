@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <table>
 	<?php
 	foreach ( $this->model->get_languages_list() as $language ) {
-		if ( $language->term_id == $lang->term_id ) {
+		if ( $language->term_id === $lang->term_id ) {
 			continue;
 		}
 		?>

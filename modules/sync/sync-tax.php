@@ -37,8 +37,8 @@ class PLL_Sync_Tax {
 	 * @return array List of taxonomy names
 	 */
 	protected function get_taxonomies_to_copy( $sync, $from = null, $to = null, $lang = null ) {
-		$taxonomies = ! $sync || in_array( 'taxonomies', $this->options['sync'] ) ? $this->model->get_translated_taxonomies() : [];
-		if ( ! $sync || in_array( 'post_format', $this->options['sync'] ) ) {
+		$taxonomies = ! $sync || in_array( 'taxonomies', $this->options['sync'], true ) ? $this->model->get_translated_taxonomies() : [];
+		if ( ! $sync || in_array( 'post_format', $this->options['sync'], true ) ) {
 			$taxonomies[] = 'post_format';
 		}
 
@@ -125,7 +125,7 @@ class PLL_Sync_Tax {
 				if ( $tr_id !== $object_id ) {
 					$to_copy = $this->get_taxonomies_to_copy( true, $object_id, $tr_id, $lang );
 
-					if ( in_array( $taxonomy, $to_copy ) ) {
+					if ( in_array( $taxonomy, $to_copy, true ) ) {
 						$newterms = $this->maybe_translate_terms( $object_id, $terms, $taxonomy, $lang );
 
 						// For some reasons, the user may have untranslated terms in the translation. Don't forget them.
@@ -192,7 +192,7 @@ class PLL_Sync_Tax {
 	 * @param array  $translations Ids of the translations of the created term
 	 */
 	public function create_term( $term_id, $taxonomy, $translations ) {
-		if ( doing_action( 'create_term' ) && in_array( $taxonomy, $this->get_taxonomies_to_copy( true ) ) ) {
+		if ( doing_action( 'create_term' ) && in_array( $taxonomy, $this->get_taxonomies_to_copy( true ), true ) ) {
 			// Get all posts associated to the translated terms
 			$tr_posts = get_posts(
 				[

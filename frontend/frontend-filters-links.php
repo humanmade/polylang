@@ -132,7 +132,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	public function term_link( $link, $term, $tax ) {
 		$cache_key = "term:{$term->term_id}:{$link}";
 		if ( false === $_link = $this->cache->get( $cache_key ) ) {
-			if ( in_array( $tax, $this->model->get_filtered_taxonomies() ) ) {
+			if ( in_array( $tax, $this->model->get_filtered_taxonomies(), true ) ) {
 				$_link = $this->links_model->switch_language_in_link( $link, $this->curlang );
 
 				/** This filter is documented in include/filters-links.php */
@@ -211,7 +211,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	 * @return string
 	 */
 	public function home_url( $url, $path ) {
-		if ( ! ( did_action( 'template_redirect' ) || did_action( 'login_init' ) ) || rtrim( $url, '/' ) != $this->links_model->home ) {
+		if ( ! ( did_action( 'template_redirect' ) || did_action( 'login_init' ) ) || rtrim( $url, '/' ) !== $this->links_model->home ) {
 			return $url;
 		}
 
@@ -271,14 +271,14 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		foreach ( $traces as $trace ) {
 			// Black list first
 			foreach ( $black_list as $v ) {
-				if ( ( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) ) || ( isset( $trace['function'], $v['function'] ) && $trace['function'] == $v['function'] ) ) {
+				if ( ( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) ) || ( isset( $trace['function'], $v['function'] ) && $trace['function'] === $v['function'] ) ) {
 					return $url;
 				}
 			}
 
 			foreach ( $white_list as $v ) {
-				if ( ( isset( $trace['function'], $v['function'] ) && $trace['function'] == $v['function'] ) ||
-					( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) && in_array( $trace['function'], [ 'home_url', 'get_home_url', 'bloginfo', 'get_bloginfo' ] ) ) ) {
+				if ( ( isset( $trace['function'], $v['function'] ) && $trace['function'] === $v['function'] ) ||
+					( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) && in_array( $trace['function'], [ 'home_url', 'get_home_url', 'bloginfo', 'get_bloginfo' ], true ) ) ) {
 					$ok = true;
 				}
 			}
@@ -319,7 +319,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		}
 
 		// Don't redirect mysite.com/?attachment_id= to mysite.com/en/?attachment_id=
-		if ( 1 == $this->options['force_lang'] && is_attachment() && isset( $_GET['attachment_id'] ) ) {
+		if ( 1 === $this->options['force_lang'] && is_attachment() && isset( $_GET['attachment_id'] ) ) {
 			return;
 		}
 
@@ -387,7 +387,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 		$redirect_url = apply_filters( 'pll_check_canonical_url', $redirect_url, $language );
 
 		// The language is not correctly set so let's redirect to the correct url for this object
-		if ( $do_redirect && $redirect_url && $requested_url != $redirect_url ) {
+		if ( $do_redirect && $redirect_url && $requested_url !== $redirect_url ) {
 			wp_safe_redirect( $redirect_url, 301 );
 			exit;
 		}

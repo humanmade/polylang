@@ -25,8 +25,8 @@ class PLL_Admin_Filters_Columns {
 		foreach ( $this->model->get_translated_post_types() as $type ) {
 			// use the latest filter late as some plugins purely overwrite what's done by others :(
 			// specific case for media
-			add_filter( 'manage_' . ( 'attachment' == $type ? 'upload' : 'edit-' . $type ) . '_columns', [ $this, 'add_post_column' ], 100 );
-			add_action( 'manage_' . ( 'attachment' == $type ? 'media' : $type . '_posts' ) . '_custom_column', [ $this, 'post_column' ], 10, 2 );
+			add_filter( 'manage_' . ( 'attachment' === $type ? 'upload' : 'edit-' . $type ) . '_columns', [ $this, 'add_post_column' ], 100 );
+			add_action( 'manage_' . ( 'attachment' === $type ? 'media' : $type . '_posts' ) . '_custom_column', [ $this, 'post_column' ], 10, 2 );
 		}
 
 		// quick edit and bulk edit
@@ -61,7 +61,7 @@ class PLL_Admin_Filters_Columns {
 
 		foreach ( $this->model->get_languages_list() as $language ) {
 			// don't add the column for the filtered language
-			if ( empty( $this->filter_lang ) || $language->slug != $this->filter_lang->slug ) {
+			if ( empty( $this->filter_lang ) || $language->slug !== $this->filter_lang->slug ) {
 				$columns[ 'language_' . $language->slug ] = $language->flag ? $language->flag . '<span class="screen-reader-text">' . esc_html( $language->name ) . '</span>' : esc_html( $language->slug );
 			}
 		}
@@ -78,7 +78,7 @@ class PLL_Admin_Filters_Columns {
 	 */
 	protected function get_first_language_column() {
 		foreach ( $this->model->get_languages_list() as $language ) {
-			if ( empty( $this->filter_lang ) || $language->slug != $this->filter_lang->slug ) {
+			if ( empty( $this->filter_lang ) || $language->slug !== $this->filter_lang->slug ) {
 				$columns[] = 'language_' . $language->slug;
 			}
 		}
@@ -118,7 +118,7 @@ class PLL_Admin_Filters_Columns {
 		$language = $this->model->get_language( substr( $column, 9 ) );
 
 		// hidden field containing the post language for quick edit
-		if ( $column == $this->get_first_language_column() ) {
+		if ( $column === $this->get_first_language_column() ) {
 			printf( '<div class="hidden" id="lang_%d">%s</div>', intval( $post_id ), esc_html( $lang->slug ) );
 		}
 
@@ -165,10 +165,10 @@ class PLL_Admin_Filters_Columns {
 	 * @return string unmodified $column
 	 */
 	public function quick_edit_custom_box( $column, $type ) {
-		if ( $column == $this->get_first_language_column() ) {
+		if ( $column === $this->get_first_language_column() ) {
 
 			$elements = $this->model->get_languages_list();
-			if ( current_filter() == 'bulk_edit_custom_box' ) {
+			if ( current_filter() === 'bulk_edit_custom_box' ) {
 				array_unshift(
 					$elements, (object) [
 						'slug' => -1,
@@ -237,11 +237,11 @@ class PLL_Admin_Filters_Columns {
 		$term_id  = (int) $term_id;
 		$language = $this->model->get_language( substr( $column, 9 ) );
 
-		if ( $column == $this->get_first_language_column() ) {
+		if ( $column === $this->get_first_language_column() ) {
 			$out = sprintf( '<div class="hidden" id="lang_%d">%s</div>', intval( $term_id ), esc_html( $lang->slug ) );
 
 			// identify the default categories to disable the language dropdown in js
-			if ( in_array( get_option( 'default_category' ), $this->model->term->get_translations( $term_id ) ) ) {
+			if ( in_array( (int) get_option( 'default_category' ), $this->model->term->get_translations( $term_id ), true ) ) {
 				$out .= sprintf( '<div class="hidden" id="default_cat_%1$d">%1$d</div>', intval( $term_id ) );
 			}
 		}

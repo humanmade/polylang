@@ -21,7 +21,7 @@ class PLL_Links_Default extends PLL_Links_Model {
 	 * @return string modified url
 	 */
 	public function add_language_to_link( $url, $lang ) {
-		return empty( $lang ) || ( $this->options['hide_default'] && $this->options['default_lang'] == $lang->slug ) ? $url : add_query_arg( 'lang', $lang->slug, $url );
+		return empty( $lang ) || ( $this->options['hide_default'] && $this->options['default_lang'] === $lang->slug ) ? $url : add_query_arg( 'lang', $lang->slug, $url );
 	}
 
 	/**
@@ -91,7 +91,7 @@ class PLL_Links_Default extends PLL_Links_Model {
 	 * @return string
 	 */
 	public function front_page_url( $lang ) {
-		if ( $this->options['hide_default'] && $lang->slug == $this->options['default_lang'] ) {
+		if ( $this->options['hide_default'] && $lang->slug === $this->options['default_lang'] ) {
 			return trailingslashit( $this->home );
 		}
 		$url = home_url( '/?page_id=' . $lang->page_on_front );

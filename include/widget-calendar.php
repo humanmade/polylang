@@ -204,7 +204,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 
 		// See how much we should pad in the beginning
 		$pad = calendar_week_mod( date( 'w', $unixmonth ) - $week_begins );
-		if ( 0 != $pad ) {
+		if ( 0 !== $pad ) {
 			$calendar_output .= "\n\t\t" . '<td colspan="' . esc_attr( $pad ) . '" class="pad">&nbsp;</td>';
 		}
 
@@ -217,15 +217,15 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 			}
 			$newrow = false;
 
-			if ( $day == gmdate( 'j', $ts ) &&
-				$thismonth == gmdate( 'm', $ts ) &&
-				$thisyear == gmdate( 'Y', $ts ) ) {
+			if ( $day === (int) gmdate( 'j', $ts ) &&
+				(int) $thismonth === (int) gmdate( 'm', $ts ) &&
+				(int) $thisyear === (int) gmdate( 'Y', $ts ) ) {
 				$calendar_output .= '<td id="today">';
 			} else {
 				$calendar_output .= '<td>';
 			}
 
-			if ( in_array( $day, $daywithpost ) ) {
+			if ( in_array( $day, $daywithpost, true ) ) {
 				// any posts today?
 				$date_format      = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
 				$label            = sprintf( __( 'Posts published on %s' ), $date_format );
@@ -240,13 +240,13 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 			}
 			$calendar_output .= '</td>';
 
-			if ( 6 == calendar_week_mod( date( 'w', mktime( 0, 0, 0, $thismonth, $day, $thisyear ) ) - $week_begins ) ) {
+			if ( 6 === calendar_week_mod( date( 'w', mktime( 0, 0, 0, $thismonth, $day, $thisyear ) ) - $week_begins ) ) {
 				$newrow = true;
 			}
 		}
 
 		$pad = 7 - calendar_week_mod( date( 'w', mktime( 0, 0, 0, $thismonth, $day, $thisyear ) ) - $week_begins );
-		if ( $pad != 0 && $pad != 7 ) {
+		if ( $pad !== 0 && $pad !== 7 ) {
 			$calendar_output .= "\n\t\t" . '<td class="pad" colspan="' . esc_attr( $pad ) . '">&nbsp;</td>';
 		}
 		$calendar_output .= "\n\t</tr>\n\t</tbody>\n\t</table>";

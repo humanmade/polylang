@@ -135,7 +135,7 @@ class PLL_Admin_Filters_Term {
 		$dropdown = new PLL_Walker_Dropdown();
 
 		// Disable the language dropdown and the translations input fields for default categories to prevent removal
-		$disabled = in_array( get_option( 'default_category' ), $this->model->term->get_translations( $term_id ) );
+		$disabled = in_array( (int) get_option( 'default_category' ), $this->model->term->get_translations( $term_id ), true );
 
 		printf(
 			'
@@ -238,7 +238,7 @@ class PLL_Admin_Filters_Term {
 
 		// Edit tags
 		if ( isset( $_POST['term_lang_choice'] ) ) {
-			if ( 'add-' . $taxonomy == $_POST['action'] ) {
+			if ( 'add-' . $taxonomy === $_POST['action'] ) {
 				check_ajax_referer( $_POST['action'], '_ajax_nonce-add-' . $taxonomy ); // category metabox
 			} else {
 				check_admin_referer( 'pll_language', '_pll_nonce' ); // edit tags or tags metabox
@@ -251,7 +251,7 @@ class PLL_Admin_Filters_Term {
 
 			// Bulk edit does not modify the language
 			// So we possibly create a tag in several languages
-			if ( -1 == $_GET['inline_lang_choice'] ) {
+			if ( -1 === $_GET['inline_lang_choice'] ) {
 				// The language of the current term is set a according to the language of the current post
 				$this->model->term->set_language( $term_id, $this->model->post->get_language( $this->post_id ) );
 				$term = get_term( $term_id, $taxonomy );
@@ -285,7 +285,7 @@ class PLL_Admin_Filters_Term {
 		} // Quick edit
 		elseif ( isset( $_POST['inline_lang_choice'] ) ) {
 			check_ajax_referer(
-				isset( $_POST['action'] ) && 'inline-save' == $_POST['action'] ? 'inlineeditnonce' : 'taxinlineeditnonce', // Post quick edit or tag quick edit ?
+				isset( $_POST['action'] ) && 'inline-save' === $_POST['action'] ? 'inlineeditnonce' : 'taxinlineeditnonce', // Post quick edit or tag quick edit ?
 				'_inline_edit'
 			);
 
@@ -294,7 +294,7 @@ class PLL_Admin_Filters_Term {
 			$translations = $this->model->term->get_translations( $term_id );
 
 			// Checks if the new language already exists in the translation group
-			if ( $old_lang && $old_lang->slug != $lang->slug ) {
+			if ( $old_lang && $old_lang->slug !== $lang->slug ) {
 				if ( array_key_exists( $lang->slug, $translations ) ) {
 					$this->model->term->delete_translation( $term_id );
 				} elseif ( array_key_exists( $old_lang->slug, $translations ) ) {
@@ -328,7 +328,7 @@ class PLL_Admin_Filters_Term {
 		// Save translations after checking the translated term is in the right language ( as well as cast id to int )
 		foreach ( $_POST['term_tr_lang'] as $lang => $tr_id ) {
 			$tr_lang               = $this->model->term->get_language( (int) $tr_id );
-			$translations[ $lang ] = $tr_lang && $tr_lang->slug == $lang ? (int) $tr_id : 0;
+			$translations[ $lang ] = $tr_lang && $tr_lang->slug === $lang ? (int) $tr_id : 0;
 		}
 
 		$this->model->term->save_translations( $term_id, $translations );
@@ -412,7 +412,7 @@ class PLL_Admin_Filters_Term {
 			} // *Post* bulk edit, in case a new term is created
 			elseif ( isset( $_GET['bulk_edit'], $_GET['inline_lang_choice'] ) ) {
 				// Bulk edit does not modify the language
-				if ( -1 == $_GET['inline_lang_choice'] ) {
+				if ( -1 === $_GET['inline_lang_choice'] ) {
 					$slug = $name . '-' . $this->model->post->get_language( $this->post_id )->slug;
 				} else {
 					$slug = $name . '-' . $this->model->get_language( $_GET['inline_lang_choice'] )->slug;
@@ -545,7 +545,7 @@ class PLL_Admin_Filters_Term {
 		foreach ( get_terms( $taxonomy, 'hide_empty=0&lang=0&name__like=' . $s ) as $term ) {
 			$lang = $this->model->term->get_language( $term->term_id );
 
-			if ( $lang && $lang->slug == $translation_language->slug && ! $this->model->term->get_translation( $term->term_id, $term_language ) ) {
+			if ( $lang && $lang->slug === $translation_language->slug && ! $this->model->term->get_translation( $term->term_id, $term_language ) ) {
 				$return[] = [
 					'id' => $term->term_id,
 					'value' => $term->name,
@@ -681,16 +681,16 @@ class PLL_Admin_Filters_Term {
 
 		// FIXME backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$traces = debug_backtrace();
+			$traces = debug_backtrace( 1, 4 );
 			$n      = version_compare( PHP_VERSION, '7', '>=' ) ? 3 : 4; // PHP 7 does not include call_user_func_array
 
 			if ( isset( $traces[ $n ] ) ) {
 				// FIXME 'column_name' for backward compatibility with WP < 4.3
-				if ( in_array( $traces[ $n ]['function'], [ 'column_cb', 'column_name', 'handle_row_actions' ] ) && in_array( $traces[ $n ]['args'][0]->term_id, $this->model->term->get_translations( $value ) ) ) {
+				if ( in_array( $traces[ $n ]['function'], [ 'column_cb', 'column_name', 'handle_row_actions' ], true ) && in_array( $traces[ $n ]['args'][0]->term_id, $this->model->term->get_translations( $value ) ) ) {
 					return $traces[ $n ]['args'][0]->term_id;
 				}
 
-				if ( 'wp_delete_term' == $traces[ $n ]['function'] ) {
+				if ( 'wp_delete_term' === $traces[ $n ]['function'] ) {
 					return $this->model->term->get( $value, $this->model->term->get_language( $traces[ $n ]['args'][0] ) );
 				}
 			}
@@ -718,7 +718,7 @@ class PLL_Admin_Filters_Term {
 		}
 
 		foreach ( $this->model->get_languages_list() as $language ) {
-			if ( $language->slug != $default_cat_lang->slug && ! $this->model->term->get_translation( $value, $language ) ) {
+			if ( $language->slug !== $default_cat_lang->slug && ! $this->model->term->get_translation( $value, $language ) ) {
 				$this->model->create_default_category( $language );
 			}
 		}
@@ -750,14 +750,14 @@ class PLL_Admin_Filters_Term {
 		$lang            = $this->model->term->get_language( $term_id );
 
 		foreach ( $this->model->term->get_translations( $term_id ) as $key => $tr_id ) {
-			if ( $lang->slug == $key ) {
+			if ( $lang->slug === $key ) {
 				$translations[ $key ] = $new_term_id;
 			} else {
 				$tr_term              = get_term( $tr_id, $taxonomy );
 				$translations[ $key ] = _split_shared_term( $tr_id, $tr_term->term_taxonomy_id );
 
 				// Hack translation ids sent by the form to avoid overwrite in PLL_Admin_Filters_Term::save_translations
-				if ( isset( $_POST['term_tr_lang'][ $key ] ) && $_POST['term_tr_lang'][ $key ] == $tr_id ) {
+				if ( isset( $_POST['term_tr_lang'][ $key ] ) && (int) $_POST['term_tr_lang'][ $key ] === (int) $tr_id ) {
 					$_POST['term_tr_lang'][ $key ] = $translations[ $key ];
 				}
 			}

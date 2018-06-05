@@ -42,7 +42,7 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 	 * @return array modified list of form fields
 	 */
 	public function attachment_fields_to_edit( $fields, $post ) {
-		if ( 'post.php' == $GLOBALS['pagenow'] ) {
+		if ( 'post.php' === $GLOBALS['pagenow'] ) {
 			return $fields; // Don't add anything on edit media panel for WP 3.5+ since we have the metabox
 		}
 

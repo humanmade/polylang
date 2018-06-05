@@ -267,7 +267,7 @@ class SpeedTrapListener implements PHPUnit_Framework_TestListener {
 	 */
 	protected function renderFooter() {
 		if ( $hidden = $this->getHiddenCount( $this->slow ) ) {
-			echo sprintf( '...and there %s %s more above your threshold hidden from view', $hidden == 1 ? 'is' : 'are', $hidden );
+			echo sprintf( '...and there %s %s more above your threshold hidden from view', $hidden === 1 ? 'is' : 'are', $hidden );
 		}
 	}
 

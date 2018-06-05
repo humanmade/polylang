@@ -58,7 +58,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 	public function add_language_to_link( $url, $lang ) {
 		if ( ! empty( $lang ) ) {
 			$base = $this->options['rewrite'] ? '' : 'language/';
-			$slug = $this->options['default_lang'] == $lang->slug && $this->options['hide_default'] ? '' : $base . $lang->slug . '/';
+			$slug = $this->options['default_lang'] === $lang->slug && $this->options['hide_default'] ? '' : $base . $lang->slug . '/';
 			$root = ( false === strpos( $url, '://' ) ) ? $this->home_relative . $this->root : $this->home . '/' . $this->root;
 
 			if ( false === strpos( $url, $new = $root . $slug ) ) {
@@ -81,7 +81,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 	 */
 	function remove_language_from_link( $url ) {
 		foreach ( $this->model->get_languages_list() as $language ) {
-			if ( ! $this->options['hide_default'] || $this->options['default_lang'] != $language->slug ) {
+			if ( ! $this->options['hide_default'] || $this->options['default_lang'] !== $language->slug ) {
 				$languages[] = $language->slug;
 			}
 		}
@@ -132,7 +132,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 	 */
 	public function home_url( $lang ) {
 		$base = $this->options['rewrite'] ? '' : 'language/';
-		$slug = $this->options['default_lang'] == $lang->slug && $this->options['hide_default'] ? '' : '/' . $this->root . $base . $lang->slug;
+		$slug = $this->options['default_lang'] === $lang->slug && $this->options['hide_default'] ? '' : '/' . $this->root . $base . $lang->slug;
 		return trailingslashit( $this->home . $slug );
 	}
 
@@ -205,7 +205,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 
 		foreach ( $rules as $key => $rule ) {
 			// Special case for translated post types and taxonomies to allow canonical redirection
-			if ( $this->options['force_lang'] && in_array( $filter, array_merge( $this->model->get_translated_post_types(), $this->model->get_translated_taxonomies() ) ) ) {
+			if ( $this->options['force_lang'] && in_array( $filter, array_merge( $this->model->get_translated_post_types(), $this->model->get_translated_taxonomies() ), true ) ) {
 
 				/**
 				 * Filters the rewrite rules to modify
@@ -227,7 +227,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 
 				$newrules[ $key ] = $rule;
 			} // Rewrite rules filtered by language
-			elseif ( in_array( $filter, $this->always_rewrite ) || in_array( $filter, $this->model->get_filtered_taxonomies() ) || ( $cpts && preg_match( $cpts, $rule, $matches ) && ! strpos( $rule, 'name=' ) ) || ( 'rewrite_rules_array' != $filter && $this->options['force_lang'] ) ) {
+			elseif ( in_array( $filter, $this->always_rewrite ) || in_array( $filter, $this->model->get_filtered_taxonomies(), true ) || ( $cpts && preg_match( $cpts, $rule, $matches ) && ! strpos( $rule, 'name=' ) ) || ( 'rewrite_rules_array' !== $filter && $this->options['force_lang'] ) ) {
 
 				/** This filter is documented in include/links-directory.php */
 				if ( apply_filters( 'pll_modify_rewrite_rule', true, [ $key => $rule ], $filter, empty( $matches[1] ) ? false : $matches[1] ) ) {
@@ -252,7 +252,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 		}
 
 		// The home rewrite rule
-		if ( 'root' == $filter && isset( $slug ) ) {
+		if ( 'root' === $filter && isset( $slug ) ) {
 			$newrules[ $slug . '?$' ] = $wp_rewrite->index . '?lang=$matches[1]';
 		}
 

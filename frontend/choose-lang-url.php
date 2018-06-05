@@ -38,7 +38,7 @@ class PLL_Choose_Lang_Url extends PLL_Choose_lang {
 		$requested_uri  = rtrim( str_replace( $this->index, '', $_SERVER['REQUEST_URI'] ), '/' ); // some PHP setups turn requests for / into /index.php in REQUEST_URI
 
 		// home is requested
-		if ( $requested_host == $host && $requested_uri == $home_path && empty( $_SERVER['QUERY_STRING'] ) ) {
+		if ( $requested_host === $host && $requested_uri === $home_path && empty( $_SERVER['QUERY_STRING'] ) ) {
 			$this->home_language();
 			add_action( 'setup_theme', [ $this, 'home_requested' ] );
 		} // take care to post & page preview http://wordpress.org/support/topic/static-frontpage-url-parameter-url-language-information

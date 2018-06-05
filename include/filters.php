@@ -166,7 +166,7 @@ class PLL_Filters {
 			$ids = array_intersect( $ids, $this->model->post->get_objects_in_language( $language ) );
 
 			foreach ( $pages as $key => $page ) {
-				if ( ! in_array( $page->ID, $ids ) ) {
+				if ( ! in_array( $page->ID, $ids, true ) ) {
 					unset( $pages[ $key ] );
 				}
 			}

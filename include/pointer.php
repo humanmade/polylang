@@ -43,7 +43,7 @@ class PLL_Pointer {
 	 */
 	public function enqueue_scripts() {
 		$dismissed = explode( ',', get_user_meta( get_current_user_id(), 'dismissed_wp_pointers', true ) );
-		if ( in_array( $this->args['pointer'], $dismissed ) || ! current_user_can( 'manage_options' ) ) {
+		if ( in_array( $this->args['pointer'], $dismissed, true ) || ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 

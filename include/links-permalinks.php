@@ -24,7 +24,7 @@ abstract class PLL_Links_Permalinks extends PLL_Links_Model {
 		// Inspired by wp-includes/rewrite.php
 		$permalink_structure        = get_option( 'permalink_structure' );
 		$this->root                 = preg_match( '#^/*' . $this->index . '#', $permalink_structure ) ? $this->index . '/' : '';
-		$this->use_trailing_slashes = ( '/' == substr( $permalink_structure, -1, 1 ) );
+		$this->use_trailing_slashes = ( '/' === substr( $permalink_structure, -1, 1 ) );
 	}
 
 	/**
@@ -90,7 +90,7 @@ abstract class PLL_Links_Permalinks extends PLL_Links_Model {
 	 * @return string
 	 */
 	public function front_page_url( $lang ) {
-		if ( $this->options['hide_default'] && $lang->slug == $this->options['default_lang'] ) {
+		if ( $this->options['hide_default'] && $lang->slug === $this->options['default_lang'] ) {
 			return trailingslashit( $this->home );
 		}
 		$url = home_url( $this->root . get_page_uri( $lang->page_on_front ) );

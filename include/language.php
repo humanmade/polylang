@@ -61,7 +61,7 @@ class PLL_Language {
 		} // Build the object from taxonomies
 		else {
 			foreach ( $language as $prop => $value ) {
-				$this->$prop = in_array( $prop, [ 'term_id', 'term_taxonomy_id', 'count' ] ) ? (int) $language->$prop : $language->$prop;
+				$this->$prop = in_array( $prop, [ 'term_id', 'term_taxonomy_id', 'count' ], true ) ? (int) $language->$prop : $language->$prop;
 			}
 
 			$this->tl_term_id          = (int) $term_language->term_id;
@@ -72,7 +72,7 @@ class PLL_Language {
 			// Backward compatibility for is_rtl
 			$description = maybe_unserialize( $language->description );
 			foreach ( $description as $prop => $value ) {
-				'rtl' == $prop ? $this->is_rtl = $value : $this->$prop = $value;
+				'rtl' === $prop ? $this->is_rtl = $value : $this->$prop = $value;
 			}
 
 			$this->description = &$this->locale; // Backward compatibility with Polylang < 1.2
