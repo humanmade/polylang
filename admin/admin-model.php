@@ -306,7 +306,7 @@ class PLL_Admin_Model extends PLL_Model {
 
 		// Validate slug is unique
 		foreach ( $this->get_languages_list() as $language ) {
-			if ( $language->slug === $args['slug'] && ( null === $lang || ( isset( $lang ) && $lang->term_id != $language->term_id ) ) ) {
+			if ( $language->slug === $args['slug'] && ( null === $lang || ( isset( $lang ) && $lang->term_id !== $language->term_id ) ) ) {
 				add_settings_error( 'general', 'pll_non_unique_slug', __( 'The language code must be unique', 'polylang' ) );
 			}
 		}
@@ -527,7 +527,7 @@ class PLL_Admin_Model extends PLL_Model {
 				}
 				unset( $tr[ $old_slug ] );
 
-				if ( empty( $tr ) || 1 == count( $tr ) ) {
+				if ( empty( $tr ) || 1 === count( $tr ) ) {
 					$dt['t'][]  = (int) $term->term_id;
 					$dt['tt'][] = (int) $term->term_taxonomy_id;
 				} else {
