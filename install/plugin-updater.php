@@ -496,7 +496,7 @@ class PLL_Plugin_Updater {
 
 		$data = [
 			'timeout' => strtotime( '+3 hours', current_time( 'timestamp' ) ),
-			'value'   => json_encode( $value ),
+			'value'   => wp_json_encode( $value ),
 		];
 
 		update_option( $cache_key, $data, 'no' );
