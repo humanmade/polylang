@@ -464,7 +464,8 @@ class PLL_Upgrade {
 	 * @since 1.4.1
 	 */
 	protected function upgrade_1_4_1() {
-		if ( 3 == $this->options['force_lang'] ) {
+		$force_lang = absint( $this->options['force_lang'] );
+		if ( 3 === $force_lang ) {
 			$this->options['browser'] = $this->options['hide_default'] = 0;
 		}
 	}
