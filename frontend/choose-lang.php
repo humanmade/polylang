@@ -259,6 +259,7 @@ abstract class PLL_Choose_Lang {
 			 * @param string $redirect the url the visitor will be redirected to
 			 */
 			if ( $redirect = apply_filters( 'pll_redirect_home', $redirect ) ) {
+				// phpcs:ignore
 				wp_redirect( $redirect );
 				exit;
 			}
