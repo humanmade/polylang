@@ -146,6 +146,7 @@ class PLL_WP_Import extends WP_Import {
 			$trs = array_diff( $trs, $existing_trs );
 
 			if ( ! empty( $trs ) ) {
+				// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 				$wpdb->query( "INSERT INTO $wpdb->term_relationships ( object_id, term_taxonomy_id ) VALUES " . implode( ',', $trs ) );
 			}
 		}
@@ -179,11 +180,13 @@ class PLL_WP_Import extends WP_Import {
 		}
 
 		if ( ! empty( $u ) ) {
+			// phpcs:disable WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query(
 				"UPDATE $wpdb->term_taxonomy
 				SET description = ( CASE term_id " . implode( ' ', $u['case'] ) . ' END )
 				WHERE term_id IN ( ' . implode( ',', $u['in'] ) . ' )'
 			);
+			// phpcs:enable
 		}
 	}
 }

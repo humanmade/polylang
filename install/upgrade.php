@@ -228,6 +228,7 @@ class PLL_Upgrade {
 
 		// Assign language to each term
 		if ( ! empty( $terms ) ) {
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query( "INSERT INTO $wpdb->term_relationships ( object_id, term_taxonomy_id ) VALUES " . implode( ',', $terms ) );
 		}
 
@@ -237,6 +238,7 @@ class PLL_Upgrade {
 			$terms = $slugs = $tts = $trs = [];
 
 			// Get all translated objects
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$objects = $wpdb->get_col( "SELECT DISTINCT meta_value FROM {$wpdb->$table} WHERE meta_key = '_translations'" );
 
 			if ( empty( $objects ) ) {
@@ -255,10 +257,12 @@ class PLL_Upgrade {
 
 			// Insert terms
 			if ( ! empty( $terms ) ) {
+				// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 				$wpdb->query( "INSERT INTO $wpdb->terms ( slug, name ) VALUES " . implode( ',', $terms ) );
 			}
 
 			// Get all terms with their term_id
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$terms = $wpdb->get_results( "SELECT term_id, slug FROM $wpdb->terms WHERE slug IN ( " . implode( ',', $slugs ) . ' )' );
 
 			// Prepare terms taxonomy relationship
@@ -270,6 +274,7 @@ class PLL_Upgrade {
 
 			// Insert term_taxonomy
 			if ( ! empty( $tts ) ) {
+				// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 				$wpdb->query( "INSERT INTO $wpdb->term_taxonomy ( term_id, taxonomy, description ) VALUES " . implode( ',', $tts ) );
 			}
 
@@ -290,6 +295,7 @@ class PLL_Upgrade {
 
 			// Insert term_relationships
 			if ( ! empty( $trs ) ) {
+				// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 				$wpdb->query( "INSERT INTO $wpdb->term_relationships ( object_id, term_taxonomy_id ) VALUES " . implode( ',', $trs ) );
 			}
 		}

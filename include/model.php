@@ -433,6 +433,19 @@ class PLL_Model {
 	public function term_exists( $term_name, $taxonomy, $parent, $language ) {
 		global $wpdb;
 
+		$cache_key = implode( '|', array_filter( [
+			$term_name,
+			$taxonomy,
+			$parent,
+			is_object( $language ) ? $language->term_id : $language,
+		] ) );
+
+		$cache_value = wp_cache_get( $cache_key, 'term_exists' );
+
+		if ( $cache_value ) {
+			return $cache_value;
+		}
+
 		$term_name = trim( wp_unslash( $term_name ) );
 
 		$select = "SELECT t.term_id FROM $wpdb->terms AS t";
@@ -445,7 +458,12 @@ class PLL_Model {
 			$where .= $wpdb->prepare( ' AND tt.parent = %d', $parent );
 		}
 
-		return $wpdb->get_var( $select . $join . $where );
+		// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
+		$term = $wpdb->get_var( $select . $join . $where );
+
+		wp_cache_add( $cache_key, 'term_exists', $term );
+
+		return $term;
 	}
 
 	/**
@@ -532,6 +550,7 @@ class PLL_Model {
 				}
 			}
 
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$res = $wpdb->get_results( $select . $join . $where . $groupby, ARRAY_A );
 			foreach ( (array) $res as $row ) {
 				$counts[ $row['term_taxonomy_id'] ] = $row['num_posts'];

@@ -44,6 +44,9 @@ class PLL_Settings extends PLL_Admin_Base {
 
 		// Saves per-page value in screen option
 		add_filter( 'set-screen-option', [ $this, 'set_screen_option' ], 10, 3 );
+
+		// Background tasks
+		add_action( 'pll_set_language_in_mass', [ $this, 'set_language_in_mass' ] );
 	}
 
 	/**
@@ -208,14 +211,7 @@ class PLL_Settings extends PLL_Admin_Base {
 			case 'content-default-lang':
 				check_admin_referer( 'content-default-lang' );
 
-				if ( $nolang = $this->model->get_objects_with_no_lang() ) {
-					if ( ! empty( $nolang['posts'] ) ) {
-						$this->model->set_language_in_mass( 'post', $nolang['posts'], $this->options['default_lang'] );
-					}
-					if ( ! empty( $nolang['terms'] ) ) {
-						$this->model->set_language_in_mass( 'term', $nolang['terms'], $this->options['default_lang'] );
-					}
-				}
+				wp_schedule_single_event( time(), 'pll_set_language_in_mass' );
 
 				self::redirect(); // To refresh the page ( possible thanks to the $_GET['noheader']=true )
 				break;
@@ -240,6 +236,22 @@ class PLL_Settings extends PLL_Admin_Base {
 				 */
 				do_action( "mlang_action_$action" );
 				break;
+		}
+	}
+
+	/**
+	 * Sets the default language for posts and terms that have none.
+	 *
+	 * @since 2.3.4-alpha
+	 */
+	public function set_language_in_mass() {
+		if ( $nolang = $this->model->get_objects_with_no_lang() ) {
+			if ( ! empty( $nolang['posts'] ) ) {
+				$this->model->set_language_in_mass( 'post', $nolang['posts'], $this->options['default_lang'] );
+			}
+			if ( ! empty( $nolang['terms'] ) ) {
+				$this->model->set_language_in_mass( 'term', $nolang['terms'], $this->options['default_lang'] );
+			}
 		}
 	}
 

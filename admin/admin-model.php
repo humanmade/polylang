@@ -337,6 +337,8 @@ class PLL_Admin_Model extends PLL_Model {
 	public function set_language_in_mass( $type, $ids, $lang ) {
 		global $wpdb;
 
+		set_time_limit( 0 );
+
 		$ids   = array_map( 'intval', $ids );
 		$lang  = $this->get_language( $lang );
 		$tt_id = 'term' === $type ? $lang->tl_term_taxonomy_id : $lang->term_taxonomy_id;
@@ -347,6 +349,7 @@ class PLL_Admin_Model extends PLL_Model {
 
 		if ( ! empty( $values ) ) {
 			$values = array_unique( $values );
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query( "INSERT INTO $wpdb->term_relationships ( object_id, term_taxonomy_id ) VALUES " . implode( ',', $values ) );
 			$lang->update_count(); // Updating term count is mandatory ( thanks to AndyDeGroo )
 		}
@@ -377,6 +380,8 @@ class PLL_Admin_Model extends PLL_Model {
 	public function set_translation_in_mass( $type, $translations ) {
 		global $wpdb;
 
+		set_time_limit( 0 );
+
 		$taxonomy = $type . '_translations';
 
 		foreach ( $translations as $t ) {
@@ -390,10 +395,12 @@ class PLL_Admin_Model extends PLL_Model {
 		// Insert terms
 		if ( ! empty( $terms ) ) {
 			$terms = array_unique( $terms );
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query( "INSERT INTO $wpdb->terms ( slug, name ) VALUES " . implode( ',', $terms ) );
 		}
 
 		// Get all terms with their term_id
+		// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 		$terms = $wpdb->get_results( "SELECT term_id, slug FROM $wpdb->terms WHERE slug IN ( " . implode( ',', $slugs ) . ' )' );
 
 		// Prepare terms taxonomy relationship
@@ -405,6 +412,7 @@ class PLL_Admin_Model extends PLL_Model {
 		// Insert term_taxonomy
 		if ( ! empty( $tts ) ) {
 			$tts = array_unique( $tts );
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query( "INSERT INTO $wpdb->term_taxonomy ( term_id, taxonomy, description, count ) VALUES " . implode( ',', $tts ) );
 		}
 
@@ -425,6 +433,7 @@ class PLL_Admin_Model extends PLL_Model {
 
 		// Insert term_relationships
 		if ( ! empty( $trs ) ) {
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query( "INSERT INTO $wpdb->term_relationships ( object_id, term_taxonomy_id ) VALUES " . implode( ',', $trs ) );
 			$trs = array_unique( $trs );
 		}
@@ -441,8 +450,12 @@ class PLL_Admin_Model extends PLL_Model {
 	 * @param in $limit Max number of posts or terms to return. Defaults to -1 (no limit).
 	 * @return array Array made of an array of post ids and an array of term ids
 	 */
-	public function get_objects_with_no_lang( $limit = -1 ) {
+	public function get_objects_with_no_lang( $limit = 300 ) {
 		global $wpdb;
+
+		if ( ( defined( 'DOING_CRON' ) && DOING_CRON ) || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+			$limit = -1;
+		}
 
 		/**
 		 * Filters the max number of posts or terms to return when searching objects with no language
@@ -472,6 +485,7 @@ class PLL_Admin_Model extends PLL_Model {
 			]
 		);
 
+		// phpcs:disable WordPress.WP.PreparedSQL.NotPrepared
 		$terms = $wpdb->get_col(
 			sprintf(
 				"
@@ -486,6 +500,7 @@ class PLL_Admin_Model extends PLL_Model {
 				$limit > 0 ? "LIMIT {$limit}" : ''
 			)
 		);
+		// phpcs:enable
 
 		/**
 		 * Filter the list of untranslated posts ids and terms ids
@@ -539,6 +554,7 @@ class PLL_Admin_Model extends PLL_Model {
 
 		// Delete relationships
 		if ( ! empty( $dr ) ) {
+			// phpcs:disable WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query(
 				"
 				DELETE FROM $wpdb->term_relationships
@@ -546,16 +562,20 @@ class PLL_Admin_Model extends PLL_Model {
 				AND term_taxonomy_id IN ( ' . implode( ',', $dr['tt'] ) . ' )
 			'
 			);
+			// phpcs:enable
 		}
 
 		// Delete terms
 		if ( ! empty( $dt ) ) {
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query( "DELETE FROM $wpdb->terms WHERE term_id IN ( " . implode( ',', $dt['t'] ) . ' )' );
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query( "DELETE FROM $wpdb->term_taxonomy WHERE term_taxonomy_id IN ( " . implode( ',', $dt['tt'] ) . ' )' );
 		}
 
 		// Update terms
 		if ( ! empty( $ut ) ) {
+			// phpcs:disable WordPress.WP.PreparedSQL.NotPrepared
 			$wpdb->query(
 				"
 				UPDATE $wpdb->term_taxonomy
@@ -563,6 +583,7 @@ class PLL_Admin_Model extends PLL_Model {
 				WHERE term_id IN ( ' . implode( ',', $ut['in'] ) . ' )
 			'
 			);
+			// phpcs:enable
 		}
 
 		if ( ! empty( $term_ids ) ) {
