@@ -97,8 +97,8 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @return array Widget options
 	 */
 	public function widget_update_callback( $instance, $new_instance, $old_instance, $widget ) {
-		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ sanitize_key( $key ) ], $this->model->get_languages_list( [ 'fields' => 'slug' ] ) ) ) { // WPCS: CSRF ok.
-			$instance['pll_lang'] = $_POST[ sanitize_key( $key ) ]; // WPCS: CSRF ok.
+		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( [ 'fields' => 'slug' ] ), true ) ) { // WPCS: CSRF ok.
+			$instance['pll_lang'] = sanitize_text_field( $_POST[ $key ] ); // WPCS: CSRF ok.
 		} else {
 			unset( $instance['pll_lang'] );
 		}
@@ -117,7 +117,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 		// Admin language
 		// FIXME Backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$user_lang = in_array( sanitize_text_field( $_POST['user_lang'] ), $this->model->get_languages_list( [ 'fields' => 'locale' ] ) ) ? sanitize_text_field( $_POST['user_lang'] ) : 0; // WPCS: CSRF ok.
+			$user_lang = in_array( sanitize_text_field( $_POST['user_lang'] ), $this->model->get_languages_list( [ 'fields' => 'locale' ] ), true ) ? sanitize_text_field( $_POST['user_lang'] ) : 0; // WPCS: CSRF ok.
 			update_user_meta( $user_id, 'locale', $user_lang );
 		}
 

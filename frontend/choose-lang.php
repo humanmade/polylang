@@ -218,7 +218,7 @@ abstract class PLL_Choose_Lang {
 	protected function home_language() {
 		// test referer in case PLL_COOKIE is set to false
 		// thanks to Ov3rfly http://wordpress.org/support/topic/enhance-feature-when-front-page-is-visited-set-language-according-to-browser
-		$language = $this->options['hide_default'] && ( ( isset( $_SERVER['HTTP_REFERER'] ) && in_array( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ), $this->links_model->get_hosts() ) ) || ! $this->options['browser'] ) ?
+		$language = $this->options['hide_default'] && ( ( isset( $_SERVER['HTTP_REFERER'] ) && in_array( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_HOST ), $this->links_model->get_hosts(), true ) ) || ! $this->options['browser'] ) ?
 			$this->model->get_language( $this->options['default_lang'] ) :
 			$this->get_preferred_language(); // sets the language according to browser preference or default language
 		$this->set_language( $language );
@@ -259,6 +259,7 @@ abstract class PLL_Choose_Lang {
 			 * @param string $redirect the url the visitor will be redirected to
 			 */
 			if ( $redirect = apply_filters( 'pll_redirect_home', $redirect ) ) {
+				// phpcs:ignore
 				wp_redirect( $redirect );
 				exit;
 			}

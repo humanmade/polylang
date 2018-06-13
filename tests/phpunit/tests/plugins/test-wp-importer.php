@@ -32,6 +32,7 @@ if ( file_exists( $_tests_dir . '/../wordpress-importer/wordpress-importer.php' 
 			global $wpdb;
 			// crude but effective: make sure there's no residual data in the main tables
 			foreach ( [ 'posts', 'postmeta', 'comments', 'terms', 'term_taxonomy', 'term_relationships', 'users', 'usermeta' ] as $table ) {
+				// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 				$wpdb->query( "DELETE FROM {$wpdb->$table}" );
 			}
 		}

@@ -122,7 +122,7 @@ class PLL_Admin_Base extends PLL_Base {
 		];
 
 		foreach ( $scripts as $script => $v ) {
-			if ( in_array( $screen->base, $v[0] ) && ( $v[2] || $this->model->get_languages_list() ) ) {
+			if ( in_array( $screen->base, $v[0], true ) && ( $v[2] || $this->model->get_languages_list() ) ) {
 				wp_enqueue_script( 'pll_' . $script, plugins_url( '/js/' . $script . $suffix . '.js', POLYLANG_FILE ), $v[1], POLYLANG_VERSION, $v[3] );
 			}
 		}
@@ -160,10 +160,10 @@ class PLL_Admin_Base extends PLL_Base {
 		$arr = wp_json_encode( $params );
 ?>
 <script type="text/javascript">
-	if (typeof jQuery != 'undefined') {
+	if (typeof jQuery !== 'undefined') {
 		(function($){
 			$.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-				if ( -1 != options.url.indexOf( ajaxurl ) || -1 != ajaxurl.indexOf( options.url ) ) {
+				if ( -1 !== options.url.indexOf( ajaxurl ) || -1 !== ajaxurl.indexOf( options.url ) ) {
 					if ( 'undefined' === typeof options.data ) {
 						options.data = ( 'get' === options.type.toLowerCase() ) ? '<?php echo $str; ?>' : <?php echo $arr; ?>;
 					} else {
@@ -218,7 +218,7 @@ class PLL_Admin_Base extends PLL_Base {
 			$this->curlang = empty( $_GET['new_lang'] ) ? $this->pref_lang : $this->model->get_language( sanitize_text_field( $_GET['new_lang'] ) ); // WPCS: CSRF ok.
 		} // Edit Term
 		// FIXME 'edit-tags.php' for backward compatibility with WP < 4.5
-		elseif ( in_array( $GLOBALS['pagenow'], [ 'edit-tags.php', 'term.php' ] ) && isset( $_GET['tag_ID'] ) && $lang = $this->model->term->get_language( (int) $_GET['tag_ID'] ) ) { // WPCS: CSRF ok.
+		elseif ( in_array( $GLOBALS['pagenow'], [ 'edit-tags.php', 'term.php' ], true ) && isset( $_GET['tag_ID'] ) && $lang = $this->model->term->get_language( (int) $_GET['tag_ID'] ) ) { // WPCS: CSRF ok.
 			$this->curlang = $lang;
 		} elseif ( isset( $_REQUEST['pll_term_id'] ) && $lang = $this->model->term->get_language( (int) $_REQUEST['pll_term_id'] ) ) { // WPCS: CSRF ok.
 			$this->curlang = $lang;

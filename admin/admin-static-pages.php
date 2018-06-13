@@ -64,11 +64,11 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	 * @return array
 	 */
 	public function display_post_states( $post_states, $post ) {
-		if ( in_array( $post->ID, $this->model->get_languages_list( [ 'fields' => 'page_on_front' ] ) ) ) {
+		if ( in_array( $post->ID, $this->model->get_languages_list( [ 'fields' => 'page_on_front' ] ), true ) ) {
 			$post_states['page_on_front'] = __( 'Front Page' );
 		}
 
-		if ( in_array( $post->ID, $this->model->get_languages_list( [ 'fields' => 'page_for_posts' ] ) ) ) {
+		if ( in_array( $post->ID, $this->model->get_languages_list( [ 'fields' => 'page_for_posts' ] ), true ) ) {
 			$post_states['page_for_posts'] = __( 'Posts Page' );
 		}
 
@@ -85,7 +85,7 @@ class PLL_Admin_Static_Pages extends PLL_Static_Pages {
 	 * @param array  $translations
 	 */
 	public function pll_save_post( $post_id, $post, $translations ) {
-		if ( in_array( $this->page_on_front, $translations ) ) {
+		if ( in_array( $this->page_on_front, $translations, true ) ) {
 			$this->model->clean_languages_cache();
 		}
 	}

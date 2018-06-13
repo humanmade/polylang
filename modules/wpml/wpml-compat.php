@@ -90,7 +90,7 @@ class PLL_WPML_Compat {
 			'multiline' => true,
 			'icl' => true,
 		];
-		if ( ! in_array( $to_register, self::$strings ) && $to_register['string'] ) {
+		if ( ! in_array( $to_register, self::$strings, true ) && $to_register['string'] ) {
 			self::$strings[] = $to_register;
 			update_option( 'polylang_wpml_strings', self::$strings );
 		}

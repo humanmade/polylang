@@ -103,7 +103,7 @@ class PLL_WPML_Config {
 		foreach ( $this->xmls as $xml ) {
 			foreach ( $xml->xpath( 'custom-fields/custom-field' ) as $cf ) {
 				$attributes = $cf->attributes();
-				if ( 'copy' === $attributes['action'] || ( ! $sync && in_array( $attributes['action'], [ 'translate', 'copy-once' ] ) ) ) {
+				if ( 'copy' === $attributes['action'] || ( ! $sync && in_array( $attributes['action'], [ 'translate', 'copy-once' ], true ) ) ) {
 					$metas[] = (string) $cf;
 				} else {
 					$metas = array_diff( $metas, [ (string) $cf ] );

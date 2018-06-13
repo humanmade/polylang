@@ -42,8 +42,8 @@ abstract class PLL_Static_Pages {
 	 */
 	public function init() {
 		if ( 'page' === get_option( 'show_on_front' ) ) {
-			$this->page_on_front  = get_option( 'page_on_front' );
-			$this->page_for_posts = get_option( 'page_for_posts' );
+			$this->page_on_front  = (int) get_option( 'page_on_front' );
+			$this->page_for_posts = (int) get_option( 'page_for_posts' );
 		} else {
 			$this->page_on_front  = 0;
 			$this->page_for_posts = 0;
@@ -60,7 +60,7 @@ abstract class PLL_Static_Pages {
 	 * @return string modified link
 	 */
 	public function page_link( $link, $id ) {
-		if ( ( $lang = $this->model->post->get_language( $id ) ) && $id === $lang->page_on_front ) {
+		if ( ( $lang = $this->model->post->get_language( $id ) ) && $id === (int) $lang->page_on_front ) {
 			return $lang->home_url;
 		}
 		return $link;

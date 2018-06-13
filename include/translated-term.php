@@ -177,7 +177,7 @@ class PLL_Translated_Term extends PLL_Translated_Object {
 	 */
 	public function wp_get_object_terms( $terms, $object_ids, $taxonomies ) {
 		$taxonomies = explode( "', '", trim( $taxonomies, "'" ) );
-		if ( ! in_array( 'term_translations', $taxonomies ) ) {
+		if ( ! in_array( 'term_translations', $taxonomies, true ) ) {
 			$this->_prime_terms_cache( $terms, $taxonomies );
 		}
 		return $terms;

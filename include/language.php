@@ -61,7 +61,7 @@ class PLL_Language {
 		} // Build the object from taxonomies
 		else {
 			foreach ( $language as $prop => $value ) {
-				$this->$prop = in_array( $prop, [ 'term_id', 'term_taxonomy_id', 'count' ] ) ? (int) $language->$prop : $language->$prop;
+				$this->$prop = in_array( $prop, [ 'term_id', 'term_taxonomy_id', 'count' ], true ) ? (int) $language->$prop : $language->$prop;
 			}
 
 			$this->tl_term_id          = (int) $term_language->term_id;

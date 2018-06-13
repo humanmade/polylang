@@ -146,7 +146,7 @@ abstract class PLL_Sync_Metas {
 			foreach ( $tr_ids as $lang => $tr_id ) {
 				if ( $tr_id !== $id ) {
 					$to_copy = $this->get_metas_to_copy( $id, $tr_id, $lang, true );
-					if ( in_array( $meta_key, $to_copy ) ) {
+					if ( in_array( $meta_key, $to_copy, true ) ) {
 						$meta_value = $this->maybe_translate_value( $meta_value, $meta_key, $id, $tr_id, $lang );
 						add_metadata( $this->meta_type, $tr_id, $meta_key, $meta_value );
 					}
@@ -199,7 +199,7 @@ abstract class PLL_Sync_Metas {
 			foreach ( $tr_ids as $lang => $tr_id ) {
 				if ( $tr_id !== $id ) {
 					$to_copy = $this->get_metas_to_copy( $id, $tr_id, $lang, true );
-					if ( in_array( $meta_key, $to_copy ) ) {
+					if ( in_array( $meta_key, $to_copy, true ) ) {
 						$meta_value = $this->maybe_translate_value( $meta_value, $meta_key, $id, $tr_id, $lang );
 						$prev_meta  = get_metadata_by_mid( $this->meta_type, $mid );
 						if ( empty( $this->prev_value[ $hash ] ) || $this->prev_value[ $hash ] === $prev_meta->meta_value ) {
@@ -253,7 +253,7 @@ abstract class PLL_Sync_Metas {
 
 			foreach ( $tr_ids as $lang => $tr_id ) {
 				if ( $tr_id !== $id ) {
-					if ( in_array( $key, $this->to_copy[ $id ][ $tr_id ] ) ) {
+					if ( in_array( $key, $this->to_copy[ $id ][ $tr_id ], true ) ) {
 						if ( '' !== $value && null !== $value && false !== $value ) { // Same test as WP
 							$value = $this->maybe_translate_value( $value, $key, $id, $tr_id, $lang );
 						}

@@ -135,7 +135,7 @@ class PLL_Admin_Filters_Term {
 		$dropdown = new PLL_Walker_Dropdown();
 
 		// Disable the language dropdown and the translations input fields for default categories to prevent removal
-		$disabled = in_array( get_option( 'default_category' ), $this->model->term->get_translations( $term_id ) );
+		$disabled = in_array( (int) get_option( 'default_category' ), $this->model->term->get_translations( $term_id ), true );
 
 		printf(
 			'
@@ -238,7 +238,7 @@ class PLL_Admin_Filters_Term {
 
 		// Edit tags
 		if ( isset( $_POST['term_lang_choice'] ) ) {
-			if ( 'add-' . $taxonomy === sanitize_text_field( $_POST['action'] ) ) { // WPCS: CSRF ok.
+			if ( 'add-' . $taxonomy === $_POST['action'] ) { // WPCS: CSRF ok.
 				check_ajax_referer( $_POST['action'], '_ajax_nonce-add-' . $taxonomy ); // category metabox
 			} else {
 				check_admin_referer( 'pll_language', '_pll_nonce' ); // edit tags or tags metabox
@@ -681,12 +681,12 @@ class PLL_Admin_Filters_Term {
 
 		// FIXME backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$traces = debug_backtrace();
+			$traces = debug_backtrace( 1, 4 );
 			$n      = version_compare( PHP_VERSION, '7', '>=' ) ? 3 : 4; // PHP 7 does not include call_user_func_array
 
 			if ( isset( $traces[ $n ] ) ) {
 				// FIXME 'column_name' for backward compatibility with WP < 4.3
-				if ( in_array( $traces[ $n ]['function'], [ 'column_cb', 'column_name', 'handle_row_actions' ] ) && in_array( $traces[ $n ]['args'][0]->term_id, $this->model->term->get_translations( $value ) ) ) {
+				if ( in_array( $traces[ $n ]['function'], [ 'column_cb', 'column_name', 'handle_row_actions' ], true ) && in_array( $traces[ $n ]['args'][0]->term_id, $this->model->term->get_translations( $value ) ) ) {
 					return $traces[ $n ]['args'][0]->term_id;
 				}
 
@@ -757,7 +757,7 @@ class PLL_Admin_Filters_Term {
 				$translations[ $key ] = _split_shared_term( $tr_id, $tr_term->term_taxonomy_id );
 
 				// Hack translation ids sent by the form to avoid overwrite in PLL_Admin_Filters_Term::save_translations
-				if ( isset( $_POST['term_tr_lang'][ $key ] ) && sanitize_text_field( $_POST['term_tr_lang'][ $key ] ) === $tr_id ) { // WPCS: CSRF ok.
+				if ( isset( $_POST['term_tr_lang'][ $key ] ) && (int) $_POST['term_tr_lang'][ $key ] === (int) $tr_id ) { // WPCS: CSRF ok.
 					$_POST['term_tr_lang'][ $key ] = $translations[ $key ];
 				}
 			}

@@ -86,7 +86,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 	 */
 	public function redirect_canonical( $redirect_url, $requested_url ) {
 		global $wp_query;
-		if ( is_page() && ! is_feed() && isset( $wp_query->queried_object ) && $wp_query->queried_object->ID === $this->curlang->page_on_front ) {
+		if ( is_page() && ! is_feed() && isset( $wp_query->queried_object ) && (int) $wp_query->queried_object->ID === (int) $this->curlang->page_on_front ) {
 			$url = is_paged() ? $this->links_model->add_paged_to_link( $this->links->get_home_url(), $wp_query->query_vars['page'] ) : $this->links->get_home_url();
 
 			// Don't forget additional query vars
@@ -149,7 +149,7 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 	 */
 	protected function is_front_page( $query ) {
 		$query = array_diff( array_keys( $query->query ), [ 'preview', 'page', 'paged', 'cpage', 'orderby' ] );
-		return 1 === count( $query ) && in_array( 'lang', $query );
+		return 1 === count( $query ) && in_array( 'lang', $query, true );
 	}
 
 	/**
@@ -216,13 +216,14 @@ class PLL_Frontend_Static_Pages extends PLL_Static_Pages {
 	public function page_for_posts_query( $lang, $query ) {
 		if ( empty( $lang ) && $this->page_for_posts ) {
 			$page_id = $this->get_page_id( $query );
+			$pages   = $this->model->get_languages_list( [ 'fields' => 'page_for_posts' ] );
 
-			if ( ! empty( $page_id ) && in_array( $page_id, $pages = $this->model->get_languages_list( [ 'fields' => 'page_for_posts' ] ) ) ) {
+			if ( ! empty( $page_id ) && in_array( $page_id, $pages, true ) ) {
 				// Fill the cache with all pages for posts to avoid one query per page later
 				// The posts_per_page limit is a trick to avoid splitting the query
 				get_posts(
 					[
-						'posts_per_page' => 999,
+						'posts_per_page' => 100,
 						'post_type' => 'page',
 						'post__in' => $pages,
 						'lang' => '',

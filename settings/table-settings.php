@@ -104,7 +104,7 @@ class PLL_Table_Settings extends WP_List_Table {
 				$classes .= ' column-primary';
 			}
 
-			if ( in_array( $column_name, $hidden ) ) {
+			if ( in_array( $column_name, $hidden, true ) ) {
 				$classes .= ' hidden';
 			}
 

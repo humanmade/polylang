@@ -132,7 +132,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 	public function term_link( $link, $term, $tax ) {
 		$cache_key = "term:{$term->term_id}:{$link}";
 		if ( false === $_link = $this->cache->get( $cache_key ) ) {
-			if ( in_array( $tax, $this->model->get_filtered_taxonomies() ) ) {
+			if ( in_array( $tax, $this->model->get_filtered_taxonomies(), true ) ) {
 				$_link = $this->links_model->switch_language_in_link( $link, $this->curlang );
 
 				/** This filter is documented in include/filters-links.php */
@@ -278,7 +278,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 			foreach ( $white_list as $v ) {
 				if ( ( isset( $trace['function'], $v['function'] ) && $trace['function'] === $v['function'] ) ||
-					( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) && in_array( $trace['function'], [ 'home_url', 'get_home_url', 'bloginfo', 'get_bloginfo' ] ) ) ) {
+					( isset( $trace['file'], $v['file'] ) && false !== strpos( $trace['file'], $v['file'] ) && in_array( $trace['function'], [ 'home_url', 'get_home_url', 'bloginfo', 'get_bloginfo' ], true ) ) ) {
 					$ok = true;
 				}
 			}
@@ -388,6 +388,7 @@ class PLL_Frontend_Filters_Links extends PLL_Filters_Links {
 
 		// The language is not correctly set so let's redirect to the correct url for this object
 		if ( $do_redirect && $redirect_url && $requested_url !== $redirect_url ) {
+			// phpcs:ignore
 			wp_redirect( $redirect_url, 301 );
 			exit;
 		}

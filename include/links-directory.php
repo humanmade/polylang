@@ -205,7 +205,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 
 		foreach ( $rules as $key => $rule ) {
 			// Special case for translated post types and taxonomies to allow canonical redirection
-			if ( $this->options['force_lang'] && in_array( $filter, array_merge( $this->model->get_translated_post_types(), $this->model->get_translated_taxonomies() ) ) ) {
+			if ( $this->options['force_lang'] && in_array( $filter, array_merge( $this->model->get_translated_post_types(), $this->model->get_translated_taxonomies() ), true ) ) {
 
 				/**
 				 * Filters the rewrite rules to modify
@@ -227,7 +227,7 @@ class PLL_Links_Directory extends PLL_Links_Permalinks {
 
 				$newrules[ $key ] = $rule;
 			} // Rewrite rules filtered by language
-			elseif ( in_array( $filter, $this->always_rewrite ) || in_array( $filter, $this->model->get_filtered_taxonomies() ) || ( $cpts && preg_match( $cpts, $rule, $matches ) && ! strpos( $rule, 'name=' ) ) || ( 'rewrite_rules_array' !== $filter && $this->options['force_lang'] ) ) {
+			elseif ( in_array( $filter, $this->always_rewrite ) || in_array( $filter, $this->model->get_filtered_taxonomies(), true ) || ( $cpts && preg_match( $cpts, $rule, $matches ) && ! strpos( $rule, 'name=' ) ) || ( 'rewrite_rules_array' !== $filter && $this->options['force_lang'] ) ) {
 
 				/** This filter is documented in include/links-directory.php */
 				if ( apply_filters( 'pll_modify_rewrite_rule', true, [ $key => $rule ], $filter, empty( $matches[1] ) ? false : $matches[1] ) ) {

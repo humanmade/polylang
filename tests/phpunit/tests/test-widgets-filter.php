@@ -198,10 +198,10 @@ class Widgets_Filter_Test extends PLL_UnitTestCase {
 		self::$polylang->filters = new PLL_Frontend_Filters( self::$polylang );
 		self::$polylang->curlang = self::$polylang->model->get_language( 'en' );
 		$sidebars                = wp_get_sidebars_widgets();
-		$this->assertTrue( in_array( 'search-2', $sidebars['sidebar-1'] ) );
+		$this->assertTrue( in_array( 'search-2', $sidebars['sidebar-1'], true ) );
 
 		self::$polylang->curlang = self::$polylang->model->get_language( 'fr' );
 		$sidebars                = wp_get_sidebars_widgets();
-		$this->assertFalse( in_array( 'search-2', $sidebars['sidebar-1'] ) );
+		$this->assertFalse( in_array( 'search-2', $sidebars['sidebar-1'], true ) );
 	}
 }

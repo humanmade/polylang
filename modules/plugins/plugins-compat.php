@@ -368,6 +368,7 @@ class PLL_Plugins_Compat {
 			if ( empty( $lang ) ) {
 				$status   = get_site_option( 'dm_301_redirect' ) ? '301' : '302'; // Honor status redirect option
 				$redirect = ( is_ssl() ? 'https://' : 'http://' ) . $hosts[ $options['default_lang'] ] . $_SERVER['REQUEST_URI'];
+				// phpcs:ignore
 				wp_redirect( $redirect, $status );
 				exit;
 			}

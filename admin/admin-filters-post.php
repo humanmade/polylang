@@ -258,7 +258,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		}
 
 		// Parent dropdown list ( only for hierarchical post types )
-		if ( in_array( $post_type, get_post_types( [ 'hierarchical' => true ] ) ) ) {
+		if ( in_array( $post_type, get_post_types( [ 'hierarchical' => true ] ), true ) ) {
 			$post = get_post( $post_ID );
 
 			// Args and filter from 'page_attributes_meta_box' in wp-admin/includes/meta-boxes.php of WP 4.2.1
@@ -544,7 +544,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 						$newterms = [];
 
 						foreach ( $terms as $term ) {
-							if ( in_array( $term->term_id, $wrong_term_ids ) ) {
+							if ( in_array( $term->term_id, $wrong_term_ids, true ) ) {
 								// Check if the term is in the correct language or if a translation exist ( mainly for default category )
 								if ( $newterm = $this->model->term->get( $term->term_id, $lang ) ) {
 									$newterms[] = (int) $newterm;

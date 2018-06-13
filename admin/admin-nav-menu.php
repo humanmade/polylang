@@ -106,8 +106,8 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		// Get all language switcher menu items
 		$items = get_posts(
 			[
-				'numberposts' => -1,
-				'nopaging'    => true,
+				'numberposts' => -1, // phpcs:ignore
+				'nopaging'    => true, // phpcs:ignore
 				'post_type'   => 'nav_menu_item',
 				'fields'      => 'ids',
 				'meta_key'    => '_pll_menu_item',

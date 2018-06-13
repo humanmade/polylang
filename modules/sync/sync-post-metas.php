@@ -42,7 +42,7 @@ class PLL_Sync_Post_Metas extends PLL_Sync_Metas {
 		$keys  = [];
 
 		// Get public meta keys ( including from translated post in case we just deleted a custom field )
-		if ( ! $sync || in_array( 'post_meta', $this->options['sync'] ) ) {
+		if ( ! $sync || in_array( 'post_meta', $this->options['sync'], true ) ) {
 			foreach ( $keys = array_unique( array_merge( array_keys( $metas ), array_keys( get_post_custom( $to ) ) ) ) as $k => $meta_key ) {
 				if ( is_protected_meta( $meta_key ) ) {
 					unset( $keys[ $k ] );
@@ -52,7 +52,7 @@ class PLL_Sync_Post_Metas extends PLL_Sync_Metas {
 
 		// Add page template and featured image
 		foreach ( [ '_wp_page_template', '_thumbnail_id' ] as $meta ) {
-			if ( ! $sync || in_array( $meta, $this->options['sync'] ) ) {
+			if ( ! $sync || in_array( $meta, $this->options['sync'], true ) ) {
 				$keys[] = $meta;
 			}
 		}

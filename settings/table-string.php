@@ -31,7 +31,7 @@ class PLL_Table_String extends WP_List_Table {
 		$this->languages      = $languages;
 		$this->strings        = PLL_Admin_Strings::get_strings();
 		$this->groups         = array_unique( wp_list_pluck( $this->strings, 'context' ) );
-		$this->selected_group = empty( $_GET['group'] ) || ! in_array( $_GET['group'], $this->groups ) ? -1 : sanitize_text_field( $_GET['group'] ); // WPCS: CSRF ok.
+		$this->selected_group = empty( $_GET['group'] ) || ! in_array( $_GET['group'], $this->groups, true ) ? -1 : sanitize_text_field( $_GET['group'] ); // WPCS: CSRF ok.
 
 		add_action( 'mlang_action_string-translation', [ $this, 'save_translations' ] );
 	}

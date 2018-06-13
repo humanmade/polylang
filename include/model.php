@@ -264,7 +264,7 @@ class PLL_Model {
 	 */
 	public function is_translated_post_type( $post_type ) {
 		$post_types = $this->get_translated_post_types( false );
-		return ( is_array( $post_type ) && array_intersect( $post_type, $post_types ) || in_array( $post_type, $post_types ) || 'any' === $post_type && ! empty( $post_types ) );
+		return ( is_array( $post_type ) && array_intersect( $post_type, $post_types ) || in_array( $post_type, $post_types, true ) || 'any' === $post_type && ! empty( $post_types ) );
 	}
 
 	/**
@@ -316,7 +316,7 @@ class PLL_Model {
 	 */
 	public function is_translated_taxonomy( $tax ) {
 		$taxonomies = $this->get_translated_taxonomies( false );
-		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies ) );
+		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies, true ) );
 	}
 
 	/**
@@ -362,7 +362,7 @@ class PLL_Model {
 	 */
 	public function is_filtered_taxonomy( $tax ) {
 		$taxonomies = $this->get_filtered_taxonomies( false );
-		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies ) );
+		return ( is_array( $tax ) && array_intersect( $tax, $taxonomies ) || in_array( $tax, $taxonomies, true ) );
 	}
 
 	/**
@@ -433,6 +433,19 @@ class PLL_Model {
 	public function term_exists( $term_name, $taxonomy, $parent, $language ) {
 		global $wpdb;
 
+		$cache_key = implode( '|', array_filter( [
+			$term_name,
+			$taxonomy,
+			$parent,
+			is_object( $language ) ? $language->term_id : $language,
+		] ) );
+
+		$cache_value = wp_cache_get( $cache_key, 'term_exists' );
+
+		if ( $cache_value ) {
+			return $cache_value;
+		}
+
 		$term_name = trim( wp_unslash( $term_name ) );
 
 		$select = "SELECT t.term_id FROM $wpdb->terms AS t";
@@ -445,7 +458,12 @@ class PLL_Model {
 			$where .= $wpdb->prepare( ' AND tt.parent = %d', $parent );
 		}
 
-		return $wpdb->get_var( $select . $join . $where );
+		// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
+		$term = $wpdb->get_var( $select . $join . $where );
+
+		wp_cache_add( $cache_key, 'term_exists', $term );
+
+		return $term;
 	}
 
 	/**
@@ -532,6 +550,7 @@ class PLL_Model {
 				}
 			}
 
+			// phpcs:ignore WordPress.WP.PreparedSQL.NotPrepared
 			$res = $wpdb->get_results( $select . $join . $where . $groupby, ARRAY_A );
 			foreach ( (array) $res as $row ) {
 				$counts[ $row['term_taxonomy_id'] ] = $row['num_posts'];
@@ -615,7 +634,7 @@ class PLL_Model {
 
 		if ( ! empty( $o ) && is_object( $this->$o ) && method_exists( $this->$o, $f ) ) {
 			if ( WP_DEBUG ) {
-				$debug = debug_backtrace();
+				$debug = debug_backtrace( 1, 3 );
 				$i     = 1 + empty( $debug[1]['line'] ); // the file and line are in $debug[2] if the function was called using call_user_func
 
 				trigger_error(
@@ -628,7 +647,7 @@ class PLL_Model {
 			return call_user_func_array( [ $this->$o, $f ], $args );
 		}
 
-		$debug = debug_backtrace();
+		$debug = debug_backtrace( 1, 1 );
 		trigger_error( sprintf( 'Call to undefined function PLL()->model->%1$s() in %2$s on line %3$s' . "\nError handler", $func, $debug[0]['file'], $debug[0]['line'] ), E_USER_ERROR );
 	}
 }
