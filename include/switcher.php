@@ -221,7 +221,7 @@ class PLL_Switcher {
 					}
 					//]]>
 				</script>',
-				'urls_' . preg_replace( '#[^a-zA-Z0-9]#', '', $args['dropdown'] ), json_encode( $urls ), esc_js( $args['name'] )
+				'urls_' . preg_replace( '#[^a-zA-Z0-9]#', '', $args['dropdown'] ), wp_json_encode( $urls ), esc_js( $args['name'] )
 			);
 		}
 

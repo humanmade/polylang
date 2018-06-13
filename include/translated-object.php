@@ -229,7 +229,7 @@ abstract class PLL_Translated_Object {
 		}
 
 		$lang = $this->model->get_language( $lang );
-		return $obj_lang->term_id === $lang->term_id ? $id : $this->get_translation( $id, $lang );
+		return absint( $obj_lang->term_id ) === absint( $lang->term_id ) ? $id : $this->get_translation( $id, $lang );
 	}
 
 	/**

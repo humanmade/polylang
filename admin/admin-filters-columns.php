@@ -108,8 +108,8 @@ class PLL_Admin_Filters_Columns {
 	 * @param int    $post_id
 	 */
 	public function post_column( $column, $post_id ) {
-		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save' === $_REQUEST['action'];
-		$lang   = $inline ? $this->model->get_language( $_POST['inline_lang_choice'] ) : $this->model->post->get_language( $post_id );
+		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save' === sanitize_text_field( $_REQUEST['action'] ); // WPCS: CSRF ok.
+		$lang   = $inline ? $this->model->get_language( sanitize_text_field( $_POST['inline_lang_choice'] ) ) : $this->model->post->get_language( $post_id );  // WPCS: CSRF ok.
 
 		if ( false === strpos( $column, 'language_' ) || ! $lang ) {
 			return;
@@ -222,13 +222,13 @@ class PLL_Admin_Filters_Columns {
 	 * @param int    $term_id
 	 */
 	public function term_column( $out, $column, $term_id ) {
-		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save-tax' === $_REQUEST['action'];
-		if ( false === strpos( $column, 'language_' ) || ! ( $lang = $inline ? $this->model->get_language( $_POST['inline_lang_choice'] ) : $this->model->term->get_language( $term_id ) ) ) {
+		$inline = wp_doing_ajax() && isset( $_REQUEST['action'], $_POST['inline_lang_choice'] ) && 'inline-save-tax' === sanitize_text_field( $_REQUEST['action'] ); // WPCS: CSRF ok.
+		if ( false === strpos( $column, 'language_' ) || ! ( $lang = $inline ? $this->model->get_language( sanitize_text_field( $_POST['inline_lang_choice'] ) ) : $this->model->term->get_language( $term_id ) ) ) { // WPCS: CSRF ok.
 			return $out;
 		}
 
-		$post_type = isset( $GLOBALS['post_type'] ) ? $GLOBALS['post_type'] : $_REQUEST['post_type']; // 2nd case for quick edit
-		$taxonomy  = isset( $GLOBALS['taxonomy'] ) ? $GLOBALS['taxonomy'] : $_REQUEST['taxonomy'];
+		$post_type = isset( $GLOBALS['post_type'] ) ? $GLOBALS['post_type'] : sanitize_text_field( $_REQUEST['post_type'] );  // WPCS: CSRF ok.
+		$taxonomy  = isset( $GLOBALS['taxonomy'] ) ? $GLOBALS['taxonomy'] : sanitize_text_field( $_REQUEST['taxonomy'] );  // WPCS: CSRF ok.
 
 		if ( ! post_type_exists( $post_type ) || ! taxonomy_exists( $taxonomy ) ) {
 			return $out;
@@ -285,7 +285,7 @@ class PLL_Admin_Filters_Columns {
 	public function ajax_update_post_rows() {
 		global $wp_list_table;
 
-		if ( ! post_type_exists( $post_type = $_POST['post_type'] ) || ! $this->model->is_translated_post_type( $post_type ) ) {
+		if ( ! post_type_exists( $post_type = sanitize_text_field( $_POST['post_type'] ) ) || ! $this->model->is_translated_post_type( $post_type ) ) {  // WPCS: CSRF ok.
 			die( 0 );
 		}
 
@@ -325,7 +325,7 @@ class PLL_Admin_Filters_Columns {
 	public function ajax_update_term_rows() {
 		global $wp_list_table;
 
-		if ( ! taxonomy_exists( $taxonomy = $_POST['taxonomy'] ) || ! $this->model->is_translated_taxonomy( $taxonomy ) ) {
+		if ( ! taxonomy_exists( $taxonomy = sanitize_text_field( $_POST['taxonomy'] ) ) || ! $this->model->is_translated_taxonomy( $taxonomy ) ) { // WPCS: CSRF ok.
 			die( 0 );
 		}
 

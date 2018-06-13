@@ -199,7 +199,7 @@ class PLL_Plugins_Compat {
 	 */
 	public function cft_copy( $post_type, $post ) {
 		global $custom_field_template;
-		if ( isset( $custom_field_template, $_REQUEST['from_post'], $_REQUEST['new_lang'] ) && ! empty( $post ) ) {
+		if ( isset( $custom_field_template, $_REQUEST['from_post'], $_REQUEST['new_lang'] ) && ! empty( $post ) ) { // WPCS: CSRF ok.
 			$_REQUEST['post'] = $post->ID;
 		}
 	}
@@ -352,12 +352,12 @@ class PLL_Plugins_Compat {
 			}
 
 			// Don't redirect post previews
-			if ( isset( $_GET['preview'] ) && 'true' === $_GET['preview'] ) {
+			if ( isset( $_GET['preview'] ) && 'true' === $_GET['preview'] ) { // WPCS: CSRF ok.
 				return;
 			}
 
 			// Don't redirect theme customizer
-			if ( isset( $_POST['customize'] ) && isset( $_POST['theme'] ) && 'on' === $_POST['customize'] ) {
+			if ( isset( $_POST['customize'] ) && isset( $_POST['theme'] ) && 'on' === $_POST['customize'] ) { // WPCS: CSRF ok.
 				return;
 			}
 

@@ -29,8 +29,8 @@ class PLL_Settings extends PLL_Admin_Base {
 	public function __construct( &$links_model ) {
 		parent::__construct( $links_model );
 
-		if ( isset( $_GET['page'] ) ) {
-			$this->active_tab = 'mlang' === $_GET['page'] ? 'lang' : substr( $_GET['page'], 6 );
+		if ( isset( $_GET['page'] ) ) { // WPCS: CSRF ok.
+			$this->active_tab = 'mlang' === $_GET['page'] ? 'lang' : substr( sanitize_text_field( $_GET['page'] ), 6 ); // WPCS: CSRF ok.
 		}
 
 		PLL_Admin_Strings::init();
@@ -218,13 +218,13 @@ class PLL_Settings extends PLL_Admin_Base {
 
 			case 'activate':
 				check_admin_referer( 'pll_activate' );
-				$this->modules[ $_GET['module'] ]->activate();
+				$this->modules[ sanitize_text_field( $_GET['module'] ) ]->activate();
 				self::redirect();
 				break;
 
 			case 'deactivate':
 				check_admin_referer( 'pll_deactivate' );
-				$this->modules[ $_GET['module'] ]->deactivate();
+				$this->modules[ sanitize_text_field( $_GET['module'] ) ]->deactivate();
 				self::redirect();
 				break;
 
@@ -276,9 +276,9 @@ class PLL_Settings extends PLL_Admin_Base {
 		}
 
 		// Handle user input
-		$action = isset( $_REQUEST['pll_action'] ) ? $_REQUEST['pll_action'] : '';
-		if ( 'edit' === $action && ! empty( $_GET['lang'] ) ) {
-			$edit_lang = $this->model->get_language( (int) $_GET['lang'] );
+		$action = isset( $_REQUEST['pll_action'] ) ? sanitize_text_field( $_REQUEST['pll_action'] ) : ''; // WPCS: CSRF ok.
+		if ( 'edit' === $action && ! empty( $_GET['lang'] ) ) { // WPCS: CSRF ok.
+			$edit_lang = $this->model->get_language( (int) $_GET['lang'] ); // WPCS: CSRF ok.
 		} else {
 			$this->handle_actions( $action );
 		}

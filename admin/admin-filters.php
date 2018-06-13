@@ -58,7 +58,7 @@ class PLL_Admin_Filters extends PLL_Filters {
 
 		// Test the Widgets screen and the Customizer to avoid displaying the option in page builders
 		// Saving the widget reloads the form. And curiously the action is in $_REQUEST but neither in $_POST, not in $_GET.
-		if ( ( isset( $screen ) && 'widgets' === $screen->base ) || ( isset( $_REQUEST['action'] ) && 'save-widget' === $_REQUEST['action'] ) || isset( $GLOBALS['wp_customize'] ) ) {
+		if ( ( isset( $screen ) && 'widgets' === $screen->base ) || ( isset( $_REQUEST['action'] ) && 'save-widget' === sanitize_text_field( $_REQUEST['action'] ) ) || isset( $GLOBALS['wp_customize'] ) ) { // WPCS: CSRF ok.
 			$dropdown = new PLL_Walker_Dropdown();
 			printf(
 				'<p><label for="%1$s">%2$s %3$s</label></p>',
@@ -97,8 +97,8 @@ class PLL_Admin_Filters extends PLL_Filters {
 	 * @return array Widget options
 	 */
 	public function widget_update_callback( $instance, $new_instance, $old_instance, $widget ) {
-		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( [ 'fields' => 'slug' ] ), true ) ) {
-			$instance['pll_lang'] = $_POST[ $key ];
+		if ( ! empty( $_POST[ $key = $widget->id . '_lang_choice' ] ) && in_array( $_POST[ $key ], $this->model->get_languages_list( [ 'fields' => 'slug' ] ), true ) ) { // WPCS: CSRF ok.
+			$instance['pll_lang'] = sanitize_text_field( $_POST[ $key ] ); // WPCS: CSRF ok.
 		} else {
 			unset( $instance['pll_lang'] );
 		}
@@ -117,14 +117,14 @@ class PLL_Admin_Filters extends PLL_Filters {
 		// Admin language
 		// FIXME Backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$user_lang = in_array( $_POST['user_lang'], $this->model->get_languages_list( [ 'fields' => 'locale' ] ), true ) ? $_POST['user_lang'] : 0;
+			$user_lang = in_array( sanitize_text_field( $_POST['user_lang'] ), $this->model->get_languages_list( [ 'fields' => 'locale' ] ), true ) ? sanitize_text_field( $_POST['user_lang'] ) : 0; // WPCS: CSRF ok.
 			update_user_meta( $user_id, 'locale', $user_lang );
 		}
 
 		// Biography translations
 		foreach ( $this->model->get_languages_list() as $lang ) {
 			$meta        = $lang->slug === $this->options['default_lang'] ? 'description' : 'description_' . $lang->slug;
-			$description = empty( $_POST[ 'description_' . $lang->slug ] ) ? '' : trim( $_POST[ 'description_' . $lang->slug ] );
+			$description = empty( $_POST[ 'description_' . $lang->slug ] ) ? '' : trim( sanitize_text_field( $_POST[ 'description_' . $lang->slug ] ) ); // WPCS: CSRF ok.
 
 			/** This filter is documented in wp-includes/user.php */
 			$description = apply_filters( 'pre_user_description', $description ); // Applies WP default filter wp_filter_kses

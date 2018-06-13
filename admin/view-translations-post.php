@@ -21,8 +21,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			$value = '';
 		}
 
-		if ( isset( $_GET['from_post'] ) ) {
-			$value = $this->model->post->get( (int) $_GET['from_post'], $language );
+		if ( isset( $_GET['from_post'] ) ) { // WPCS: CSRF ok.
+			$value = $this->model->post->get( (int) $_GET['from_post'], $language ); // WPCS: CSRF ok.
 		}
 
 		$link = $add_link = $this->links->new_post_translation_link( $post_ID, $language );

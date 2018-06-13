@@ -138,7 +138,7 @@ class PLL_License {
 			$api_params = [
 				'edd_action' => $request,
 				'license'    => $this->license_key,
-				'item_name'  => urlencode( $this->name ),
+				'item_name'  => rawurlencode( $this->name ),
 				'url'        => home_url(),
 			];
 

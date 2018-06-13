@@ -33,7 +33,7 @@ abstract class PLL_Choose_Lang {
 	 */
 	public function init() {
 		if ( Polylang::is_ajax_on_front() || false === stripos( $_SERVER['SCRIPT_FILENAME'], 'index.php' ) ) {
-			$this->set_language( empty( $_REQUEST['lang'] ) ? $this->get_preferred_language() : $this->model->get_language( $_REQUEST['lang'] ) );
+			$this->set_language( empty( $_REQUEST['lang'] ) ? $this->get_preferred_language() : $this->model->get_language( sanitize_text_field( $_REQUEST['lang'] ) ) ); // WPCS: CSRF ok.
 		}
 
 		add_action( 'pre_comment_on_post', [ $this, 'pre_comment_on_post' ] ); // sets the language of comment
@@ -98,7 +98,7 @@ abstract class PLL_Choose_Lang {
 				$this->curlang->slug,
 				time() + $expiration,
 				COOKIEPATH,
-				2 === $this->options['force_lang'] ? parse_url( $this->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN,
+				2 === $this->options['force_lang'] ? wp_parse_url( $this->links_model->home, PHP_URL_HOST ) : COOKIE_DOMAIN,
 				is_ssl()
 			);
 		}
@@ -247,7 +247,7 @@ abstract class PLL_Choose_Lang {
 		// FIXME why this happens? http://wordpress.org/support/topic/polylang-crashes-1
 		// don't redirect if $_POST is not empty as it could break other plugins
 		// don't forget the query string which may be added by plugins
-		elseif ( is_string( $redirect = $this->curlang->home_url ) && empty( $_POST ) ) {
+		elseif ( is_string( $redirect = $this->curlang->home_url ) && empty( $_POST ) ) { // WPCS: CSRF ok.
 			$redirect = empty( $_SERVER['QUERY_STRING'] ) ? $redirect : $redirect . ( $this->links_model->using_permalinks ? '?' : '&' ) . $_SERVER['QUERY_STRING'];
 
 			/**

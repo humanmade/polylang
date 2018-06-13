@@ -31,7 +31,7 @@ class PLL_Table_String extends WP_List_Table {
 		$this->languages      = $languages;
 		$this->strings        = PLL_Admin_Strings::get_strings();
 		$this->groups         = array_unique( wp_list_pluck( $this->strings, 'context' ) );
-		$this->selected_group = empty( $_GET['group'] ) || ! in_array( $_GET['group'], $this->groups, true ) ? -1 : $_GET['group'];
+		$this->selected_group = empty( $_GET['group'] ) || ! in_array( $_GET['group'], $this->groups, true ) ? -1 : sanitize_text_field( $_GET['group'] ); // WPCS: CSRF ok.
 
 		add_action( 'mlang_action_string-translation', [ $this, 'save_translations' ] );
 	}
@@ -160,8 +160,8 @@ class PLL_Table_String extends WP_List_Table {
 	 * @return int -1 or 1 if $a is considered to be respectively less than or greater than $b.
 	 */
 	protected function usort_reorder( $a, $b ) {
-			$result = strcmp( $a[ $_GET['orderby'] ], $b[ $_GET['orderby'] ] ); // determine sort order
-			return ( empty( $_GET['order'] ) || 'asc' === $_GET['order'] ) ? $result : -$result; // send final sort direction to usort
+			$result = strcmp( $a[ sanitize_text_field( $_GET['orderby'] ) ], $b[ sanitize_text_field( $_GET['orderby'] ) ] );  // WPCS: CSRF ok.
+			return ( empty( $_GET['order'] ) || 'asc' === $_GET['order'] ) ? $result : -$result; // WPCS: CSRF ok.
 	}
 
 	/**
@@ -173,7 +173,7 @@ class PLL_Table_String extends WP_List_Table {
 		$data = $this->strings;
 
 		// Filter for search string
-		$s = empty( $_GET['s'] ) ? '' : wp_unslash( $_GET['s'] );
+		$s = empty( $_GET['s'] ) ? '' : wp_unslash( $_GET['s'] ); // WPCS: CSRF ok.
 		foreach ( $data as $key => $row ) {
 			if ( ( -1 !== $this->selected_group && $row['context'] !== $this->selected_group ) || ( ! empty( $s ) && stripos( $row['name'], $s ) === false && stripos( $row['string'], $s ) === false ) ) {
 				unset( $data[ $key ] );
@@ -198,7 +198,7 @@ class PLL_Table_String extends WP_List_Table {
 		$per_page              = $this->get_items_per_page( 'pll_strings_per_page' );
 		$this->_column_headers = [ $this->get_columns(), [], $this->get_sortable_columns() ];
 
-		if ( ! empty( $_GET['orderby'] ) ) { // No sort by default
+		if ( ! empty( $_GET['orderby'] ) ) {  // WPCS: CSRF ok.
 			usort( $data, [ $this, 'usort_reorder' ] );
 		}
 
@@ -234,7 +234,7 @@ class PLL_Table_String extends WP_List_Table {
 	 * @return string|false The action name or False if no action was selected
 	 */
 	public function current_action() {
-		return empty( $_POST['submit'] ) ? parent::current_action() : false;
+		return empty( $_POST['submit'] ) ? parent::current_action() : false; // WPCS: CSRF ok.
 	}
 
 	/**
@@ -265,7 +265,7 @@ class PLL_Table_String extends WP_List_Table {
 		foreach ( $this->groups as $group ) {
 			printf(
 				'<option value="%s"%s>%s</option>' . "\n",
-				esc_attr( urlencode( $group ) ),
+				esc_attr( rawurlencode( $group ) ),
 				$this->selected_group === $group ? ' selected="selected"' : '',
 				esc_html( $group )
 			);
@@ -334,7 +334,7 @@ class PLL_Table_String extends WP_List_Table {
 		// Unregisters strings registered through WPML API
 		if ( $this->current_action() === 'delete' && ! empty( $_POST['strings'] ) && function_exists( 'icl_unregister_string' ) ) {
 			foreach ( $_POST['strings'] as $key ) {
-				icl_unregister_string( $this->strings[ $key ]['context'], $this->strings[ $key ]['name'] );
+				icl_unregister_string( $this->strings[ sanitize_text_field( $key ) ]['context'], $this->strings[ sanitize_text_field( $key ) ]['name'] );
 			}
 		}
 
@@ -344,7 +344,7 @@ class PLL_Table_String extends WP_List_Table {
 			$args['paged'] = (int) $_GET['paged']; // Don't rely on $_REQUEST['paged'] or $_POST['paged']. See #14
 		}
 		if ( ! empty( $args['s'] ) ) {
-			$args['s'] = urlencode( $args['s'] ); // Searched string needs to be encoded as it comes from $_POST
+			$args['s'] = rawurlencode( sanitize_text_field( $args['s'] ) ); // Searched string needs to be encoded as it comes from $_POST
 		}
 		PLL_Settings::redirect( $args );
 	}

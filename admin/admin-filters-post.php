@@ -141,7 +141,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 		$post_type = get_post_type( $post_ID );
 
 		$lang = ( $lg = $this->model->post->get_language( $post_ID ) ) ? $lg :
-			( isset( $_GET['new_lang'] ) ? $this->model->get_language( $_GET['new_lang'] ) :
+			( isset( $_GET['new_lang'] ) ? $this->model->get_language( sanitize_text_field( $_GET['new_lang'] ) ) : // WPCS: CSRF ok.
 			$this->pref_lang );
 
 		$dropdown = new PLL_Walker_Dropdown();
@@ -371,7 +371,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 			);
 		}
 
-		wp_die( json_encode( $return ) );
+		wp_die( wp_json_encode( $return ) );
 	}
 
 	/**
@@ -380,7 +380,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	 * @since 2.3
 	 */
 	public function edit_post() {
-		if ( isset( $_POST['post_lang_choice'], $_POST['post_ID'] ) && $post_id = (int) $_POST['post_ID'] ) {
+		if ( isset( $_POST['post_lang_choice'], $_POST['post_ID'] ) && $post_id = (int) $_POST['post_ID'] ) { // WPCS: CSRF ok.
 			check_admin_referer( 'pll_language', '_pll_nonce' );
 
 			$post             = get_post( $post_id );
@@ -434,7 +434,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	 * @since 2.3
 	 */
 	public function bulk_edit_posts() {
-		if ( isset( $_GET['bulk_edit'], $_GET['inline_lang_choice'] ) && -1 !== $_GET['inline_lang_choice'] ) {
+		if ( isset( $_GET['bulk_edit'], $_GET['inline_lang_choice'] ) && -1 !== $_GET['inline_lang_choice'] ) { // WPCS: CSRF ok.
 			check_admin_referer( 'bulk-posts' );
 
 			if ( $lang = $this->model->get_language( $_GET['inline_lang_choice'] ) ) {
@@ -581,7 +581,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	public function wp_insert_post_parent( $post_parent, $post_id, $new_postarr, $postarr ) {
 		if ( isset( $postarr['bulk_edit'] ) ) {
 			check_admin_referer( 'bulk-posts' );
-			$lang        = -1 === $postarr['inline_lang_choice'] ?
+			$lang = -1 === $postarr['inline_lang_choice'] ?
 				$this->model->post->get_language( $post_id ) :
 				$this->model->get_language( $postarr['inline_lang_choice'] );
 			$post_parent = $this->model->post->get_translation( $post_parent, $lang );
@@ -614,7 +614,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	 * @return array Modified arguments
 	 */
 	public function page_attributes_dropdown_pages_args( $dropdown_args, $post ) {
-		$dropdown_args['lang'] = isset( $_POST['lang'] ) ? $this->model->get_language( $_POST['lang'] ) : $this->model->post->get_language( $post->ID ); // ajax or not ?
+		$dropdown_args['lang'] = isset( $_POST['lang'] ) ? $this->model->get_language( sanitizet_text_field( $_POST['lang'] ) ) : $this->model->post->get_language( $post->ID );  // WPCS: CSRF ok.
 		if ( ! $dropdown_args['lang'] ) {
 			$dropdown_args['lang'] = $this->pref_lang;
 		}

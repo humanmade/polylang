@@ -63,7 +63,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 
 		// Support theme customizer
 		// FIXME of course does not work if 'transport' is set to 'postMessage'
-		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) {
+		if ( isset( $_POST['wp_customize'], $_POST['customized'] ) ) { // WPCS: CSRF ok.
 			add_filter( 'pre_option_blogname', 'pll__', 20 );
 			add_filter( 'pre_option_blogdescription', 'pll__', 20 );
 		}
@@ -319,7 +319,7 @@ class PLL_Frontend_Filters extends PLL_Filters {
 	public function set_default_language( $post_id ) {
 		if ( ! $this->model->post->get_language( $post_id ) ) {
 			if ( isset( $_REQUEST['lang'] ) ) {
-				$this->model->post->set_language( $post_id, $_REQUEST['lang'] );
+				$this->model->post->set_language( $post_id, sanitize_text_field( $_REQUEST['lang'] ) ); // WPCS: CSRF ok.
 			} elseif ( ( $parent_id = wp_get_post_parent_id( $post_id ) ) && $parent_lang = $this->model->post->get_language( $parent_id ) ) {
 				$this->model->post->set_language( $post_id, $parent_lang );
 			} else {
@@ -357,8 +357,8 @@ class PLL_Frontend_Filters extends PLL_Filters {
 	 */
 	public function save_term( $term_id, $tt_id, $taxonomy ) {
 		if ( $this->model->is_translated_taxonomy( $taxonomy ) && ! $this->model->term->get_language( $term_id ) ) {
-			if ( isset( $_REQUEST['lang'] ) ) {
-				$this->model->term->set_language( $term_id, $_REQUEST['lang'] );
+			if ( isset( $_REQUEST['lang'] ) ) { // WPCS: CSRF ok.
+				$this->model->term->set_language( $term_id, sanitize_text_field( $_REQUEST['lang'] ) );  // WPCS: CSRF ok.
 			} elseif ( ( $term = get_term( $term_id, $taxonomy ) ) && ! empty( $term->parent ) && $parent_lang = $this->model->term->get_language( $term->parent ) ) {
 				$this->model->term->set_language( $term_id, $parent_lang );
 			} else {

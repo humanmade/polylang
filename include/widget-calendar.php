@@ -237,7 +237,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 			if ( in_array( $day, $daywithpost, true ) ) {
 				// any posts today?
 				$date_format = date( _x( 'F j, Y', 'daily archives date format' ), strtotime( "{$thisyear}-{$thismonth}-{$day}" ) );
-				// translators: %s replaced by the date
+				// translators: %s is replaced by the date
 				$label            = sprintf( __( 'Posts published on %s' ), $date_format );
 				$calendar_output .= sprintf(
 					'<a href="%s" aria-label="%s">%s</a>',

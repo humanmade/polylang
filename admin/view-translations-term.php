@@ -33,7 +33,7 @@ if ( isset( $term_id ) ) {
 		if ( isset( $term_id ) && ( $translation_id = $this->model->term->get_translation( $term_id, $language ) ) && $translation_id !== $term_id ) {
 			$translation = get_term( $translation_id, $taxonomy );
 		}
-		if ( isset( $_GET['from_tag'] ) && ( $translation_id = $this->model->term->get( (int) $_GET['from_tag'], $language ) ) && ! $this->model->term->get_translation( $translation_id, $lang ) ) {
+		if ( isset( $_GET['from_tag'] ) && ( $translation_id = $this->model->term->get( (int) $_GET['from_tag'], $language ) ) && ! $this->model->term->get_translation( $translation_id, $lang ) ) { // WPCS: CSRF ok.
 			$translation = get_term( $translation_id, $taxonomy );
 		}
 

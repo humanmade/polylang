@@ -106,8 +106,8 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		// Get all language switcher menu items
 		$items = get_posts(
 			[
-				'numberposts' => -1,
-				'nopaging'    => true,
+				'numberposts' => -1, // phpcs:ignore
+				'nopaging'    => true, // phpcs:ignore
 				'post_type'   => 'nav_menu_item',
 				'fields'      => 'ids',
 				'meta_key'    => '_pll_menu_item',
@@ -133,7 +133,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 	 * @param int $menu_item_db_id
 	 */
 	public function wp_update_nav_menu_item( $menu_id = 0, $menu_item_db_id = 0 ) {
-		if ( empty( $_POST['menu-item-url'][ $menu_item_db_id ] ) || '#pll_switcher' !== $_POST['menu-item-url'][ $menu_item_db_id ] ) {
+		if ( empty( $_POST['menu-item-url'][ $menu_item_db_id ] ) || '#pll_switcher' !== sanitize_text_field( $_POST['menu-item-url'][ $menu_item_db_id ] ) ) { // WPCS: CSRF ok.
 			return;
 		}
 
@@ -216,7 +216,7 @@ class PLL_Admin_Nav_Menu extends PLL_Nav_Menu {
 		if ( current_user_can( 'edit_theme_options' ) && isset( $mods['nav_menu_locations'] ) ) {
 
 			// Manage Locations tab in Appearance -> Menus
-			if ( isset( $_GET['action'] ) && 'locations' === $_GET['action'] ) {
+			if ( isset( $_GET['action'] ) && 'locations' === sanitize_text_field( $_GET['action'] ) ) { // WPCS: CSRF ok.
 				check_admin_referer( 'save-menu-locations' );
 				$this->options['nav_menus'][ $this->theme ] = [];
 			} // Edit Menus tab in Appearance -> Menus
