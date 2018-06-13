@@ -614,7 +614,7 @@ class PLL_Admin_Filters_Post extends PLL_Admin_Filters_Post_Base {
 	 * @return array Modified arguments
 	 */
 	public function page_attributes_dropdown_pages_args( $dropdown_args, $post ) {
-		$dropdown_args['lang'] = isset( $_POST['lang'] ) ? $this->model->get_language( sanitizet_text_field( $_POST['lang'] ) ) : $this->model->post->get_language( $post->ID );  // WPCS: CSRF ok.
+		$dropdown_args['lang'] = isset( $_POST['lang'] ) ? $this->model->get_language( sanitize_text_field( $_POST['lang'] ) ) : $this->model->post->get_language( $post->ID );  // WPCS: CSRF ok.
 		if ( ! $dropdown_args['lang'] ) {
 			$dropdown_args['lang'] = $this->pref_lang;
 		}

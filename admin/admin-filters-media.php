@@ -160,7 +160,7 @@ class PLL_Admin_Filters_Media extends PLL_Admin_Filters_Post_Base {
 		}
 
 		if ( isset( $_POST['media_tr_lang'] ) ) {  // WPCS: CSRF ok.
-			$this->save_translations( $post['ID'], sanitize_text_field( $_POST['media_tr_lang'] ) ); // WPCS: CSRF ok.
+			$this->save_translations( $post['ID'], $_POST['media_tr_lang'] ); // WPCS: CSRF ok.
 		}
 
 		return $post;

@@ -92,19 +92,19 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 		// Let's figure out when we are
 		if ( ! empty( $monthnum ) && ! empty( $year ) ) {
 			$thismonth = zeroise( intval( $monthnum ), 2 );
-			$thisyear  = (int) $year;
+			$thisyear  = $year;
 		} elseif ( ! empty( $w ) ) {
 			// We need to get the month from MySQL
-			$thisyear = (int) substr( $m, 0, 4 );
+			$thisyear = substr( $m, 0, 4 );
 			// it seems MySQL's weeks disagree with PHP's
 			$d         = ( ( $w - 1 ) * 7 ) + 6;
 			$thismonth = $wpdb->get_var( $wpdb->prepare( "SELECT DATE_FORMAT((DATE_ADD(%s, INTERVAL %d DAY) ), '%%m')", "{$thisyear}0101", $d ) );
 		} elseif ( ! empty( $m ) ) {
-			$thisyear = (int) substr( $m, 0, 4 );
+			$thisyear = substr( $m, 0, 4 );
 			if ( strlen( $m ) < 6 ) {
 				$thismonth = '01';
 			} else {
-				$thismonth = zeroise( (int) substr( $m, 4, 2 ), 2 );
+				$thismonth = zeroise( substr( $m, 4, 2 ), 2 );
 			}
 		} else {
 			$thisyear  = gmdate( 'Y', $ts );
@@ -207,7 +207,7 @@ class PLL_Widget_Calendar extends WP_Widget_Calendar {
 		// phpcs:enable
 		if ( $dayswithposts ) {
 			foreach ( (array) $dayswithposts as $daywith ) {
-				$daywithpost[] = $daywith[0];
+				$daywithpost[] = intval( $daywith[0] );
 			}
 		}
 
