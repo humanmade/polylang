@@ -86,8 +86,8 @@ class PLL_Uninstall {
 		$ids = get_posts(
 			[
 				'post_type'   => 'nav_menu_item',
-				'numberposts' => -1,
-				'nopaging'    => true,
+				'numberposts' => -1, // phpcs:ignore
+				'nopaging'    => true, // phpcs:ignore
 				'fields'      => 'ids',
 				'meta_key'    => '_pll_menu_item',
 			]
@@ -114,8 +114,8 @@ class PLL_Uninstall {
 			[
 				'post_type'   => 'polylang_mo',
 				'post_status' => 'any',
-				'numberposts' => -1,
-				'nopaging'    => true,
+				'numberposts' => -1, // phpcs:ignore
+				'nopaging'    => true, // phpcs:ignore
 				'fields'      => 'ids',
 			]
 		);

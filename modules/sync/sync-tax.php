@@ -196,8 +196,8 @@ class PLL_Sync_Tax {
 			// Get all posts associated to the translated terms
 			$tr_posts = get_posts(
 				[
-					'numberposts' => -1,
-					'nopaging'    => true,
+					'numberposts' => -1, // phpcs:ignore
+					'nopaging'    => true, // phpcs:ignore
 					'post_type'   => 'any',
 					'post_status' => 'any',
 					'fields'      => 'ids',

@@ -140,8 +140,8 @@ class PLL_Filters {
 
 			$r = [
 				'lang' => 0, // So this query is not filtered
-				'numberposts' => -1,
-				'nopaging'    => true,
+				'numberposts' => -1, // phpcs:ignore
+				'nopaging'    => true, // phpcs:ignore
 				'post_type'   => $args['post_type'],
 				'fields'      => 'ids',
 				'tax_query'   => [
