@@ -131,11 +131,11 @@ class Sync_Test extends PLL_UnitTestCase {
 		$this->assertEqualSets( [ 'value1', 'value4', 'value5' ], get_post_meta( $to, 'key' ) );
 
 		// update_metadata_by_mid
-		$this->assertTrue( update_metadata_by_mid( 'post', $mid, 'value6' ) );
+		$this->assertTrue( update_meta( $mid, 'key', 'value6' ) );
 		$this->assertEqualSets( [ 'value1', 'value4', 'value6' ], get_post_meta( $to, 'key' ) );
 
 		// delete_metadata_by_mid
-		$this->assertTrue( delete_metadata_by_mid( 'post', $mid ) );
+		$this->assertTrue( delete_meta( $mid ) );
 		$this->assertEqualSets( [ 'value1', 'value4' ], get_post_meta( $to, 'key' ) );
 	}
 

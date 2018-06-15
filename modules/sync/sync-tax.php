@@ -122,7 +122,7 @@ class PLL_Sync_Tax {
 			$tr_ids = $this->model->post->get_translations( $object_id );
 
 			foreach ( $tr_ids as $lang => $tr_id ) {
-				if ( $tr_id !== $object_id ) {
+				if ( (int) $tr_id !== (int) $object_id ) {
 					$to_copy = $this->get_taxonomies_to_copy( true, $object_id, $tr_id, $lang );
 
 					if ( in_array( $taxonomy, $to_copy, true ) ) {

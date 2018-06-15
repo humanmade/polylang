@@ -129,7 +129,7 @@ class PLL_Admin_Sync {
 		}
 
 		foreach ( $translations as $lang => $tr_id ) {
-			if ( ! $tr_id || $tr_id === $post_id ) {
+			if ( ! $tr_id || (int) $tr_id === (int) $post_id ) {
 				continue;
 			}
 
@@ -191,7 +191,7 @@ class PLL_Admin_Sync {
 			$term = get_term( $term_id );
 
 			foreach ( $translations as $lang => $tr_id ) {
-				if ( ! empty( $tr_id ) && $tr_id !== $term_id ) {
+				if ( ! empty( $tr_id ) && (int) $tr_id !== (int) $term_id ) {
 					$tr_parent = $this->model->term->get_translation( $term->parent, $lang );
 
 					$wpdb->update(
