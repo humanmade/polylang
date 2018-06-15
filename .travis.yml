@@ -10,6 +10,7 @@ notifications:
 branches:
   only:
     - master
+    - hm
 
 php:
   - 5.6
