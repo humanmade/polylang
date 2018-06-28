@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						?>
 						<input type="hidden" name="pll_action" value="update" />
 						<input type="hidden" name="lang_id" value="<?php echo esc_attr( $edit_lang->term_id ); ?>" />
-					<?php
+						<?php
 					} else {
 						?>
 						<input type="hidden" name="pll_action" value="add" />
