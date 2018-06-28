@@ -109,7 +109,7 @@ abstract class PLL_Base {
 		foreach ( $this as $prop => &$obj ) {
 			if ( is_object( $obj ) && method_exists( $obj, $func ) ) {
 				if ( WP_DEBUG ) {
-					$debug = debug_backtrace( 1, 3 );
+					$debug = debug_backtrace( 1, 4 );
 					$i     = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
 					trigger_error(
 						sprintf(

@@ -681,7 +681,7 @@ class PLL_Admin_Filters_Term {
 
 		// FIXME backward compatibility with WP < 4.7
 		if ( version_compare( $GLOBALS['wp_version'], '4.7alpha', '<' ) ) {
-			$traces = debug_backtrace( 1, 4 );
+			$traces = debug_backtrace( 1, 5 );
 			$n      = version_compare( PHP_VERSION, '7', '>=' ) ? 3 : 4; // PHP 7 does not include call_user_func_array
 
 			if ( isset( $traces[ $n ] ) ) {

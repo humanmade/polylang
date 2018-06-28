@@ -634,7 +634,7 @@ class PLL_Model {
 
 		if ( ! empty( $o ) && is_object( $this->$o ) && method_exists( $this->$o, $f ) ) {
 			if ( WP_DEBUG ) {
-				$debug = debug_backtrace( 1, 3 );
+				$debug = debug_backtrace( 1, 4 );
 				$i     = 1 + empty( $debug[1]['line'] ); // the file and line are in $debug[2] if the function was called using call_user_func
 
 				trigger_error(

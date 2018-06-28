@@ -260,7 +260,7 @@ class PLL_Admin_Sync {
 
 		if ( is_object( $this->$obj ) && method_exists( $this->$obj, 'copy' ) ) {
 			if ( WP_DEBUG ) {
-				$debug = debug_backtrace( 1, 3 );
+				$debug = debug_backtrace( 1, 4 );
 				$i     = 1 + empty( $debug[1]['line'] ); // The file and line are in $debug[2] if the function was called using call_user_func
 
 				trigger_error(
