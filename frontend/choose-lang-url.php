@@ -31,8 +31,8 @@ class PLL_Choose_Lang_Url extends PLL_Choose_lang {
 	 * @since 1.2
 	 */
 	public function set_language_from_url() {
-		$host      = str_replace( 'www.', '', wp_parse_url( $this->links_model->home, PHP_URL_HOST ) );
-		$home_path = wp_parse_url( $this->links_model->home, PHP_URL_PATH );
+		$host      = str_replace( 'www.', '', parse_url( $this->links_model->home, PHP_URL_HOST ) );
+		$home_path = parse_url( $this->links_model->home, PHP_URL_PATH );
 
 		$requested_host = str_replace( 'www.', '', $_SERVER['HTTP_HOST'] );
 		$requested_uri  = rtrim( str_replace( $this->index, '', $_SERVER['REQUEST_URI'] ), '/' ); // some PHP setups turn requests for / into /index.php in REQUEST_URI
